@@ -1,4 +1,4 @@
-from smache import smache, RedisStore, RedisDependencyGraph
+from smache import Smache, RedisStore, RedisDependencyGraph
 from smache.data_sources import MongoDataSource
 from mongoengine import Document, StringField, IntField, connect
 
@@ -8,6 +8,7 @@ import pytest
 import redis
 
 # Definitions
+smache = Smache()
 db = connect('testdb', host='localhost', port=27017,)
 
 class User(Document):

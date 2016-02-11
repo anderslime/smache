@@ -1,4 +1,4 @@
-from smache import smache, RedisStore, RedisDependencyGraph
+from smache import Smache, RedisStore, RedisDependencyGraph
 
 from collections import namedtuple
 import pytest
@@ -6,6 +6,7 @@ import pytest
 import redis
 
 # Definitions
+smache = Smache()
 a = smache.data_source('A')
 b = smache.data_source('B')
 c = smache.data_source('C')
