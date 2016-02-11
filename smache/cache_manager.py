@@ -104,7 +104,6 @@ class CacheManager:
         if self._options.write_through:
             self._write_through_update(key)
         else:
-            print "MARKING STALE"
             self.store.mark_as_stale(key)
 
     def _write_through_update(self, key):
