@@ -42,11 +42,6 @@ class CacheManager:
             return wrapper
         return _computed
 
-    def data_source(self, data_source_id):
-        data_source = DummyDataSource(data_source_id)
-        self.add_sources(data_source)
-        return data_source
-
     def add_sources(self, *data_sources):
         for data_source in data_sources:
             data_source.subscribe(self._on_data_source_update)
@@ -109,6 +104,7 @@ class CacheManager:
         if self._options.write_through:
             self._write_through_update(key)
         else:
+            print "MARKING STALE"
             self.store.mark_as_stale(key)
 
     def _write_through_update(self, key):

@@ -1,4 +1,5 @@
 from smache import Smache, RedisStore, RedisDependencyGraph
+from smache.data_sources.dummy_data_source import DummyEntity, DummyDataSource
 
 from collections import namedtuple
 import pytest
@@ -7,9 +8,11 @@ import redis
 
 # Definitions
 smache = Smache()
-a = smache.data_source('A')
-b = smache.data_source('B')
-c = smache.data_source('C')
+a = DummyDataSource('A')
+b = DummyDataSource('B')
+c = DummyDataSource('C')
+
+smache.add_sources(a, b, c)
 
 @smache.computed(a, sources=(b, c))
 def score(a):
@@ -24,7 +27,6 @@ def f(a, b, c):
     return a.value * h(b, c)
 
 # Tests
-Entity = namedtuple('Entity', ['id', 'value'])
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 @pytest.yield_fixture(autouse=True)
@@ -34,9 +36,9 @@ def flush_before_each_test_case():
 
 
 def test_cache():
-    ax = Entity(1, 10)
-    bx = Entity(2, 2)
-    cx = Entity(3, 3)
+    ax = DummyEntity(1, 10)
+    bx = DummyEntity(2, 2)
+    cx = DummyEntity(3, 3)
 
     assert f(ax, bx, cx) == 50
     assert h(bx, cx) == 5

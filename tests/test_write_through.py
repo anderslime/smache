@@ -7,6 +7,7 @@ import redis
 
 # Definitions
 smache = Smache(write_through=True)
+
 a = DummyDataSource('A', {'1': {'value': 'hello'}})
 b = DummyDataSource('B', {'1': {'value': 'world'}})
 
