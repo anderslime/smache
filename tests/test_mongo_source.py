@@ -23,6 +23,10 @@ smache.add_sources(a)
 def name(a):
     return a.name
 
+@smache.computed(sources=(a))
+def score():
+    return 50
+
 # Tests
 Entity = namedtuple('Entity', ['id', 'value'])
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -44,3 +48,16 @@ def test_depending_computed_are_invalidated_on_save():
     user.save()
 
     assert smache.is_fun_fresh(name, user) == False
+
+def test_collection_whide_invalidation():
+    user = User(name='Anders', age=12)
+    user.save()
+
+    assert score() == 50
+
+    assert smache.is_fun_fresh(score) == True
+
+    user.name = 'Emil'
+    user.save()
+
+    assert smache.is_fun_fresh(score) == False
