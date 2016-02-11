@@ -5,7 +5,7 @@ from setuptools import setup
 from setuptools.command.test import test as TestCommand
 
 __name__ = 'smache'
-__version__ = '0.0.1'
+__version__ = '0.0.3'
 __author__ = 'Anders Emil Nielsen'
 __author_email__ = 'aemilnielsen@gmail.com'
 __doc__ = """
