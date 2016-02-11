@@ -23,4 +23,4 @@ def build_dependency_graph(data_sources, computed_functions):
         for computed_dep in computed_fun.computed_deps:
             nodes[computed_dep.fun_name].add_parent(computed_node)
 
-    return nodes.values()
+    return nodes

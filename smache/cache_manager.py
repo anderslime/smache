@@ -1,4 +1,6 @@
 from data_sources import DummyDataSource
+from smache.dependency_graph_builder import build_dependency_graph
+from smache.topological_sort import topological_sort
 
 from collections import namedtuple as struct
 
@@ -70,6 +72,13 @@ class CacheManager:
         key = self._fun_key(fun, *args, **kwargs)
         return self.store.lookup(key).value
 
+    def dependency_graph(self):
+        return build_dependency_graph(self.data_sources, self.computed_funs)
+
+    def _node_ids_in_topological_order(self):
+        topologically_sorted_nodes = topological_sort(self.dependency_graph())
+        return [node.id for node in topologically_sorted_nodes]
+
     def _get_computed(self, fun_name):
         return self.computed_funs[fun_name]
 
@@ -94,6 +103,7 @@ class CacheManager:
                 key
             )
 
+
     def _parse_deps(self, value):
         if isinstance(value, tuple):
             return value
@@ -113,14 +123,26 @@ class CacheManager:
 
     def _on_data_source_update(self, data_source, entity_id):
         depending_keys = self.dep_graph.values_depending_on(data_source.data_source_id, entity_id)
-        for key in depending_keys:
-            self._handle_stale_key(key)
+        self._invalidate_keys(depending_keys)
 
-    def _handle_stale_key(self, key):
+    def _invalidate_keys(self, keys):
         if self._options.write_through:
-            self._write_through_update(key)
+            self._write_through_invalidation(keys)
         else:
+            self._mark_invalidation(keys)
+
+    def _mark_invalidation(self, keys):
+        for key in keys:
             self.store.mark_as_stale(key)
+
+    def _write_through_invalidation(self, keys):
+        sorted_nodes = self._node_ids_in_topological_order()
+        decomp_keys = [self._decompose_fun_key(key) for key in keys]
+        fun_names = [fun_name for (fun_name, _) in decomp_keys]
+        indexes = [sorted_nodes.index(fun_name) for fun_name in fun_names]
+        sorted_keys = [key for key, _ in sorted(zip(keys, indexes), key=lambda x: x[1])]
+        for key in sorted_keys:
+            self._write_through_update(key)
 
     def _write_through_update(self, key):
         fun_name, arg_ids = self._decompose_fun_key(key)

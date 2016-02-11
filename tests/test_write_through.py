@@ -17,7 +17,7 @@ smache.add_sources(a, b)
 def hyphen(a, b):
     return ' - '.join([a.value, b.value])
 
-@smache.computed(sources=(a))
+@smache.computed(sources=(a), computed_deps=(hyphen))
 def slash():
     return '/'.join([a.find('1').value, a.find('2').value])
 
@@ -36,6 +36,7 @@ def test_write_through():
     bx = DummyEntity(1, 'world')
 
     assert hyphen(ax, bx) == 'hello - world'
+    assert slash() == 'hello/hihi'
 
     assert smache.is_fun_fresh(hyphen, ax, bx) == True
 
