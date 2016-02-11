@@ -60,7 +60,7 @@ class CacheManager:
             data_source.subscribe(self._on_data_source_update)
 
     def add_computed(self, fun, entity_deps, kwargs):
-        data_source_deps = kwargs.get('sources', ())
+        data_source_deps = self._parse_deps(kwargs.get('sources', ()))
         self._computed_funs[fun.__name__] = (fun.__name__, entity_deps, data_source_deps)
 
     def is_fresh(self, key):
@@ -87,7 +87,7 @@ class CacheManager:
                 key
             )
 
-    def parse_deps(self, value):
+    def _parse_deps(self, value):
         if isinstance(value, tuple):
             return value
         else:
