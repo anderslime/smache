@@ -1,4 +1,6 @@
 import redis
+from smache.graph_drawer import draw_graph
+from smache.dependency_graph_builder import build_dependency_graph
 
 from stores import RedisStore
 from dependency_graph import RedisDependencyGraph
@@ -22,6 +24,18 @@ class Smache:
         self.add_sources = self._cache_manager.add_sources
 
         self.is_fun_fresh = self._cache_manager.is_fun_fresh
+
+    def draw(self, filename='graph'):
+        draw_graph(self._dependency_graph(), filename)
+
+    def _dependency_graph(self):
+        return build_dependency_graph(
+            self._cache_manager.data_sources,
+            self._cache_manager.computed_funs
+        )
+
+    def __repr__(self):
+        return self._dependency_graph()
 
 class Options:
     defaults = {

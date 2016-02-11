@@ -18,7 +18,7 @@ smache.add_sources(a, b, c)
 def score(a):
     return a.value + 5 + 10
 
-@smache.computed(b, c)
+@smache.computed(b, c, computed_deps=(score))
 def h(b, c):
     return b.value + c.value
 
@@ -34,8 +34,8 @@ def flush_before_each_test_case():
     redis_con.flushall()
     yield
 
-
 def test_cache():
+
     ax = DummyEntity(1, 10)
     bx = DummyEntity(2, 2)
     cx = DummyEntity(3, 3)

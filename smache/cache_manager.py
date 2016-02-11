@@ -3,11 +3,12 @@ from data_sources import DummyDataSource
 from collections import namedtuple as struct
 
 class ComputedFunction:
-    def __init__(self, fun, entity_deps, data_source_deps):
+    def __init__(self, fun, entity_deps, data_source_deps, computed_deps):
         self.fun              = fun
         self.fun_name         = fun.__name__
         self.entity_deps      = entity_deps
         self.data_source_deps = data_source_deps
+        self.computed_deps    = computed_deps
 
     def call(self, *entity_dep_ids):
         deps_with_ids = zip(self.entity_deps, entity_dep_ids)
@@ -19,7 +20,8 @@ class CacheManager:
         self.store            = store
         self.dep_graph        = dep_graph
         self._options         = options
-        self._computed_funs   = {}
+        self.computed_funs   = {}
+        self.data_sources    = []
 
     def cache_function(self, fun, *args, **kwargs):
         key = self._fun_key(fun, *args, **kwargs)
@@ -44,11 +46,18 @@ class CacheManager:
 
     def add_sources(self, *data_sources):
         for data_source in data_sources:
+            self.data_sources.append(data_source)
             data_source.subscribe(self._on_data_source_update)
 
     def add_computed(self, fun, entity_deps, kwargs):
         data_source_deps = self._parse_deps(kwargs.get('sources', ()))
-        self._computed_funs[fun.__name__] = ComputedFunction(fun, entity_deps, data_source_deps)
+        computed_deps    = self._parse_deps(kwargs.get('computed_deps', ()))
+        computed_dep_funs = [self._get_computed(computed_dep.__name__) for computed_dep in computed_deps]
+        computed_fun = ComputedFunction(fun,
+                                        entity_deps,
+                                        data_source_deps,
+                                        computed_dep_funs)
+        self._set_computed(computed_fun)
 
     def is_fresh(self, key):
         return self.store.is_fresh(key)
@@ -61,8 +70,15 @@ class CacheManager:
         key = self._fun_key(fun, *args, **kwargs)
         return self.store.lookup(key).value
 
+    def _get_computed(self, fun_name):
+        return self.computed_funs[fun_name]
+
+    def _set_computed(self, computed_fun):
+        self.computed_funs[computed_fun.fun_name] = computed_fun
+
+
     def _add_data_source_dependencies(self, fun, key):
-        data_source_deps = self._computed_funs[fun.__name__].data_source_deps
+        data_source_deps = self.computed_funs[fun.__name__].data_source_deps
         for data_source_dep in data_source_deps:
             self.dep_graph.add_data_source_dependency(
                 data_source_dep.data_source_id,
@@ -70,7 +86,7 @@ class CacheManager:
             )
 
     def _add_entity_dependencies(self, fun, args, key):
-        entity_deps = self._computed_funs[fun.__name__].entity_deps
+        entity_deps = self._get_computed(fun.__name__).entity_deps
         for data_source, data_source_entity in zip(entity_deps, args):
             self.dep_graph.add_dependency(
                 data_source.data_source_id,
@@ -108,6 +124,6 @@ class CacheManager:
 
     def _write_through_update(self, key):
         fun_name, arg_ids = self._decompose_fun_key(key)
-        computed_fun = self._computed_funs[fun_name]
+        computed_fun = self.computed_funs[fun_name]
         computed_value = computed_fun.call(*arg_ids)
         return self.store.store(key, computed_value)
