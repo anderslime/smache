@@ -12,7 +12,6 @@ __doc__ = """
 Lots of description
 """
 
-
 class ToxTestCommand(TestCommand):
 
     def finalize_options(self):
@@ -31,7 +30,9 @@ setup(
     description=__doc__,
     keywords='smart caching dataflow reactive push-based',
     install_requires=[
-        'redis',
+        'redis==2.10',
+        'blinker==1.4',
+        'mongoengine==0.10'
     ],
     tests_require=['tox'],
     url='http://limecode.dk',

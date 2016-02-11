@@ -1,2 +1,2 @@
-redis==2.10
-mongoengine==0.10
+--index-url https://pypi.python.org/simple/
+-e .
