@@ -24,8 +24,7 @@ pip install pytest-watch
 #### Usage
 
 ```
-$ pip install pytest-watch
-$ ./bin/watchtests
+./bin/watchtests
 ```
 
 #### Troubleshooting for tmux:
