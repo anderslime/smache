@@ -1,14 +1,4 @@
-class DataSource:
-    def __init__(self, data_source_id):
-        self.data_source_id = data_source_id
-        self.subscriber = lambda x: x
-
-    def subscribe(self, fun):
-        self.subscriber = fun
-
-    def did_update(self, entity_id):
-        self.subscriber(self, entity_id)
-
+from data_sources import DummyDataSource
 
 class CacheManager:
     def __init__(self, store, dep_graph):
@@ -38,7 +28,7 @@ class CacheManager:
         return _computed
 
     def data_source(self, data_source_id):
-        data_source = DataSource(data_source_id)
+        data_source = DummyDataSource(data_source_id)
         self.add_sources(data_source)
         return data_source
 
