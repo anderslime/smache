@@ -30,7 +30,6 @@ setup(
     license='MIT',
     description=__doc__,
     keywords='smart caching dataflow reactive push-based',
-    long_description=open('README.rst').read(),
     install_requires=[
         'redis',
     ],

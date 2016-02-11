@@ -1,5 +1,4 @@
 from smache import smache, RedisStore, RedisDependencyGraph
-from smache.graph_drawer import draw
 
 from collections import namedtuple
 import pytest
