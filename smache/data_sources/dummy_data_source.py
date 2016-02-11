@@ -5,6 +5,7 @@ DummyEntity = namedtuple('Entity', ['id', 'value'])
 class DummyDataSource:
     def __init__(self, data_source_id, data = {}):
         self.data_source_id = data_source_id
+        self.original_data = data.copy()
         self.data = data
         self.subscriber = lambda x, y: x
 
@@ -21,3 +22,6 @@ class DummyDataSource:
     def find(self, id):
         raw_data = self.data[str(id)]
         return DummyEntity(id, raw_data['value'])
+
+    def reset(self):
+        self.data = self.original_data.copy()
