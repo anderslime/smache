@@ -5,7 +5,7 @@ from setuptools import setup
 from setuptools.command.test import test as TestCommand
 
 __name__ = 'smache'
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 __author__ = 'Anders Emil Nielsen'
 __author_email__ = 'aemilnielsen@gmail.com'
 __doc__ = """
@@ -29,6 +29,7 @@ setup(
     license='MIT',
     description=__doc__,
     keywords='smart caching dataflow reactive push-based',
+    long_description=open('README.rst').read(),
     install_requires=[
         'redis==2.10',
         'blinker==1.4',
