@@ -87,14 +87,6 @@ class DataSource:
         self.subscriber(self, entity_id)
 
 
-class Node:
-    def __init__(self, node_id, parents = []):
-        self.node_id = node_id
-        self.parents = parents
-
-    def add_parent(self, parent_node):
-        self.parents.append(parent_node)
-
 class RedisDependencyGraph:
     def __init__(self, redis_con):
         self.redis_con = redis_con
