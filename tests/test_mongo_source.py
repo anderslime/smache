@@ -28,7 +28,6 @@ def score():
     return 50
 
 # Tests
-Entity = namedtuple('Entity', ['id', 'value'])
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 @pytest.yield_fixture(autouse=True)
