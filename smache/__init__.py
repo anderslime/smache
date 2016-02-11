@@ -3,13 +3,6 @@ import redis
 from stores import RedisStore
 from dependency_graph import RedisDependencyGraph
 
-class FunctionStore:
-    def fun_key(self, fun, *args, **kwargs):
-        fun_name_key = fun.__name__
-        args_key = '/'.join(str(arg.id) for arg in args)
-        return '/'.join([fun_name_key, args_key])
-
-
 class DataSource:
     def __init__(self, data_source_id):
         self.data_source_id = data_source_id
@@ -23,14 +16,13 @@ class DataSource:
 
 
 class CacheManager:
-    def __init__(self, fun_store, store, dep_graph):
-        self.fun_store        = fun_store
+    def __init__(self, store, dep_graph):
         self.store            = store
         self.dep_graph        = dep_graph
         self._computed_funs   = {}
 
     def cache_function(self, fun, *args, **kwargs):
-        key = self.fun_store.fun_key(fun, *args, **kwargs)
+        key = self._fun_key(fun, *args, **kwargs)
         self._add_entity_dependencies(fun, args, key)
         self._add_data_source_dependencies(fun, key)
         cache_result = self.store.lookup(key)
@@ -67,7 +59,7 @@ class CacheManager:
         return self.store.is_fresh(key)
 
     def is_fun_fresh(self, fun, *args, **kwargs):
-        key = self.fun_store.fun_key(fun, *args, **kwargs)
+        key = self._fun_key(fun, *args, **kwargs)
         return self.store.is_fresh(key)
 
     def _add_data_source_dependencies(self, fun, key):
@@ -93,6 +85,11 @@ class CacheManager:
         else:
             return (value,)
 
+    def _fun_key(self, fun, *args, **kwargs):
+        fun_name_key = fun.__name__
+        args_key = '/'.join(str(arg.id) for arg in args)
+        return '/'.join([fun_name_key, args_key])
+
     def _on_data_source_update(self, data_source, entity_id):
         depending_keys = self.dep_graph.values_depending_on(data_source.data_source_id, entity_id)
         for key in depending_keys:
@@ -102,5 +99,4 @@ redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 dep_graph = RedisDependencyGraph(redis_con)
 store     = RedisStore(redis_con)
-fun_store = FunctionStore()
-smache    = CacheManager(fun_store, store, dep_graph)
+smache    = CacheManager(store, dep_graph)
