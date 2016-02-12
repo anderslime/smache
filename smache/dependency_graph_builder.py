@@ -18,7 +18,7 @@ def build_dependency_graph(data_sources, computed_functions):
 
     for computed_fun in computed_functions.values():
         computed_node = nodes[computed_fun.fun_name]
-        for data_source_dep in list(computed_fun.entity_deps) + list(computed_fun.data_source_deps):
+        for data_source_dep in list(computed_fun.arg_deps) + list(computed_fun.data_source_deps):
             nodes[data_source_dep.data_source_id].add_parent(computed_node)
         for computed_dep in computed_fun.computed_deps:
             nodes[computed_dep.fun_name].add_parent(computed_node)

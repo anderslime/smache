@@ -1,21 +1,9 @@
 from data_sources import DummyDataSource
-from smache.dependency_graph_builder import build_dependency_graph
-from smache.topological_sort import topological_sort
+from computed_function import ComputedFunction
+from dependency_graph_builder import build_dependency_graph
+from topological_sort import topological_sort
 
 from collections import namedtuple as struct
-
-class ComputedFunction:
-    def __init__(self, fun, entity_deps, data_source_deps, computed_deps):
-        self.fun              = fun
-        self.fun_name         = fun.__name__
-        self.entity_deps      = entity_deps
-        self.data_source_deps = data_source_deps
-        self.computed_deps    = computed_deps
-
-    def call(self, *entity_dep_ids):
-        deps_with_ids = zip(self.entity_deps, entity_dep_ids)
-        args = [entity_dep.find(entity_id) for entity_dep, entity_id in deps_with_ids]
-        return self.fun(*args)
 
 class CacheManager:
     def __init__(self, store, dep_graph, options):
@@ -51,12 +39,12 @@ class CacheManager:
             self.data_sources.append(data_source)
             data_source.subscribe(self._on_data_source_update)
 
-    def add_computed(self, fun, entity_deps, kwargs):
+    def add_computed(self, fun, arg_deps, kwargs):
         data_source_deps = self._parse_deps(kwargs.get('sources', ()))
         computed_deps    = self._parse_deps(kwargs.get('computed_deps', ()))
         computed_dep_funs = [self._get_computed(computed_dep.__name__) for computed_dep in computed_deps]
         computed_fun = ComputedFunction(fun,
-                                        entity_deps,
+                                        arg_deps,
                                         data_source_deps,
                                         computed_dep_funs)
         self._set_computed(computed_fun)
@@ -85,7 +73,6 @@ class CacheManager:
     def _set_computed(self, computed_fun):
         self.computed_funs[computed_fun.fun_name] = computed_fun
 
-
     def _add_data_source_dependencies(self, fun, key):
         data_source_deps = self.computed_funs[fun.__name__].data_source_deps
         for data_source_dep in data_source_deps:
@@ -95,8 +82,8 @@ class CacheManager:
             )
 
     def _add_entity_dependencies(self, fun, args, key):
-        entity_deps = self._get_computed(fun.__name__).entity_deps
-        for data_source, data_source_entity in zip(entity_deps, args):
+        arg_deps = self._get_computed(fun.__name__).arg_deps
+        for data_source, data_source_entity in zip(arg_deps, args):
             self.dep_graph.add_dependency(
                 data_source.data_source_id,
                 data_source_entity.id,
@@ -145,7 +132,10 @@ class CacheManager:
             self._write_through_update(key)
 
     def _write_through_update(self, key):
-        fun_name, arg_ids = self._decompose_fun_key(key)
-        computed_fun = self.computed_funs[fun_name]
-        computed_value = computed_fun.call(*arg_ids)
+        computed_value = self._call_computed_from_key(key)
         return self.store.store(key, computed_value)
+
+    def _call_computed_from_key(self, key):
+        fun_name, args = self._decompose_fun_key(key)
+        computed_fun = self.computed_funs[fun_name]
+        return computed_fun(*args)
