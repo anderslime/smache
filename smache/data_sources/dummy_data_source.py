@@ -19,9 +19,15 @@ class DummyDataSource:
         self.data[str(id)] = value
         self.did_update(id)
 
-    def find(self, id):
-        raw_data = self.data[str(id)]
+    def find(self, input_value):
+        raw_data = self._get(input_value)
         return DummyEntity(id, raw_data['value'])
 
     def reset(self):
         self.data = self.original_data.copy()
+
+    def _get(self, input_value):
+        if isinstance(input_value, int) or isinstance(input_value, str):
+            return self.data[str(input_value)]
+        else:
+            return self.data[input_value.id]
