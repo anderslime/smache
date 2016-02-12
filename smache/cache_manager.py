@@ -3,6 +3,7 @@ from computed_function import ComputedFunction
 from function_serializer import FunctionSerializer
 from dependency_graph_builder import build_dependency_graph
 from topological_sort import topological_sort
+from computed_function_repository import ComputedFunctionRepository
 
 from collections import namedtuple as struct
 
@@ -12,7 +13,7 @@ class CacheManager:
         self.dep_graph            = dep_graph
         self._options             = options
         self._function_serializer = FunctionSerializer()
-        self.computed_funs        = {}
+        self.computed_repo        = ComputedFunctionRepository()
         self.data_sources         = []
 
     def cache_function(self, fun, *args, **kwargs):
@@ -44,7 +45,7 @@ class CacheManager:
     def add_computed(self, fun, arg_deps, kwargs):
         data_source_deps = self._parse_deps(kwargs.get('sources', ()))
         computed_deps    = self._parse_deps(kwargs.get('computed_deps', ()))
-        computed_dep_funs = [self._get_computed(computed_dep.__name__) for computed_dep in computed_deps]
+        computed_dep_funs = [self._get_computed(computed_dep) for computed_dep in computed_deps]
         computed_fun = ComputedFunction(fun,
                                         arg_deps,
                                         data_source_deps,
@@ -63,13 +64,16 @@ class CacheManager:
         return self.store.lookup(key).value
 
     def dependency_graph(self):
-        return build_dependency_graph(self.data_sources, self.computed_funs)
+        return build_dependency_graph(
+            self.data_sources,
+            self.computed_repo.computed_funs
+        )
 
     def _computed_key(self, fun, *args, **kwargs):
-        computed_fun = self.computed_funs[fun.__name__]
+        computed_fun = self.computed_repo.get(fun)
         return self._fun_key(
             computed_fun.arg_deps,
-            fun,
+            computed_fun.fun,
             *args,
             **kwargs
         )
@@ -79,14 +83,14 @@ class CacheManager:
         topologically_sorted_nodes = topological_sort(self.dependency_graph())
         return [node.id for node in topologically_sorted_nodes]
 
-    def _get_computed(self, fun_name):
-        return self.computed_funs[fun_name]
+    def _get_computed(self, fun):
+        return self.computed_repo.get(fun)
 
     def _set_computed(self, computed_fun):
-        self.computed_funs[computed_fun.fun_name] = computed_fun
+        self.computed_repo.add(computed_fun)
 
     def _add_data_source_dependencies(self, fun, key):
-        data_source_deps = self.computed_funs[fun.__name__].data_source_deps
+        data_source_deps = self.computed_repo.get(fun).data_source_deps
         for data_source_dep in data_source_deps:
             self.dep_graph.add_data_source_dependency(
                 data_source_dep.data_source_id,
@@ -94,7 +98,7 @@ class CacheManager:
             )
 
     def _add_entity_dependencies(self, fun, args, key):
-        arg_deps = self._get_computed(fun.__name__).arg_deps
+        arg_deps = self._get_computed(fun).arg_deps
         for data_source, data_source_entity in zip(arg_deps, args):
             self.dep_graph.add_dependency(
                 data_source.data_source_id,
@@ -136,7 +140,7 @@ class CacheManager:
 
     def _call_computed_from_key(self, key):
         fun_name, args = self._deserialized_fun(key)
-        computed_fun = self.computed_funs[fun_name]
+        computed_fun = self.computed_repo.get_from_id(fun_name)
         return computed_fun(*args)
 
     def _fun_key(self, fun, *args, **kwargs):
