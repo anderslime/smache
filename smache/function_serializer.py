@@ -3,9 +3,6 @@ import json
 class FunctionSerializer:
     seperator_token = '~~~'
 
-    def __init__(self, computed_funs):
-        self.computed_funs = computed_funs
-
     def serialized_fun(self, entity_deps, fun, *args, **kwargs):
         args = self._serialized_args(args, entity_deps)
         elements = [json.dumps(fun.__name__)] + args
@@ -25,13 +22,3 @@ class FunctionSerializer:
         deserialized_fun_name = json.loads(elements[0])
         deserialized_args = [json.loads(element) for element in elements[1:]]
         return deserialized_fun_name, deserialized_args
-
-    def deserialize_arg(self, argument, argument_index, entity_ids):
-        entity_deps_with_ids = zip(self.entity_deps, entity_ids)
-        if argument_index < len(self.entity_deps):
-            entity_dep = self.entity_deps.index(argument_index)
-            entity_id  = entity_ids.index(argument_index)
-            return entity_dep.find()
-
-    def _num_of_static_args(self, arguments):
-        return len(arguments) - len(self.entity_deps)

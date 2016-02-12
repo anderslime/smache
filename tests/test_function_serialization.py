@@ -15,34 +15,27 @@ smache.add_sources(a, b)
 def score(a, b, static):
     return (a.value + b.value) * static
 
+@smache.computed(sources=(a, b))
+def no_args():
+    return "NO ARG IS FUN"
+
 def test_serialization():
     ax = DummyEntity(1, 10)
     bx = DummyEntity('2', 2)
 
-    fun_serializer = FunctionSerializer(None)
+    fun_serializer = FunctionSerializer()
 
     expected_serialization = '"score"~~~1~~~"2"~~~500'
 
-    serialized_fun = fun_serializer.serialized_fun([a, b], score, ax, bx, 500)
-    assert serialized_fun == expected_serialization
+    key = fun_serializer.serialized_fun([a, b], score, ax, bx, 500)
+    assert key == expected_serialization
 
-def test_deserialization():
-    ax = DummyEntity(1, 10)
-    bx = DummyEntity("2", 2)
+    assert fun_serializer.deserialized_fun(key) == ("score", [1, '2', 500])
 
-    fun_serializer = FunctionSerializer(None)
+def test_de_and_serialization_of_no_arg_fun():
+    fun_serializer = FunctionSerializer()
 
-    key = '"score"~~~1~~~"2"~~~500'
+    key = fun_serializer.serialized_fun([], score)
+    assert key == '"score"'
+    assert fun_serializer.deserialized_fun(key) == ("score", [])
 
-    fun_name, deserialized_args = fun_serializer.deserialized_fun(key)
-    # first_arg = deserialized_args[0]
-    # second_arg = deserialized_args[1]
-    # third_arg = deserialized_args[2]
-
-    assert fun_name == "score"
-    assert deserialized_args == [1, '2', 500]
-    # assert first_arg.value == 10
-    # assert first_arg.id == 1
-    # assert second_arg.value == 2
-    # assert second_arg.id == 2
-    # assert third_arg == 500
