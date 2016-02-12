@@ -19,6 +19,9 @@ class DummyDataSource:
         self.data[str(id)] = value
         self.did_update(id)
 
+    def serialize(self, dummy_entity):
+        return dummy_entity.id
+
     def find(self, input_value):
         raw_data = self._get(input_value)
         return DummyEntity(id, raw_data['value'])
