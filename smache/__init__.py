@@ -31,7 +31,7 @@ class Smache:
         return self._cache_manager.dependency_graph()
 
     def __repr__(self):
-        return self._dependency_graph().values()
+        return "<Smache deps={}>".format(str(self._dependency_graph().values()))
 
 class Options:
     defaults = {
