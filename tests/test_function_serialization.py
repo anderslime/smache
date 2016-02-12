@@ -1,5 +1,6 @@
 from smache import Smache
-from smache.data_sources.dummy_data_source import DummyEntity, DummyDataSource
+from smache.data_sources.dummy_data_source import DummyEntity
+from smache.data_sources import DummyDataSource, RawDataSource
 from smache.function_serializer import FunctionSerializer
 
 import redis
@@ -8,10 +9,11 @@ import redis
 smache = Smache()
 a = DummyDataSource('A')
 b = DummyDataSource('B')
+raw = RawDataSource()
 
-smache.add_sources(a, b)
+smache.add_sources(a, b, raw)
 
-@smache.computed(a, b)
+@smache.computed(a, b, raw)
 def score(a, b, static):
     return (a.value + b.value) * static
 
@@ -27,7 +29,7 @@ def test_serialization():
 
     expected_serialization = '"score"~~~1~~~"2"~~~500'
 
-    key = fun_serializer.serialized_fun([a, b], score, ax, bx, 500)
+    key = fun_serializer.serialized_fun([a, b, raw], score, ax, bx, 500)
     assert key == expected_serialization
 
     assert fun_serializer.deserialized_fun(key) == ("score", [1, '2', 500])

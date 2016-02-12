@@ -1,5 +1,6 @@
 from smache import Smache, RedisStore, RedisDependencyGraph
-from smache.data_sources.dummy_data_source import DummyEntity, DummyDataSource
+from smache.data_sources.dummy_data_source import DummyEntity
+from smache.data_sources import DummyDataSource, RawDataSource
 
 from collections import namedtuple
 import pytest
@@ -11,8 +12,9 @@ smache = Smache()
 a = DummyDataSource('A')
 b = DummyDataSource('B')
 c = DummyDataSource('C')
+raw = RawDataSource()
 
-smache.add_sources(a, b, c)
+smache.add_sources(a, b, c, raw)
 
 @smache.computed(a, sources=(b, c))
 def score(a):
@@ -25,6 +27,10 @@ def h(b, c):
 @smache.computed(a, b, c)
 def f(a, b, c):
     return a.value * h(b, c)
+
+@smache.computed(a, b, raw)
+def with_raw(a, b, static_value):
+    return (a.value + b.value) * static_value
 
 # Tests
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -65,6 +71,13 @@ def test_cache():
     assert smache.is_fun_fresh(score, ax) == False
     assert smache.is_fun_fresh(f, ax, bx, cx) == False
     assert smache.is_fun_fresh(h, bx, cx) == False
+
+def test_with_raw_value():
+    ax = DummyEntity(1, 10)
+    bx = DummyEntity(2, 2)
+
+    assert with_raw(ax, bx, 1000) == 12000
+
 
 def test_redis():
     key = 'hello_world'

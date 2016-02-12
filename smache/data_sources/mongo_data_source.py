@@ -15,6 +15,12 @@ class MongoDataSource:
                 sender=self.document
             )
 
+    def serialize(self, entity):
+        return str(entity.id)
+
+    def find(self, entity_id):
+        return self.document.objects(id=entity_id)
+
     def did_update(self, entity_id):
         self.subscriber(self, entity_id)
 
