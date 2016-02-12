@@ -78,7 +78,6 @@ class CacheManager:
             **kwargs
         )
 
-
     def _node_ids_in_topological_order(self):
         topologically_sorted_nodes = topological_sort(self.dependency_graph())
         return [node.id for node in topologically_sorted_nodes]

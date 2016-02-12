@@ -13,4 +13,3 @@ class ComputedFunctionRepository:
 
     def _id(self, fun):
         return fun.__name__
-
