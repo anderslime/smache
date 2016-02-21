@@ -4,3 +4,4 @@ dist/
 .cache
 .tox
 .venv
+.eggs
