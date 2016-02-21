@@ -34,7 +34,8 @@ setup(
         'redis==2.10',
         'blinker==1.4',
         'mongoengine==0.10',
-        'dagger'
+        'dagger',
+        'rq'
     ],
     tests_require=['tox'],
     url='http://limecode.dk',
