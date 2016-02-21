@@ -20,10 +20,11 @@ class Smache:
         store     = RedisStore(redis_con)
         dep_graph = RedisDependencyGraph(redis_con)
         function_serializer = FunctionSerializer()
-        worker_queue = self._options.worker_queue or Queue(connection=redis_con)
 
         global computed_repo
         computed_repo = ComputedFunctionRepository()
+        worker_queue = self._use_or_default(self._options.worker_queue,
+                                            lambda: Queue(connection=redis_con))
         scheduler = AsyncScheduler(worker_queue, computed_repo)
 
         self._cache_manager = CacheManager(store,
@@ -46,6 +47,12 @@ class Smache:
     def _dependency_graph(self):
         return self._cache_manager.dependency_graph()
 
+    def _use_or_default(self, value, default_lambda):
+        if value != None:
+            return value
+        else:
+            return default_lambda()
+
     def __repr__(self):
         return "<Smache deps={}>".format(str(self._dependency_graph().values()))
 
@@ -64,18 +71,14 @@ def execute(key):
 
 class AsyncScheduler:
     def __init__(self, worker_queue, computed_repo):
-        self.worker_queue = worker_queue
         self.computed_repo = computed_repo
+        self.worker_queue = worker_queue
 
     def schedule_write_through(self, keys):
         for key in keys:
             self.worker_queue.enqueue_call(func=execute, args=(key,))
 
 class InProcessScheduler:
-    def __init__(self, worker_queue, computed_repo):
-        self.worker_queue = worker_queue
-        self.computed_repo = computed_repo
-
     def schedule_write_through(self, keys):
         for key in keys:
             execute(key)

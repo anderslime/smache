@@ -10,7 +10,7 @@ from rq import Queue, SimpleWorker
 # Definitions
 from redis import Redis
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
-worker_queue = Queue(connection=redis_con)
+worker_queue = Queue('test_queue', connection=redis_con)
 smache = Smache(worker_queue=worker_queue, write_through=True)
 
 a = DummyDataSource('A', {'1': {'value': 'hello'}, '2': {'value': 'hihi'}})
