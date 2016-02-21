@@ -24,7 +24,7 @@ def score(a):
 def h(b, c):
     return b.value + c.value
 
-@smache.computed(a, b, c)
+@smache.computed(a, b, c, computed_deps=(h))
 def f(a, b, c):
     return a.value * h(b, c)
 

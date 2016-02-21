@@ -1,6 +1,5 @@
 from data_sources import DummyDataSource
 from computed_function import ComputedFunction
-from function_serializer import FunctionSerializer
 from dependency_graph_builder import build_dependency_graph
 from topological_sort import topological_sort
 from computed_function_repository import ComputedFunctionRepository
@@ -8,12 +7,13 @@ from computed_function_repository import ComputedFunctionRepository
 from collections import namedtuple as struct
 
 class CacheManager:
-    def __init__(self, store, dep_graph, options):
+    def __init__(self, store, dep_graph, computed_repo, scheduler, function_serializer, options):
         self.store                = store
         self.dep_graph            = dep_graph
         self._options             = options
-        self._function_serializer = FunctionSerializer()
-        self.computed_repo        = ComputedFunctionRepository()
+        self._scheduler           = scheduler
+        self._function_serializer = function_serializer
+        self.computed_repo        = computed_repo
         self.data_sources         = []
 
     def cache_function(self, fun, *args, **kwargs):
@@ -34,6 +34,7 @@ class CacheManager:
                 return self.cache_function(fun, *args, **kwargs)
             self.add_computed(fun, deps, kwargs)
             wrapper.__name__ = fun.__name__
+            wrapper.__module__ = fun.__module__
             return wrapper
         return _computed
 
@@ -130,17 +131,7 @@ class CacheManager:
         fun_names = [self._fun_name_from_key(key) for key in keys]
         indexes = [sorted_nodes.index(fun_name) for fun_name in fun_names]
         sorted_keys = [key for key, _ in sorted(zip(keys, indexes), key=lambda x: x[1])]
-        for key in sorted_keys:
-            self._write_through_update(key)
-
-    def _write_through_update(self, key):
-        computed_value = self._call_computed_from_key(key)
-        return self.store.store(key, computed_value)
-
-    def _call_computed_from_key(self, key):
-        fun_name, args = self._deserialized_fun(key)
-        computed_fun = self.computed_repo.get_from_id(fun_name)
-        return computed_fun(*args)
+        self._scheduler.schedule_write_through(sorted_keys)
 
     def _fun_key(self, fun, *args, **kwargs):
         return self._function_serializer.serialized_fun(fun, *args, **kwargs)
@@ -148,5 +139,3 @@ class CacheManager:
     def _fun_name_from_key(self, fun_key):
         return self._function_serializer.fun_name(fun_key)
 
-    def _deserialized_fun(self, fun_key):
-        return self._function_serializer.deserialized_fun(fun_key)

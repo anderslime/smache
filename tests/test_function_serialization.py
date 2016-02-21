@@ -27,17 +27,18 @@ def test_serialization():
 
     fun_serializer = FunctionSerializer()
 
-    expected_serialization = '"score"~~~1~~~"2"~~~500'
+    expected_serialization = '"tests.test_function_serialization/score"~~~1~~~"2"~~~500'
 
     key = fun_serializer.serialized_fun([a, b, raw], score, ax, bx, 500)
     assert key == expected_serialization
 
-    assert fun_serializer.deserialized_fun(key) == ("score", [1, '2', 500])
+    expected_deserialization = ("tests.test_function_serialization/score", [1, '2', 500])
+    assert fun_serializer.deserialized_fun(key) == expected_deserialization
 
 def test_de_and_serialization_of_no_arg_fun():
     fun_serializer = FunctionSerializer()
 
     key = fun_serializer.serialized_fun([], score)
-    assert key == '"score"'
-    assert fun_serializer.deserialized_fun(key) == ("score", [])
+    assert key == '"tests.test_function_serialization/score"'
+    assert fun_serializer.deserialized_fun(key) == ("tests.test_function_serialization/score", [])
 
