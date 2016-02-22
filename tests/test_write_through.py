@@ -61,4 +61,3 @@ def test_write_through_with_collection_wide_subscription():
     execute_all_jobs(worker_queue, redis_con)
 
     assert smache._cache_manager.function_cache_value(slash) == 'hello/lol'
-
