@@ -7,6 +7,7 @@ from dependency_graphs import RedisDependencyGraph
 from cache_manager import CacheManager
 from computed_function_repository import ComputedFunctionRepository
 from function_serializer import FunctionSerializer
+from data_sources import MongoDataSource
 
 from schedulers import AsyncScheduler, InProcessScheduler
 
