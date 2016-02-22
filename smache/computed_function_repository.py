@@ -7,8 +7,15 @@ class ComputedFunctionRepository:
     def get(self, fun):
         return self.get_from_id(self._id(fun))
 
-    def get_from_id(self, id):
-        return self.computed_funs[id]
+    def get_from_id(self, fun_id):
+        try:
+            return self.computed_funs[fun_id]
+        except KeyError:
+            funs = self.computed_funs.keys()
+            raise KeyError(
+                "Could not find computed function {} from computed_funs: {}".format(fun_id, funs)
+            )
+
 
     def add(self, computed_fun):
         self.computed_funs[self._id(computed_fun.fun)] = computed_fun
