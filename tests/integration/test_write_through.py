@@ -1,6 +1,6 @@
 from smache import Smache, RedisStore, RedisDependencyGraph
 from smache.data_sources.dummy_data_source import DummyEntity, DummyDataSource
-from .helper import execute_all_jobs
+from tests.helper import execute_all_jobs
 
 import pytest
 
