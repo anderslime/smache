@@ -12,8 +12,14 @@ class AsyncScheduler:
 
     def schedule_write_through(self, keys):
         logger.debug("Schedule write through update on: {}".format(keys))
-        for key in keys:
-            self.worker_queue.enqueue_call(func=_execute, args=(key,))
+        reduce(self._enqueue_execute, keys, None)
+
+    def _enqueue_execute(self, last_job, key):
+        return self.worker_queue.enqueue_call(
+            func=_execute,
+            args=(key,),
+            depends_on=last_job
+        )
 
 
 class InProcessScheduler:
