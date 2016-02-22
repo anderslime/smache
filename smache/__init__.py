@@ -17,17 +17,15 @@ class Smache:
     def __init__(self, **kwargs):
         self._options = Options(**kwargs)
 
-        redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
-
-        store     = RedisStore(redis_con)
-        dep_graph = RedisDependencyGraph(redis_con)
-        function_serializer = FunctionSerializer()
+        redis_con = self._options.redis_con
+        worker_queue = self._options.worker_queue
 
         global computed_repo
-        computed_repo = ComputedFunctionRepository()
-        worker_queue = self._use_or_default(self._options.worker_queue,
-                                            lambda: Queue(connection=redis_con))
-        scheduler = AsyncScheduler(worker_queue)
+        computed_repo       = ComputedFunctionRepository()
+        store               = RedisStore(redis_con)
+        dep_graph           = RedisDependencyGraph(redis_con)
+        function_serializer = FunctionSerializer()
+        scheduler           = AsyncScheduler(worker_queue)
 
         self._cache_manager = CacheManager(store,
                                            dep_graph,
@@ -68,7 +66,26 @@ class Options:
         self.options = self.defaults.update(options)
 
         self.write_through = self._value_equal(options, 'write_through', True)
-        self.worker_queue = options.get('worker_queue')
+        self.redis_con     = self._redis_con(options)
+        self.worker_queue  = self._worker_queue(options, self.redis_con)
+
+    def _worker_queue(self, options, redis_con):
+        return self._use_or_default(
+            options.get('worker_queue'),
+            lambda: Queue('smache', connection=redis_con)
+        )
+
+    def _redis_con(self, options):
+        return self._use_or_default(
+            options.get('redis_con'),
+            lambda: redis.StrictRedis(host='localhost', port=6379, db=0)
+        )
+
+    def _use_or_default(self, value, default_lambda):
+        if value != None:
+            return value
+        else:
+            return default_lambda()
 
     def _value_equal(self, options, prop, test_value):
         return prop in options and options[prop] == test_value
