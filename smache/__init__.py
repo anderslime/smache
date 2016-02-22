@@ -11,6 +11,9 @@ from data_sources import MongoDataSource
 
 from schedulers import AsyncScheduler, InProcessScheduler
 
+from smache_logging import logger
+import logging, sys
+
 global computed_repo
 computed_repo = ComputedFunctionRepository()
 
@@ -42,6 +45,16 @@ class Smache:
 
         self.is_fun_fresh = self._cache_manager.is_fun_fresh
 
+        if self._options.debug:
+            handler = logging.StreamHandler(sys.stdout)
+            handler.setLevel(logging.DEBUG)
+
+            logger.addHandler(handler)
+            logger.setLevel(logging.DEBUG)
+
+    def log(self, something):
+        logger.debug("LOGGING FROM SMACHE: {}".format(something))
+
     def draw(self, filename='graph'):
         draw_graph(self._dependency_graph().values(), filename)
 
@@ -60,13 +73,15 @@ class Smache:
 
 class Options:
     defaults = {
-        'write_through': False
+        'write_through': False,
+        'debug': False
     }
 
     def __init__(self, **options):
         self.options = self.defaults.update(options)
 
         self.write_through = self._value_equal(options, 'write_through', True)
+        self.debug         = self._value_equal(options, 'debug', True)
         self.redis_con     = self._redis_con(options)
         self.worker_queue  = self._worker_queue(options, self.redis_con)
 

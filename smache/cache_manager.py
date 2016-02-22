@@ -5,6 +5,7 @@ from topological_sort import topological_sort
 from computed_function_repository import ComputedFunctionRepository
 
 from collections import namedtuple as struct
+from smache.smache_logging import logger
 
 class CacheManager:
     def __init__(self, store, dep_graph, computed_repo, scheduler, function_serializer, options):
