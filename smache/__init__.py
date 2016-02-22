@@ -3,7 +3,7 @@ from rq import Queue
 from smache.graph_drawer import draw_graph
 
 from stores import RedisStore
-from dependency_graph import RedisDependencyGraph
+from dependency_graphs import RedisDependencyGraph
 from cache_manager import CacheManager
 from computed_function_repository import ComputedFunctionRepository
 from function_serializer import FunctionSerializer
