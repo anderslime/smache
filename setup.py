@@ -1,7 +1,7 @@
 import os
 import sys
 
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 __name__ = 'smache'
@@ -28,6 +28,7 @@ setup(
     author=__author__,
     license='MIT',
     description=__doc__,
+    packages=find_packages(exclude=['tests']),
     keywords='smart caching dataflow reactive push-based',
     long_description=open('README.rst').read(),
     install_requires=[
