@@ -1,7 +1,7 @@
 import redis
 import pytest
 
-from smache.stores.redis_store import RedisStore
+from smache.stores import RedisStore
 
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
