@@ -1,6 +1,7 @@
 from smache import Smache, RedisStore, RedisDependencyGraph
 from smache.data_sources import MongoDataSource
 from mongoengine import Document, StringField, IntField, connect
+from tests.mongo_helper import User
 
 from collections import namedtuple
 import pytest
@@ -9,11 +10,6 @@ import redis
 
 # Definitions
 smache = Smache()
-db = connect('testdb', host='localhost', port=27017,)
-
-class User(Document):
-    name = StringField()
-    age = IntField()
 
 a = MongoDataSource(User)
 
