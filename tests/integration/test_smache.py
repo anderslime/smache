@@ -20,11 +20,11 @@ smache.add_sources(a, b, c, raw)
 def score(a):
     return a.value + 5 + 10
 
-@smache.computed(b, c, computed_deps=(score))
+@smache.computed(b, c)
 def h(b, c):
     return b.value + c.value
 
-@smache.computed(a, b, c, computed_deps=(h))
+@smache.computed(a, b, c)
 def f(a, b, c):
     return a.value * h(b, c)
 

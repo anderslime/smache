@@ -22,7 +22,7 @@ smache.add_sources(a, b)
 def hyphen(a, b):
     return ' - '.join([a.value, b.value])
 
-@smache.computed(sources=(a), computed_deps=(hyphen))
+@smache.computed(sources=(a))
 def slash():
     return '/'.join([a.find('1').value, a.find('2').value])
 
