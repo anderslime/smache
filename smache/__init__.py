@@ -27,7 +27,7 @@ class Smache:
         computed_repo = ComputedFunctionRepository()
         worker_queue = self._use_or_default(self._options.worker_queue,
                                             lambda: Queue(connection=redis_con))
-        scheduler = AsyncScheduler(worker_queue)
+        scheduler = AsyncScheduler(worker_queue, computed_repo)
 
         self._cache_manager = CacheManager(store,
                                            dep_graph,
@@ -73,27 +73,3 @@ class Options:
     def _value_equal(self, options, prop, test_value):
         return prop in options and options[prop] == test_value
 
-
-class AsyncScheduler:
-    def __init__(self, worker_queue):
-        self.worker_queue = worker_queue
-
-    def schedule_write_through(self, keys):
-        for key in keys:
-            self.worker_queue.enqueue_call(func=_execute, args=(key,))
-
-
-class InProcessScheduler:
-    def schedule_write_through(self, keys):
-        for key in keys:
-            _execute(key)
-
-
-def _execute(key):
-    redis_con      = redis.StrictRedis(host='localhost', port=6379, db=0)
-    store          = RedisStore(redis_con)
-
-    fun_name, args = FunctionSerializer().deserialized_fun(key)
-    computed_fun   = computed_repo.get_from_id(fun_name)
-    computed_value = computed_fun(*args)
-    return store.store(key, computed_value)
