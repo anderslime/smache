@@ -27,7 +27,7 @@ class Smache:
         computed_repo = ComputedFunctionRepository()
         worker_queue = self._use_or_default(self._options.worker_queue,
                                             lambda: Queue(connection=redis_con))
-        scheduler = AsyncScheduler(worker_queue, computed_repo)
+        scheduler = AsyncScheduler(worker_queue)
 
         self._cache_manager = CacheManager(store,
                                            dep_graph,
