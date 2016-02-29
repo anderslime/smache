@@ -118,10 +118,9 @@ class CacheManager:
         self._invalidate_keys(depending_keys)
 
     def _invalidate_keys(self, keys):
+        self._mark_invalidation(keys)
         if self._options.write_through:
             self._write_through_invalidation(keys)
-        else:
-            self._mark_invalidation(keys)
 
     def _mark_invalidation(self, keys):
         for key in keys:
