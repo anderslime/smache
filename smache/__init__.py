@@ -29,7 +29,7 @@ class Smache:
         store               = RedisStore(redis_con)
         dep_graph           = RedisDependencyGraph(redis_con)
         function_serializer = FunctionSerializer()
-        scheduler           = AsyncScheduler(worker_queue)
+        scheduler           = self._options.scheduler
 
         self._cache_manager = CacheManager(store,
                                            dep_graph,
@@ -84,6 +84,7 @@ class Options:
         self.debug         = self._value_equal(options, 'debug', True)
         self.redis_con     = self._redis_con(options)
         self.worker_queue  = self._worker_queue(options, self.redis_con)
+        self.scheduler     = self._scheduler(options, self.worker_queue)
 
     def _worker_queue(self, options, redis_con):
         return self._use_or_default(
@@ -96,6 +97,13 @@ class Options:
             options.get('redis_con'),
             lambda: redis.StrictRedis(host='localhost', port=6379, db=0)
         )
+
+    def _scheduler(self, options, worker_queue):
+        return self._use_or_default(
+            options.get('scheduler'),
+            lambda: AsyncScheduler(worker_queue)
+        )
+
 
     def _use_or_default(self, value, default_lambda):
         if value != None:
