@@ -55,7 +55,7 @@ class CacheManager:
                                         arg_deps,
                                         data_source_deps,
                                         computed_dep_funs)
-        self._relation_deps_repo.add_all(relation_deps)
+        self._relation_deps_repo.add_all(relation_deps, computed_fun)
         self._set_computed(computed_fun)
 
     def is_fresh(self, key):
@@ -110,6 +110,12 @@ class CacheManager:
                 data_source.serialize(data_source_entity),
                 key
             )
+            self.dep_graph.add_fun_dependency(
+                data_source.data_source_id,
+                data_source.serialize(data_source_entity),
+                ComputedFunction.id_from_fun(fun),
+                key
+            )
 
     def _parse_deps(self, value):
         if isinstance(value, tuple):
@@ -124,18 +130,26 @@ class CacheManager:
 
     def _depending_relation_keys(self, data_source, entity):
         depending_relations = self._relation_deps_repo.get(data_source.data_source_id)
-        depending_relation_keys = [self._rel_keys(relation_fun, entity) for relation_fun in depending_relations]
+        depending_relation_keys = [self._rel_keys(relation_fun, entity, computed_fun) for relation_fun, computed_fun in depending_relations]
         return self._flattened_sets(depending_relation_keys)
+
+    def _rel_keys(self, relation_fun, entity, computed_fun):
+        computed_sources = relation_fun(entity)
+        rel_keys = [self._fun_values_depending_on(computed_source.__name__, computed_source.id, computed_fun)
+                    for computed_source in self._list(computed_sources)]
+        return self._flattened_sets(rel_keys)
 
     def _flattened_sets(self, depending_relation_keys):
         return reduce(lambda x, y: x | y, depending_relation_keys, set())
 
-    def _rel_keys(self, relation_fun, entity):
-        computed_fun_source = relation_fun(entity)
-        return self.dep_graph.values_depending_on(
-            computed_fun_source.__name__,
-            computed_fun_source.id
-        )
+    def _fun_values_depending_on(self, data_source_id, entity_id, computed_fun):
+        return self.dep_graph.fun_values_depending_on(data_source_id, entity_id, computed_fun.id)
+
+    def _list(self, value):
+        if isinstance(value, list):
+            return value
+        else:
+            return [value]
 
     def _invalidate_keys(self, keys):
         self._mark_invalidation(keys)
