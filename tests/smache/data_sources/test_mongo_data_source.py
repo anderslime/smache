@@ -12,9 +12,9 @@ def test_subscriber_is_notified_on_update():
         'notified_entity_id': None
     }
 
-    def notify(data_source, entity_id):
+    def notify(data_source, entity):
         notified['notified_data_source'] = data_source
-        notified['notified_entity_id'] = entity_id
+        notified['notified_entity_id'] = entity.id
 
     data_source.subscribe(notify)
 

@@ -1,6 +1,14 @@
 from collections import namedtuple
 
-DummyEntity = namedtuple('Entity', ['id', 'value'])
+class DummyEntity:
+    def __init__(self, data_source_id, id, value):
+        self.data_source_id = data_source_id
+        self.id             = id
+        self.value          = value
+
+    @property
+    def __name__(self):
+        return self.data_source_id
 
 class DummyDataSource:
     def __init__(self, data_source_id, data = {}):
@@ -13,7 +21,10 @@ class DummyDataSource:
         self.subscriber = fun
 
     def did_update(self, entity_id):
-        self.subscriber(self, entity_id)
+        entity = self.find(entity_id)
+        if not entity:
+            entity = DummyEntity(self.data_source_id, entity_id, None)
+        self.subscriber(self, entity)
 
     def update(self, id, value):
         self.data[str(id)] = value
@@ -23,14 +34,15 @@ class DummyDataSource:
         return dummy_entity.id
 
     def find(self, input_value):
-        raw_data = self._get(input_value)
-        return DummyEntity(id, raw_data['value'])
+        raw_data = self.data.get(self._key(input_value))
+        if raw_data:
+            return DummyEntity(self.data_source_id, input_value, raw_data['value'])
 
     def reset(self):
         self.data = self.original_data.copy()
 
-    def _get(self, input_value):
+    def _key(self, input_value):
         if isinstance(input_value, int) or isinstance(input_value, str):
-            return self.data[str(input_value)]
+            return str(input_value)
         else:
-            return self.data[input_value.id]
+            return input_value.id

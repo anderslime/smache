@@ -36,8 +36,8 @@ def flush_before_each_test_case():
 from time import sleep
 
 def test_write_through():
-    ax = DummyEntity(1, 'hello')
-    bx = DummyEntity(1, 'world')
+    ax = DummyEntity(a.data_source_id, 1, 'hello')
+    bx = DummyEntity(b.data_source_id, 1, 'world')
 
     assert hyphen(ax, bx) == 'hello - world'
     assert slash() == 'hello/hihi'

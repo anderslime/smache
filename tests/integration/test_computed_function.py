@@ -13,6 +13,6 @@ def score(a, raw_value):
 
 def test_computed_function():
     computed_fun = ComputedFunction(score, (a, raw), (b), tuple())
-    ax = DummyEntity(1, 10)
+    ax = DummyEntity(a.data_source_id, 1, 10)
 
     assert computed_fun(ax, 500) == 510

@@ -22,8 +22,8 @@ def no_args():
     return "NO ARG IS FUN"
 
 def test_serialization():
-    ax = DummyEntity(1, 10)
-    bx = DummyEntity('2', 2)
+    ax = DummyEntity(a.data_source_id, 1, 10)
+    bx = DummyEntity(b.data_source_id, '2', 2)
 
     fun_serializer = FunctionSerializer()
 

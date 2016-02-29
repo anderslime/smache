@@ -3,6 +3,7 @@ from computed_function import ComputedFunction
 from dependency_graph_builder import build_dependency_graph
 from topological_sort import topological_sort
 from computed_function_repository import ComputedFunctionRepository
+from relation_dependency_repository import RelationDependencyRepository
 
 from collections import namedtuple as struct
 from smache.smache_logging import logger
@@ -16,6 +17,7 @@ class CacheManager:
         self._function_serializer = function_serializer
         self.computed_repo        = computed_repo
         self.data_sources         = []
+        self._relation_deps_repo  = RelationDependencyRepository()
 
     def cache_function(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
@@ -47,11 +49,13 @@ class CacheManager:
     def add_computed(self, fun, arg_deps, kwargs):
         data_source_deps = self._parse_deps(kwargs.get('sources', ()))
         computed_deps    = self._parse_deps(kwargs.get('computed_deps', ()))
+        relation_deps    = kwargs.get('relations', ())
         computed_dep_funs = [self._get_computed(computed_dep) for computed_dep in computed_deps]
         computed_fun = ComputedFunction(fun,
                                         arg_deps,
                                         data_source_deps,
                                         computed_dep_funs)
+        self._relation_deps_repo.add_all(relation_deps)
         self._set_computed(computed_fun)
 
     def is_fresh(self, key):
@@ -113,9 +117,25 @@ class CacheManager:
         else:
             return (value,)
 
-    def _on_data_source_update(self, data_source, entity_id):
-        depending_keys = self.dep_graph.values_depending_on(data_source.data_source_id, entity_id)
-        self._invalidate_keys(depending_keys)
+    def _on_data_source_update(self, data_source, entity):
+        depending_keys = self.dep_graph.values_depending_on(data_source.data_source_id, entity.id)
+        depending_relation_keys = self._depending_relation_keys(data_source, entity)
+        self._invalidate_keys(depending_keys | depending_relation_keys)
+
+    def _depending_relation_keys(self, data_source, entity):
+        depending_relations = self._relation_deps_repo.get(data_source.data_source_id)
+        depending_relation_keys = [self._rel_keys(relation_fun, entity) for relation_fun in depending_relations]
+        return self._flattened_sets(depending_relation_keys)
+
+    def _flattened_sets(self, depending_relation_keys):
+        return reduce(lambda x, y: x | y, depending_relation_keys, set())
+
+    def _rel_keys(self, relation_fun, entity):
+        computed_fun_source = relation_fun(entity)
+        return self.dep_graph.values_depending_on(
+            computed_fun_source.__name__,
+            computed_fun_source.id
+        )
 
     def _invalidate_keys(self, keys):
         self._mark_invalidation(keys)

@@ -42,9 +42,9 @@ def flush_before_each_test_case():
 
 def test_cache():
 
-    ax = DummyEntity(1, 10)
-    bx = DummyEntity(2, 2)
-    cx = DummyEntity(3, 3)
+    ax = DummyEntity(a.data_source_id, 1, 10)
+    bx = DummyEntity(b.data_source_id, 2, 2)
+    cx = DummyEntity(c.data_source_id, 3, 3)
 
     assert f(ax, bx, cx) == 50
     assert h(bx, cx) == 5
@@ -73,8 +73,8 @@ def test_cache():
     assert smache.is_fun_fresh(h, bx, cx) == False
 
 def test_with_raw_value():
-    ax = DummyEntity(1, 10)
-    bx = DummyEntity(2, 2)
+    ax = DummyEntity(a.data_source_id, 1, 10)
+    bx = DummyEntity(b.data_source_id, 2, 2)
 
     assert with_raw(ax, bx, 1000) == 12000
 
