@@ -15,6 +15,9 @@ class MongoDataSource:
             sender=self.document
         )
 
+    def for_entity(self, document_instance):
+        return self.data_source_id == document_instance.__class__.__name__
+
     def serialize(self, entity):
         return str(entity.id)
 

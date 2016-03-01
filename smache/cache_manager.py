@@ -135,15 +135,20 @@ class CacheManager:
 
     def _rel_keys(self, relation_fun, entity, computed_fun):
         computed_sources = relation_fun(entity)
-        rel_keys = [self._fun_values_depending_on(computed_source.__name__, computed_source.id, computed_fun)
+        rel_keys = [self._fun_values_depending_on(computed_source, computed_fun)
                     for computed_source in self._list(computed_sources)]
         return self._flattened_sets(rel_keys)
 
     def _flattened_sets(self, depending_relation_keys):
         return reduce(lambda x, y: x | y, depending_relation_keys, set())
 
-    def _fun_values_depending_on(self, data_source_id, entity_id, computed_fun):
-        return self.dep_graph.fun_values_depending_on(data_source_id, entity_id, computed_fun.id)
+    def _fun_values_depending_on(self, computed_source, computed_fun):
+        data_source = next(source for source in self.data_sources if source.for_entity(computed_source))
+        return self.dep_graph.fun_values_depending_on(
+            data_source.data_source_id,
+            computed_source.id,
+            computed_fun.id
+        )
 
     def _list(self, value):
         if isinstance(value, list):

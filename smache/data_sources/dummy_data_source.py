@@ -20,6 +20,9 @@ class DummyDataSource:
     def subscribe(self, fun):
         self.subscriber = fun
 
+    def for_entity(self, entity_instance):
+        return self.data_source_id == entity_instance.data_source_id
+
     def did_update(self, entity_id):
         entity = self.find(entity_id)
         if not entity:
