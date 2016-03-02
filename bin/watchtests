@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 iconPath=$(pwd -P)/bin/icons/$4
 ptw --onpass "terminal-notifier -title 'Passed!' -message 'All smache tests have passwed' -appIcon '$iconPath/Success.icns'" \
     --onfail "terminal-notifier -title 'Failed!' -message 'Smache tests failed' -appIcon '$iconPath/Failed.icns'"
