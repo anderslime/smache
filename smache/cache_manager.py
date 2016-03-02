@@ -177,4 +177,3 @@ class CacheManager:
 
     def _fun_name_from_key(self, fun_key):
         return self._function_serializer.fun_name(fun_key)
-
