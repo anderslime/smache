@@ -5,7 +5,7 @@ from tests.helper import execute_all_jobs
 import pytest
 
 import redis
-from rq import Queue, SimpleWorker
+from rq import Queue
 
 # Definitions
 from redis import Redis

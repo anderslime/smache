@@ -3,9 +3,6 @@ from rq import Queue
 from smache import Smache, MongoDataSource
 from tests.mongo_helper import User, Handin, db
 
-import logging, sys
-
-
 # Setup
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 worker_queue = Queue('test_queue', connection=redis_con)
@@ -47,12 +44,8 @@ def build_setup(num_of_users):
     return data_setup
 
 def make_underlying_data_change():
-    print "USER"
     user = User.objects.first()
     user.save()
-    logger.info("HELLO INFO")
-    logger.debug("HELLO INFO")
-    print "USER SAVED"
 
 
 def run_benchmark(benchmark, num_of_users):
@@ -63,4 +56,3 @@ def run_benchmark(benchmark, num_of_users):
 
 def test_performance_10_users(benchmark):
     run_benchmark(benchmark, 1)
-    assert False
