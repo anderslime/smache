@@ -41,18 +41,30 @@ def build_setup(num_of_users):
         for user in saved_users:
             score(user)
 
+        # Query to warm up mongodb
+        test_user = User.objects.first()
+        test_user.save()
+
     return data_setup
 
 def make_underlying_data_change():
     user = User.objects.first()
     user.save()
 
-
 def run_benchmark(benchmark, num_of_users):
     benchmark.pedantic(make_underlying_data_change,
                         setup=build_setup(num_of_users),
                         iterations=1,
-                        rounds=1)
+                        rounds=2)
 
-def test_performance_10_users(benchmark):
-    run_benchmark(benchmark, 1)
+def test_performance_20users(benchmark):
+    run_benchmark(benchmark, 20)
+
+def test_performance_40users(benchmark):
+    run_benchmark(benchmark, 40)
+
+def test_performance_80users(benchmark):
+    run_benchmark(benchmark, 80)
+
+def test_performance_120users(benchmark):
+    run_benchmark(benchmark, 160)

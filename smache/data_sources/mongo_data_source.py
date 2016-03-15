@@ -25,5 +25,5 @@ class MongoDataSource:
         return self.document.objects(id=entity_id).first()
 
     def _mongoengine_post_save(self, sender, document, **kwargs):
-        logger.debug("{} updated - notifying subscriber {}".format(document, self._subscriber.__name__))
+        logger.debug("{}({}) updated - notifying subscriber {}".format(document, str(document.id), self._subscriber.__name__))
         self._subscriber(self, document)

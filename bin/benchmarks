@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-py.test -c "benchmarks.ini" -s
+py.test --benchmark-json report.json -c "benchmarks.ini" --pyargs tests/benchmarks
 

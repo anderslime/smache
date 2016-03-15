@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+# a bar plot with errorbars
+import numpy as np
+import matplotlib.pyplot as pl
+import json
+
+json_benchmarks = []
+
+mean = []
+std  = []
+
+with open('report.json') as f:
+  benchmark_json = json.loads(f.read())
+  mean           = [bm['stats']['mean'] * 1000 for bm in benchmark_json["benchmarks"]]
+  std            = [bm['stats']['stddev'] * 1000 for bm in benchmark_json["benchmarks"]]
+  labels         = [bm['name'].split('_')[-1] for bm in benchmark_json['benchmarks']]
+
+N = len(mean)
+
+menMeans = mean
+menStd = std
+
+ind = np.arange(N)  # the x locations for the groups
+width = 0.35       # the width of the bars
+
+fig = pl.figure()
+ax = pl.subplot(111)
+
+ax.bar(ind, menMeans, width, color='r', yerr=menStd)
+ax.set_ylabel('Time (ms)')
+ax.set_title('Time per number of users')
+ax.set_xticks(ind + width)
+ax.set_xticklabels(labels)
+
+pl.show()
