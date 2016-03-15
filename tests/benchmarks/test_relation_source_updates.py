@@ -3,6 +3,8 @@ from rq import Queue
 from smache import Smache, MongoDataSource
 from tests.mongo_helper import User, Handin, db
 
+import logging
+
 # Setup
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 worker_queue = Queue('test_queue', connection=redis_con)
@@ -25,9 +27,8 @@ def score(user):
         'avg_score': avg_score
     }
 
-num_of_handins_per_user = 100
 
-def build_setup(num_of_users):
+def build_setup(num_of_users, num_of_handins_per_user):
     def data_setup():
         db.drop_database('testdb')
 
@@ -48,23 +49,27 @@ def build_setup(num_of_users):
     return data_setup
 
 def make_underlying_data_change():
-    user = User.objects.first()
-    user.save()
+    handin = Handin.objects.first()
+    handin.save()
 
-def run_benchmark(benchmark, num_of_users):
+def run_benchmark(benchmark, num_of_handins_per_user):
+    num_of_users = 1
     benchmark.pedantic(make_underlying_data_change,
-                        setup=build_setup(num_of_users),
-                        iterations=1,
-                        rounds=2)
+                       setup=build_setup(num_of_users, num_of_handins_per_user),
+                       iterations=1,
+                       rounds=2)
 
-def test_performance_20users(benchmark):
-    run_benchmark(benchmark, 20)
+def test_performance_handins_100(benchmark):
+    run_benchmark(benchmark, 100)
 
-def test_performance_40users(benchmark):
-    run_benchmark(benchmark, 40)
+def test_performance_handins_200(benchmark):
+    run_benchmark(benchmark, 200)
 
-def test_performance_80users(benchmark):
-    run_benchmark(benchmark, 80)
+def test_performance_handins_400(benchmark):
+    run_benchmark(benchmark, 400)
 
-def test_performance_120users(benchmark):
-    run_benchmark(benchmark, 160)
+def test_performance_handins_800(benchmark):
+    run_benchmark(benchmark, 800)
+
+def test_performance_handins_1600(benchmark):
+    run_benchmark(benchmark, 1600)

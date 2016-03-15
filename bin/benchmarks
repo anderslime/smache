@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-py.test --benchmark-json report.json -c "benchmarks.ini" --pyargs tests/benchmarks
+py.test --benchmark-json tests/benchmark_results/argument_source_updates.json -c "benchmarks.ini" --pyargs tests/benchmarks/test_argument_source_updates.py
+py.test --benchmark-json tests/benchmark_results/relation_source_updates.json -c "benchmarks.ini" --pyargs tests/benchmarks/test_relation_source_updates.py
 
