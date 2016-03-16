@@ -1,0 +1,164 @@
+{
+    "commit_info": {
+        "id": "35e281cb9daed9761fe95d5a0d3056d71cdedb6a", 
+        "dirty": true
+    }, 
+    "version": "3.0.0", 
+    "benchmarks": [
+        {
+            "stats": {
+                "q1": 0.011256933212280273, 
+                "q3": 0.014271974563598633, 
+                "iterations": 1, 
+                "min": 0.010843038558959961, 
+                "max": 0.015160083770751953, 
+                "median": 0.01252734661102295, 
+                "iqr": 0.0030150413513183594, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 2, 
+                "ld15iqr": 0.010843038558959961, 
+                "stddev": 0.0019157738076222986, 
+                "hd15iqr": 0.015160083770751953, 
+                "outliers": "2;0", 
+                "data": [
+                    0.015160083770751953, 
+                    0.011670827865600586, 
+                    0.013383865356445312, 
+                    0.010843038558959961
+                ], 
+                "rounds": 4, 
+                "mean": 0.012764453887939453
+            }, 
+            "fullname": "tests/test_relation_source_updates.py::test_relation_updates_with_db_small", 
+            "group": null, 
+            "name": "test_relation_updates_with_db_small", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.014724016189575195, 
+                "q3": 0.015362024307250977, 
+                "iterations": 1, 
+                "min": 0.014394044876098633, 
+                "max": 0.015604019165039062, 
+                "median": 0.015087008476257324, 
+                "iqr": 0.0006380081176757812, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 2, 
+                "ld15iqr": 0.014394044876098633, 
+                "stddev": 0.0004973059139157845, 
+                "hd15iqr": 0.015604019165039062, 
+                "outliers": "2;0", 
+                "data": [
+                    0.015604019165039062, 
+                    0.015053987503051758, 
+                    0.01512002944946289, 
+                    0.014394044876098633
+                ], 
+                "rounds": 4, 
+                "mean": 0.015043020248413086
+            }, 
+            "fullname": "tests/test_relation_source_updates.py::test_relation_updates_with_db_medium", 
+            "group": null, 
+            "name": "test_relation_updates_with_db_medium", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.024386048316955566, 
+                "q3": 0.025959372520446777, 
+                "iterations": 1, 
+                "min": 0.023138046264648438, 
+                "max": 0.02620983123779297, 
+                "median": 0.02567148208618164, 
+                "iqr": 0.001573324203491211, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 1, 
+                "ld15iqr": 0.023138046264648438, 
+                "stddev": 0.001380317165558489, 
+                "hd15iqr": 0.02620983123779297, 
+                "outliers": "1;0", 
+                "data": [
+                    0.025708913803100586, 
+                    0.023138046264648438, 
+                    0.025634050369262695, 
+                    0.02620983123779297
+                ], 
+                "rounds": 4, 
+                "mean": 0.025172710418701172
+            }, 
+            "fullname": "tests/test_relation_source_updates.py::test_relation_updates_with_db_large", 
+            "group": null, 
+            "name": "test_relation_updates_with_db_large", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.03616750240325928, 
+                "q3": 0.04257655143737793, 
+                "iterations": 1, 
+                "min": 0.03583693504333496, 
+                "max": 0.04322195053100586, 
+                "median": 0.0392146110534668, 
+                "iqr": 0.006409049034118652, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 1, 
+                "ld15iqr": 0.03583693504333496, 
+                "stddev": 0.0037473341217788146, 
+                "hd15iqr": 0.04322195053100586, 
+                "outliers": "1;0", 
+                "data": [
+                    0.04322195053100586, 
+                    0.03583693504333496, 
+                    0.036498069763183594, 
+                    0.04193115234375
+                ], 
+                "rounds": 4, 
+                "mean": 0.039372026920318604
+            }, 
+            "fullname": "tests/test_relation_source_updates.py::test_relation_updates_with_db_humongous", 
+            "group": null, 
+            "name": "test_relation_updates_with_db_humongous", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }
+    ], 
+    "machine_info": {
+        "node": "anderslime.P-2812HNU-F1", 
+        "machine": "x86_64", 
+        "python_version": "2.7.11", 
+        "release": "15.3.0", 
+        "python_compiler": "GCC 4.2.1 Compatible Apple LLVM 7.0.2 (clang-700.1.81)", 
+        "python_implementation": "CPython", 
+        "processor": "i386", 
+        "system": "Darwin"
+    }, 
+    "datetime": "2016-03-16T09:52:57.549824"
+}

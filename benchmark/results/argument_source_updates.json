@@ -1,0 +1,164 @@
+{
+    "commit_info": {
+        "id": "35e281cb9daed9761fe95d5a0d3056d71cdedb6a", 
+        "dirty": true
+    }, 
+    "version": "3.0.0", 
+    "benchmarks": [
+        {
+            "stats": {
+                "q1": 0.0018700361251831055, 
+                "q3": 0.0033849477767944336, 
+                "iterations": 1, 
+                "min": 0.0018160343170166016, 
+                "max": 0.0044667720794677734, 
+                "median": 0.0021135807037353516, 
+                "iqr": 0.0015149116516113281, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 1, 
+                "ld15iqr": 0.0018160343170166016, 
+                "stddev": 0.0012438485098633168, 
+                "hd15iqr": 0.0044667720794677734, 
+                "outliers": "1;0", 
+                "data": [
+                    0.0044667720794677734, 
+                    0.0019240379333496094, 
+                    0.0018160343170166016, 
+                    0.0023031234741210938
+                ], 
+                "rounds": 4, 
+                "mean": 0.0026274919509887695
+            }, 
+            "fullname": "tests/test_argument_source_updates.py::test_relation_updates_with_db_small", 
+            "group": null, 
+            "name": "test_relation_updates_with_db_small", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.0018340349197387695, 
+                "q3": 0.002102971076965332, 
+                "iterations": 1, 
+                "min": 0.0018160343170166016, 
+                "max": 0.002192974090576172, 
+                "median": 0.0019325017929077148, 
+                "iqr": 0.0002689361572265625, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 1, 
+                "ld15iqr": 0.0018160343170166016, 
+                "stddev": 0.0001724101553259736, 
+                "hd15iqr": 0.002192974090576172, 
+                "outliers": "1;0", 
+                "data": [
+                    0.0018520355224609375, 
+                    0.002192974090576172, 
+                    0.002012968063354492, 
+                    0.0018160343170166016
+                ], 
+                "rounds": 4, 
+                "mean": 0.0019685029983520508
+            }, 
+            "fullname": "tests/test_argument_source_updates.py::test_relation_updates_with_db_medium", 
+            "group": null, 
+            "name": "test_relation_updates_with_db_medium", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.0018720626831054688, 
+                "q3": 0.0023385286331176758, 
+                "iterations": 1, 
+                "min": 0.0018260478973388672, 
+                "max": 0.0024390220642089844, 
+                "median": 0.0020780563354492188, 
+                "iqr": 0.00046646595001220703, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 1, 
+                "ld15iqr": 0.0018260478973388672, 
+                "stddev": 0.0002840323120844355, 
+                "hd15iqr": 0.0024390220642089844, 
+                "outliers": "1;0", 
+                "data": [
+                    0.0018260478973388672, 
+                    0.0019180774688720703, 
+                    0.002238035202026367, 
+                    0.0024390220642089844
+                ], 
+                "rounds": 4, 
+                "mean": 0.0021052956581115723
+            }, 
+            "fullname": "tests/test_argument_source_updates.py::test_relation_updates_with_db_large", 
+            "group": null, 
+            "name": "test_relation_updates_with_db_large", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.0018600225448608398, 
+                "q3": 0.0020824670791625977, 
+                "iterations": 1, 
+                "min": 0.0018100738525390625, 
+                "max": 0.002095937728881836, 
+                "median": 0.0019894838333129883, 
+                "iqr": 0.0002224445343017578, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 1, 
+                "ld15iqr": 0.0018100738525390625, 
+                "stddev": 0.000135196439028245, 
+                "hd15iqr": 0.002095937728881836, 
+                "outliers": "1;0", 
+                "data": [
+                    0.0019099712371826172, 
+                    0.0018100738525390625, 
+                    0.0020689964294433594, 
+                    0.002095937728881836
+                ], 
+                "rounds": 4, 
+                "mean": 0.0019712448120117188
+            }, 
+            "fullname": "tests/test_argument_source_updates.py::test_relation_updates_with_db_humongous", 
+            "group": null, 
+            "name": "test_relation_updates_with_db_humongous", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }
+    ], 
+    "machine_info": {
+        "node": "anderslime.P-2812HNU-F1", 
+        "machine": "x86_64", 
+        "python_version": "2.7.11", 
+        "release": "15.3.0", 
+        "python_compiler": "GCC 4.2.1 Compatible Apple LLVM 7.0.2 (clang-700.1.81)", 
+        "python_implementation": "CPython", 
+        "processor": "i386", 
+        "system": "Darwin"
+    }, 
+    "datetime": "2016-03-16T09:52:47.581227"
+}
