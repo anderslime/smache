@@ -1,6 +1,7 @@
 from mongoengine import Document, StringField, IntField, connect, ListField, ReferenceField
 
-db = connect('testdb', host='localhost', port=27017,)
+def test_connect():
+    connect('testdb', host='localhost', port=27017,)
 
 class User(Document):
     name = StringField()
