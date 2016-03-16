@@ -1,0 +1,3 @@
+#!/usr/bin/env python
+from benchmark.db_helper import build_base_dbs
+build_base_dbs()

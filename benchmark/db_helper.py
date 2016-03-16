@@ -11,38 +11,48 @@ class Handin(Document):
     users = ListField(ReferenceField(User))
     score = IntField()
 
+class TestSet:
+    def __init__(self, db_alias, num_of_users, num_of_handins):
+        self.db_alias = db_alias
+        self.num_of_users = num_of_users
+        self.num_of_handins = num_of_handins
+
+    @property
+    def num_of_users_per_handin(self):
+        return self.num_of_users / self.num_of_handins
+
+
 test_sets = [
-    ('small',     500,   20),  # = 25
-    ('medium',    2500,  60),  # = 42
-    ('large',     12500, 180), # = 69
-    ('humongous', 62500, 540)  # = 116
+    TestSet('small', 500, 20),
+    TestSet('medium', 2500, 40),
+    TestSet('large', 12500, 80),
+    TestSet('humongous', 62500, 160)
 ]
 
 def build_base_dbs():
-    for db_alias, num_of_users, num_of_handins, in test_sets:
-        connect(test_db_base_name(db_alias))
+    for test_set in test_sets:
+        connect(test_db_base_name(test_set.db_alias))
 
         print User._get_db()
 
-        print "==== STARTING {} ====".format(name)
+        print "==== STARTING {} ====".format(test_set.db_alias)
         print "CREATING USERS"
-        users = [User(name='Joe', age=25) for _ in range(num_of_users)]
+        users = [User(name='Joe', age=25) for _ in range(test_set.num_of_users)]
         User.objects.insert(users)
 
         print "BUILDING HANDINS"
-        handins = [Handin(score=10) for _ in range(num_of_handins)]
+        handins = [Handin(score=10) for _ in range(test_set.num_of_handins)]
 
         print "APPENDING USERS TO HANDINS"
-        num_of_users_per_handin = num_of_users / num_of_handins
         handins = []
         users = User.objects()
-        for i in range(0, num_of_handins, num_of_users_per_handin):
-            handins.append(Handin(score=i, users=users[i:i+num_of_users_per_handin]))
+        for i in range(0, test_set.num_of_handins, test_set.num_of_users_per_handin):
+            handins.append(Handin(score=i, users=users[i:i+test_set.num_of_users_per_handin]))
 
         print "INSERTING HANDINS"
         Handin.objects.insert(handins)
 
-        print "==== FINISHED {} ====".format(name)
+        print "==== FINISHED {} ====".format(test_set.db_alias)
 
         disconnect('default')
 
@@ -66,8 +76,8 @@ def test_db_name(name):
     return "test_db_{}".format(name)
 
 def clean_dbs():
-    for db_alias, _, _ in test_sets:
-        clean_db(db_alias)
+    for test_set in test_sets:
+        clean_db(test_set.db_alias)
 
 def clean_db(db_alias):
     db = connect_db(db_alias)
@@ -88,6 +98,3 @@ def connect_db(db_alias):
     Handin._collection = None
 
     return connect(test_db_name(db_alias))
-
-if __name__ == '__main__':
-    build_base_dbs()

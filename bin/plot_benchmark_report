@@ -1,32 +1,7 @@
 #!/usr/bin/env python
-# a bar plot with errorbars
-import numpy as np
-import matplotlib.pyplot as pl
-import json, sys
-
-json_benchmarks = []
-
-mean = []
-std  = []
-
-name = 'No title'
+import sys
+from benchmark.plot import show_plot
 
 filename = sys.argv[1]
 
-with open(filename) as f:
-  benchmark_json = json.loads(f.read())
-  name = benchmark_json['benchmarks'][0]['fullname'].split('::')[0]
-  mean           = [bm['stats']['mean'] * 1000 for bm in benchmark_json["benchmarks"]]
-  std            = [bm['stats']['stddev'] * 1000 for bm in benchmark_json["benchmarks"]]
-  x_axis         = [int(bm['name'].split('_')[-1]) for bm in benchmark_json['benchmarks']]
-
-fig = pl.figure()
-ax = pl.subplot(111)
-
-ax.errorbar(x_axis, mean, std)
-ax.set_ylabel('Time (ms)')
-ax.set_title(name)
-pl.xlim(0, x_axis[-1] + 100)
-pl.ylim(mean[0] - 1, mean[-1] + 1)
-
-pl.show()
+show_plot(filename)
