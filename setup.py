@@ -34,7 +34,7 @@ setup(
     install_requires=[
         'redis==2.10',
         'blinker==1.4',
-        'mongoengine==0.10',
+        'mongoengine>=0.10.6,<0.11',
         'rq==0.5.6',
         'dagger'
     ],
