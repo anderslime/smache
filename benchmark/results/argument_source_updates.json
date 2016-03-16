@@ -1,37 +1,37 @@
 {
     "commit_info": {
-        "id": "35e281cb9daed9761fe95d5a0d3056d71cdedb6a", 
+        "id": "062b374a623e206c85ae96f3ba12494403e0f3ff", 
         "dirty": true
     }, 
     "version": "3.0.0", 
     "benchmarks": [
         {
             "stats": {
-                "q1": 0.0018700361251831055, 
-                "q3": 0.0033849477767944336, 
+                "q1": 0.004092097282409668, 
+                "q3": 0.0053980350494384766, 
                 "iterations": 1, 
-                "min": 0.0018160343170166016, 
-                "max": 0.0044667720794677734, 
-                "median": 0.0021135807037353516, 
-                "iqr": 0.0015149116516113281, 
+                "min": 0.0037641525268554688, 
+                "max": 0.006326913833618164, 
+                "median": 0.004444599151611328, 
+                "iqr": 0.0013059377670288086, 
                 "iqr_outliers": 0, 
                 "stddev_outliers": 1, 
-                "ld15iqr": 0.0018160343170166016, 
-                "stddev": 0.0012438485098633168, 
-                "hd15iqr": 0.0044667720794677734, 
+                "ld15iqr": 0.0037641525268554688, 
+                "stddev": 0.0011024518988964956, 
+                "hd15iqr": 0.006326913833618164, 
                 "outliers": "1;0", 
                 "data": [
-                    0.0044667720794677734, 
-                    0.0019240379333496094, 
-                    0.0018160343170166016, 
-                    0.0023031234741210938
+                    0.006326913833618164, 
+                    0.0037641525268554688, 
+                    0.004469156265258789, 
+                    0.004420042037963867
                 ], 
                 "rounds": 4, 
-                "mean": 0.0026274919509887695
+                "mean": 0.004745066165924072
             }, 
-            "fullname": "tests/test_argument_source_updates.py::test_relation_updates_with_db_small", 
+            "fullname": "tests/test_argument_source_updates.py::test_argument_updates_with_db_small", 
             "group": null, 
-            "name": "test_relation_updates_with_db_small", 
+            "name": "test_argument_updates_with_db_small", 
             "options": {
                 "disable_gc": false, 
                 "warmup": false, 
@@ -43,31 +43,31 @@
         }, 
         {
             "stats": {
-                "q1": 0.0018340349197387695, 
-                "q3": 0.002102971076965332, 
+                "q1": 0.004292011260986328, 
+                "q3": 0.004432559013366699, 
                 "iterations": 1, 
-                "min": 0.0018160343170166016, 
-                "max": 0.002192974090576172, 
-                "median": 0.0019325017929077148, 
-                "iqr": 0.0002689361572265625, 
+                "min": 0.004191160202026367, 
+                "max": 0.004435062408447266, 
+                "median": 0.004411458969116211, 
+                "iqr": 0.0001405477523803711, 
                 "iqr_outliers": 0, 
                 "stddev_outliers": 1, 
-                "ld15iqr": 0.0018160343170166016, 
-                "stddev": 0.0001724101553259736, 
-                "hd15iqr": 0.002192974090576172, 
+                "ld15iqr": 0.004191160202026367, 
+                "stddev": 0.00011562594411827009, 
+                "hd15iqr": 0.004435062408447266, 
                 "outliers": "1;0", 
                 "data": [
-                    0.0018520355224609375, 
-                    0.002192974090576172, 
-                    0.002012968063354492, 
-                    0.0018160343170166016
+                    0.004191160202026367, 
+                    0.004435062408447266, 
+                    0.004430055618286133, 
+                    0.004392862319946289
                 ], 
                 "rounds": 4, 
-                "mean": 0.0019685029983520508
+                "mean": 0.004362285137176514
             }, 
-            "fullname": "tests/test_argument_source_updates.py::test_relation_updates_with_db_medium", 
+            "fullname": "tests/test_argument_source_updates.py::test_argument_updates_with_db_medium", 
             "group": null, 
-            "name": "test_relation_updates_with_db_medium", 
+            "name": "test_argument_updates_with_db_medium", 
             "options": {
                 "disable_gc": false, 
                 "warmup": false, 
@@ -79,31 +79,31 @@
         }, 
         {
             "stats": {
-                "q1": 0.0018720626831054688, 
-                "q3": 0.0023385286331176758, 
+                "q1": 0.003592967987060547, 
+                "q3": 0.004418611526489258, 
                 "iterations": 1, 
-                "min": 0.0018260478973388672, 
-                "max": 0.0024390220642089844, 
-                "median": 0.0020780563354492188, 
-                "iqr": 0.00046646595001220703, 
+                "min": 0.003398895263671875, 
+                "max": 0.004455089569091797, 
+                "median": 0.004084587097167969, 
+                "iqr": 0.0008256435394287109, 
                 "iqr_outliers": 0, 
                 "stddev_outliers": 1, 
-                "ld15iqr": 0.0018260478973388672, 
-                "stddev": 0.0002840323120844355, 
-                "hd15iqr": 0.0024390220642089844, 
+                "ld15iqr": 0.003398895263671875, 
+                "stddev": 0.0005032153261151686, 
+                "hd15iqr": 0.004455089569091797, 
                 "outliers": "1;0", 
                 "data": [
-                    0.0018260478973388672, 
-                    0.0019180774688720703, 
-                    0.002238035202026367, 
-                    0.0024390220642089844
+                    0.0037870407104492188, 
+                    0.003398895263671875, 
+                    0.004455089569091797, 
+                    0.004382133483886719
                 ], 
                 "rounds": 4, 
-                "mean": 0.0021052956581115723
+                "mean": 0.004005789756774902
             }, 
-            "fullname": "tests/test_argument_source_updates.py::test_relation_updates_with_db_large", 
+            "fullname": "tests/test_argument_source_updates.py::test_argument_updates_with_db_large", 
             "group": null, 
-            "name": "test_relation_updates_with_db_large", 
+            "name": "test_argument_updates_with_db_large", 
             "options": {
                 "disable_gc": false, 
                 "warmup": false, 
@@ -115,31 +115,31 @@
         }, 
         {
             "stats": {
-                "q1": 0.0018600225448608398, 
-                "q3": 0.0020824670791625977, 
+                "q1": 0.003646373748779297, 
+                "q3": 0.0037769079208374023, 
                 "iterations": 1, 
-                "min": 0.0018100738525390625, 
-                "max": 0.002095937728881836, 
-                "median": 0.0019894838333129883, 
-                "iqr": 0.0002224445343017578, 
+                "min": 0.003629922866821289, 
+                "max": 0.003833770751953125, 
+                "median": 0.003691434860229492, 
+                "iqr": 0.00013053417205810547, 
                 "iqr_outliers": 0, 
                 "stddev_outliers": 1, 
-                "ld15iqr": 0.0018100738525390625, 
-                "stddev": 0.000135196439028245, 
-                "hd15iqr": 0.002095937728881836, 
+                "ld15iqr": 0.003629922866821289, 
+                "stddev": 8.953062089638772e-05, 
+                "hd15iqr": 0.003833770751953125, 
                 "outliers": "1;0", 
                 "data": [
-                    0.0019099712371826172, 
-                    0.0018100738525390625, 
-                    0.0020689964294433594, 
-                    0.002095937728881836
+                    0.0036628246307373047, 
+                    0.003833770751953125, 
+                    0.0037200450897216797, 
+                    0.003629922866821289
                 ], 
                 "rounds": 4, 
-                "mean": 0.0019712448120117188
+                "mean": 0.0037116408348083496
             }, 
-            "fullname": "tests/test_argument_source_updates.py::test_relation_updates_with_db_humongous", 
+            "fullname": "tests/test_argument_source_updates.py::test_argument_updates_with_db_humongous", 
             "group": null, 
-            "name": "test_relation_updates_with_db_humongous", 
+            "name": "test_argument_updates_with_db_humongous", 
             "options": {
                 "disable_gc": false, 
                 "warmup": false, 
@@ -151,7 +151,7 @@
         }
     ], 
     "machine_info": {
-        "node": "anderslime.P-2812HNU-F1", 
+        "node": "anderslime.local", 
         "machine": "x86_64", 
         "python_version": "2.7.11", 
         "release": "15.3.0", 
@@ -160,5 +160,5 @@
         "processor": "i386", 
         "system": "Darwin"
     }, 
-    "datetime": "2016-03-16T09:52:47.581227"
+    "datetime": "2016-03-16T10:34:12.438106"
 }

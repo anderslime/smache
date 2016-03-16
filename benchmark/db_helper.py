@@ -1,7 +1,15 @@
-import tests.mongo_helper as mongo
+from mongoengine import Document, StringField, IntField, connect, ListField, ReferenceField
 from mongoengine.connection import connect, disconnect
 from pymongo import MongoClient
 from collections import namedtuple
+
+class User(Document):
+    name = StringField()
+    age = IntField()
+
+class Handin(Document):
+    users = ListField(ReferenceField(User))
+    score = IntField()
 
 test_sets = [
     ('small',     500,   20),  # = 25
@@ -10,47 +18,45 @@ test_sets = [
     ('humongous', 62500, 540)  # = 116
 ]
 
-test_db_names = [test_set[0] for test_set in test_sets]
-
 def build_base_dbs():
-    for name, num_of_users, num_of_handins, in test_sets:
-        connect(test_db_base_name(name))
+    for db_alias, num_of_users, num_of_handins, in test_sets:
+        connect(test_db_base_name(db_alias))
 
-        print mongo.User._get_db()
+        print User._get_db()
 
         print "==== STARTING {} ====".format(name)
         print "CREATING USERS"
-        users = [mongo.User(name='Joe', age=25) for _ in range(num_of_users)]
-        mongo.User.objects.insert(users)
+        users = [User(name='Joe', age=25) for _ in range(num_of_users)]
+        User.objects.insert(users)
 
         print "BUILDING HANDINS"
-        handins = [mongo.Handin(score=10) for _ in range(num_of_handins)]
+        handins = [Handin(score=10) for _ in range(num_of_handins)]
 
         print "APPENDING USERS TO HANDINS"
         num_of_users_per_handin = num_of_users / num_of_handins
         handins = []
-        users = mongo.User.objects()
+        users = User.objects()
         for i in range(0, num_of_handins, num_of_users_per_handin):
-            handins.append(mongo.Handin(score=i, users=users[i:i+num_of_users_per_handin]))
+            handins.append(Handin(score=i, users=users[i:i+num_of_users_per_handin]))
 
         print "INSERTING HANDINS"
-        mongo.Handin.objects.insert(handins)
+        Handin.objects.insert(handins)
 
         print "==== FINISHED {} ====".format(name)
 
         disconnect('default')
 
         # Hack to avoid mongoengine caching connection
-        mongo.User._collection = None
-        mongo.Handin._collection = None
+        User._collection = None
+        Handin._collection = None
 
 
-def restore_test_db(db_name):
+def restore_test_db(db_alias):
     client = MongoClient()
     client.admin.command(
         'copydb',
-        fromdb=test_db_base_name(db_name),
-        todb=test_db_name(db_name)
+        fromdb=test_db_base_name(db_alias),
+        todb=test_db_name(db_alias)
     )
 
 def test_db_base_name(name):
@@ -59,18 +65,29 @@ def test_db_base_name(name):
 def test_db_name(name):
     return "test_db_{}".format(name)
 
-def clean_and_connect_db(name):
+def clean_dbs():
+    for db_alias, _, _ in test_sets:
+        clean_db(db_alias)
+
+def clean_db(db_alias):
+    db = connect_db(db_alias)
+    db.drop_database(test_db_name(db_alias))
+
+    restore_test_db(db_alias)
+
+def connect_db_setup(db_name):
+    def setup():
+        connect_db(db_name)
+    return setup
+
+def connect_db(db_alias):
     disconnect('default')
 
     # Hack to avoid mongoengine caching connection
-    mongo.User._collection = None
-    mongo.Handin._collection = None
+    User._collection = None
+    Handin._collection = None
 
-    # Restore to base
-    db_name = test_db_name(name)
-    db = connect(db_name)
-    db.drop_database(db_name)
-    restore_test_db(name)
+    return connect(test_db_name(db_alias))
 
 if __name__ == '__main__':
     build_base_dbs()
