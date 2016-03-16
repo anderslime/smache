@@ -4,13 +4,15 @@ import matplotlib.pyplot as pl
 import json
 from .db_helper import test_sets
 
-def show_plot(filename):
-    json_benchmarks = []
+def show_plot(report_name):
+    filename = '/'.join(['benchmark', 'results', report_name])
+    old_data_filename = '/'.join(['benchmark', 'results', 'current', report_name])
 
-    mean = []
-    std  = []
+    old_means = []
 
-    name = 'No title'
+    with open(old_data_filename) as f:
+        old_benchmark_json = json.loads(f.read())
+        old_means = [bm['stats']['mean'] * 1000 for bm in old_benchmark_json["benchmarks"]]
 
     with open(filename) as f:
         benchmark_json = json.loads(f.read())
@@ -25,6 +27,7 @@ def show_plot(filename):
 
         def build_axis(axis, x_axis, x_label):
             axis.errorbar(x_axis, mean, std)
+            axis.errorbar(x_axis, old_means)
             axis.set_ylabel('Time (ms)')
             axis.set_xlabel(x_label)
             axis.set_title(name)

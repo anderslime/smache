@@ -1,0 +1,164 @@
+{
+    "commit_info": {
+        "id": "c587b389b27d6ebc124b7b28e7bba9fba6f6eeaa", 
+        "dirty": true
+    }, 
+    "version": "3.0.0", 
+    "benchmarks": [
+        {
+            "stats": {
+                "q1": 0.003880620002746582, 
+                "q3": 0.005385875701904297, 
+                "iterations": 1, 
+                "min": 0.00351715087890625, 
+                "max": 0.006466865539550781, 
+                "median": 0.004274487495422363, 
+                "iqr": 0.0015052556991577148, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 1, 
+                "ld15iqr": 0.00351715087890625, 
+                "stddev": 0.0012737205850064139, 
+                "hd15iqr": 0.006466865539550781, 
+                "outliers": "1;0", 
+                "data": [
+                    0.006466865539550781, 
+                    0.00351715087890625, 
+                    0.004244089126586914, 
+                    0.0043048858642578125
+                ], 
+                "rounds": 4, 
+                "mean": 0.0046332478523254395
+            }, 
+            "fullname": "tests/test_argument_source_updates.py::test_argument_updates_with_db_small", 
+            "group": null, 
+            "name": "test_argument_updates_with_db_small", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.0033941268920898438, 
+                "q3": 0.004242539405822754, 
+                "iterations": 1, 
+                "min": 0.0031740665435791016, 
+                "max": 0.004336118698120117, 
+                "median": 0.0038815736770629883, 
+                "iqr": 0.0008484125137329102, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 1, 
+                "ld15iqr": 0.0031740665435791016, 
+                "stddev": 0.000527311127427216, 
+                "hd15iqr": 0.004336118698120117, 
+                "outliers": "1;0", 
+                "data": [
+                    0.003614187240600586, 
+                    0.004336118698120117, 
+                    0.0031740665435791016, 
+                    0.004148960113525391
+                ], 
+                "rounds": 4, 
+                "mean": 0.003818333148956299
+            }, 
+            "fullname": "tests/test_argument_source_updates.py::test_argument_updates_with_db_medium", 
+            "group": null, 
+            "name": "test_argument_updates_with_db_medium", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.0036934614181518555, 
+                "q3": 0.004236459732055664, 
+                "iterations": 1, 
+                "min": 0.003543853759765625, 
+                "max": 0.004257917404174805, 
+                "median": 0.004029035568237305, 
+                "iqr": 0.0005429983139038086, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 1, 
+                "ld15iqr": 0.003543853759765625, 
+                "stddev": 0.00033691390353399696, 
+                "hd15iqr": 0.004257917404174805, 
+                "outliers": "1;0", 
+                "data": [
+                    0.003543853759765625, 
+                    0.0042150020599365234, 
+                    0.004257917404174805, 
+                    0.003843069076538086
+                ], 
+                "rounds": 4, 
+                "mean": 0.00396496057510376
+            }, 
+            "fullname": "tests/test_argument_source_updates.py::test_argument_updates_with_db_large", 
+            "group": null, 
+            "name": "test_argument_updates_with_db_large", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.0035380125045776367, 
+                "q3": 0.004199385643005371, 
+                "iterations": 1, 
+                "min": 0.003448009490966797, 
+                "max": 0.004356861114501953, 
+                "median": 0.003834962844848633, 
+                "iqr": 0.0006613731384277344, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 2, 
+                "ld15iqr": 0.003448009490966797, 
+                "stddev": 0.000409557713229755, 
+                "hd15iqr": 0.004356861114501953, 
+                "outliers": "2;0", 
+                "data": [
+                    0.004041910171508789, 
+                    0.0036280155181884766, 
+                    0.003448009490966797, 
+                    0.004356861114501953
+                ], 
+                "rounds": 4, 
+                "mean": 0.003868699073791504
+            }, 
+            "fullname": "tests/test_argument_source_updates.py::test_argument_updates_with_db_humongous", 
+            "group": null, 
+            "name": "test_argument_updates_with_db_humongous", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }
+    ], 
+    "machine_info": {
+        "node": "anderslime.local", 
+        "machine": "x86_64", 
+        "python_version": "2.7.11", 
+        "release": "15.3.0", 
+        "python_compiler": "GCC 4.2.1 Compatible Apple LLVM 7.0.2 (clang-700.1.81)", 
+        "python_implementation": "CPython", 
+        "processor": "i386", 
+        "system": "Darwin"
+    }, 
+    "datetime": "2016-03-16T14:39:07.425075"
+}
