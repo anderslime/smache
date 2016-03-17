@@ -1,7 +1,12 @@
 from smache.data_sources import MongoDataSource
 from tests.mongo_helper import User, test_connect
 
+import smache
+
 test_connect()
+
+def setup_function(function):
+    smache.reset_globals()
 
 def test_subscriber_is_notified_on_update():
     data_source = MongoDataSource(User)

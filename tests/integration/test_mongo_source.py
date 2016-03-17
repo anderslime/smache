@@ -30,6 +30,7 @@ redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 @pytest.yield_fixture(autouse=True)
 def flush_before_each_test_case():
+    smache.set_globals()
     redis_con.flushall()
     yield
 

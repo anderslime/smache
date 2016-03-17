@@ -12,7 +12,6 @@ class DataUpdatePropagator:
     def __init__(self, data_sources, options, store, scheduler):
         self._function_serializer = FunctionSerializer()
         self.data_sources         = data_sources
-        self._options             = options
         self.store                = store
         self._scheduler           = scheduler
 
@@ -51,7 +50,7 @@ class DataUpdatePropagator:
 
     def _invalidate_keys(self, keys):
         self._mark_invalidation(keys)
-        if self._options.write_through:
+        if smache.smache_options.write_through:
             self._write_through_invalidation(keys)
 
     def _mark_invalidation(self, keys):

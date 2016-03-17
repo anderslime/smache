@@ -15,7 +15,7 @@ from schedulers import AsyncScheduler, InProcessScheduler
 from smache_logging import logger
 import logging, sys
 
-global computed_repo, relation_deps_repo, dependency_graph
+global computed_repo, relation_deps_repo, dependency_graph, smache_options
 
 class Smache:
     def __init__(self, **kwargs):
@@ -56,10 +56,13 @@ class Smache:
             logger.setLevel(logging.DEBUG)
 
     def set_globals(self):
-        global computed_repo, relation_deps_repo, dependency_graph
+        global computed_repo, relation_deps_repo, dependency_graph, smache_options
         computed_repo      = self.computed_repo
         relation_deps_repo = self.relation_deps_repo
         dependency_graph   = self.dependency_graph
+        smache_options     = self._options
+
+
 
     def log(self, something):
         logger.debug("LOGGING FROM SMACHE: {}".format(something))
@@ -123,3 +126,7 @@ class Options:
     def _value_equal(self, options, prop, test_value):
         return prop in options and options[prop] == test_value
 
+def reset_globals():
+    global computed_repo, relation_deps_repo
+    computed_repo = ComputedFunctionRepository()
+    relation_deps_repo = RelationDependencyRepository()
