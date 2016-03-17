@@ -9,22 +9,20 @@ import smache
 
 
 class DataUpdatePropagator:
-    def __init__(self, dep_graph, relation_deps_repo, function_serializer, data_sources, options, store, scheduler):
-        self.dep_graph            = dep_graph
-        self._relation_deps_repo  = relation_deps_repo
-        self._function_serializer = function_serializer
+    def __init__(self, data_sources, options, store, scheduler):
+        self._function_serializer = FunctionSerializer()
         self.data_sources         = data_sources
         self._options             = options
         self.store                = store
         self._scheduler           = scheduler
 
     def handle_update(self, data_source, entity):
-        depending_keys = self.dep_graph.values_depending_on(data_source.data_source_id, entity.id)
+        depending_keys = smache.dependency_graph.values_depending_on(data_source.data_source_id, entity.id)
         depending_relation_keys = self._depending_relation_keys(data_source, entity)
         self._invalidate_keys(depending_keys | depending_relation_keys)
 
     def _depending_relation_keys(self, data_source, entity):
-        depending_relations = self._relation_deps_repo.get(data_source.data_source_id)
+        depending_relations = smache.relation_deps_repo.get(data_source.data_source_id)
         depending_relation_keys = [self._rel_keys(relation_fun, entity, computed_fun) for relation_fun, computed_fun in depending_relations]
         return self._flattened_sets(depending_relation_keys)
 
@@ -39,7 +37,7 @@ class DataUpdatePropagator:
 
     def _fun_values_depending_on(self, computed_source, computed_fun):
         data_source = next(source for source in self.data_sources if source.for_entity(computed_source))
-        return self.dep_graph.fun_values_depending_on(
+        return smache.dependency_graph.fun_values_depending_on(
             data_source.data_source_id,
             computed_source.id,
             computed_fun.id
@@ -82,6 +80,7 @@ class DataUpdatePropagator:
             self.data_sources,
             smache.computed_repo.computed_funs
         )
+
 
 class AsyncScheduler:
     def __init__(self, worker_queue):

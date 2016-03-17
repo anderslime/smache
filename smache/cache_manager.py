@@ -6,6 +6,8 @@ from computed_function_repository import ComputedFunctionRepository
 from collections import namedtuple as struct
 from smache.smache_logging import logger
 
+import smache
+
 class CacheManager:
     def __init__(self, store, dep_graph, computed_repo, scheduler, function_serializer, relation_deps_repo, options):
         self.store                = store
@@ -119,9 +121,6 @@ class CacheManager:
 
     def _on_data_source_update(self, data_source, entity):
         DataUpdatePropagator(
-            self.dep_graph,
-            self._relation_deps_repo,
-            self._function_serializer,
             self.data_sources,
             self._options,
             self.store,
