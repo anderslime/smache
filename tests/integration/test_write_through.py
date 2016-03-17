@@ -28,6 +28,7 @@ def slash():
 
 @pytest.yield_fixture(autouse=True)
 def flush_before_each_test_case():
+    smache.set_globals()
     a.reset()
     b.reset()
     redis_con.flushall()

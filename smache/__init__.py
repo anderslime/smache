@@ -15,9 +15,7 @@ from schedulers import AsyncScheduler, InProcessScheduler
 from smache_logging import logger
 import logging, sys
 
-global computed_repo, relation_deps_repo
-computed_repo = ComputedFunctionRepository()
-relation_reps_repo = RelationDependencyRepository()
+global computed_repo, relation_deps_repo, dependency_graph
 
 class Smache:
     def __init__(self, **kwargs):
@@ -26,20 +24,19 @@ class Smache:
         redis_con = self._options.redis_con
         worker_queue = self._options.worker_queue
 
-        global computed_repo, relation_reps_repo
-        computed_repo       = ComputedFunctionRepository()
-        relation_deps_repo  = RelationDependencyRepository()
+        self.computed_repo       = ComputedFunctionRepository()
+        self.relation_deps_repo  = RelationDependencyRepository()
+        self.dependency_graph    = RedisDependencyGraph(redis_con)
         store               = RedisStore(redis_con)
-        dep_graph           = RedisDependencyGraph(redis_con)
         function_serializer = FunctionSerializer()
         scheduler           = self._options.scheduler
 
         self._cache_manager = CacheManager(store,
-                                           dep_graph,
-                                           computed_repo,
+                                           self.dependency_graph,
+                                           self.computed_repo,
                                            scheduler,
                                            function_serializer,
-                                           relation_deps_repo,
+                                           self.relation_deps_repo,
                                            self._options)
 
         # Delegates
@@ -49,12 +46,20 @@ class Smache:
 
         self.is_fun_fresh = self._cache_manager.is_fun_fresh
 
+        self.set_globals()
+
         if self._options.debug:
             handler = logging.StreamHandler(sys.stdout)
             handler.setLevel(logging.DEBUG)
 
             logger.addHandler(handler)
             logger.setLevel(logging.DEBUG)
+
+    def set_globals(self):
+        global computed_repo, relation_deps_repo, dependency_graph
+        computed_repo      = self.computed_repo
+        relation_deps_repo = self.relation_deps_repo
+        dependency_graph   = self.dependency_graph
 
     def log(self, something):
         logger.debug("LOGGING FROM SMACHE: {}".format(something))
