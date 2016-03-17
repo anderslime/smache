@@ -15,7 +15,7 @@ from schedulers import AsyncScheduler, InProcessScheduler
 from smache_logging import logger
 import logging, sys
 
-global computed_repo, relation_deps_repo, dependency_graph, smache_options
+global computed_repo, relation_deps_repo, dependency_graph, smache_options, scheduler, _data_sources
 
 class Smache:
     def __init__(self, **kwargs):
@@ -27,14 +27,15 @@ class Smache:
         self.computed_repo       = ComputedFunctionRepository()
         self.relation_deps_repo  = RelationDependencyRepository()
         self.dependency_graph    = RedisDependencyGraph(redis_con)
+        self.scheduler           = self._options.scheduler
+        self.data_sources        = []
         store               = RedisStore(redis_con)
         function_serializer = FunctionSerializer()
-        scheduler           = self._options.scheduler
 
         self._cache_manager = CacheManager(store,
                                            self.dependency_graph,
                                            self.computed_repo,
-                                           scheduler,
+                                           self.data_sources,
                                            function_serializer,
                                            self.relation_deps_repo,
                                            self._options)
@@ -56,11 +57,13 @@ class Smache:
             logger.setLevel(logging.DEBUG)
 
     def set_globals(self):
-        global computed_repo, relation_deps_repo, dependency_graph, smache_options
+        global computed_repo, relation_deps_repo, dependency_graph, smache_options, scheduler, _data_sources
         computed_repo      = self.computed_repo
         relation_deps_repo = self.relation_deps_repo
         dependency_graph   = self.dependency_graph
         smache_options     = self._options
+        scheduler          = self.scheduler
+        _data_sources      = self.data_sources
 
 
 

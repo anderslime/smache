@@ -9,14 +9,13 @@ from smache.smache_logging import logger
 import smache
 
 class CacheManager:
-    def __init__(self, store, dep_graph, computed_repo, scheduler, function_serializer, relation_deps_repo, options):
+    def __init__(self, store, dep_graph, computed_repo, data_sources, function_serializer, relation_deps_repo, options):
         self.store                = store
         self.dep_graph            = dep_graph
         self._options             = options
-        self._scheduler           = scheduler
         self._function_serializer = function_serializer
         self.computed_repo        = computed_repo
-        self.data_sources         = []
+        self.data_sources         = data_sources
         self._relation_deps_repo  = relation_deps_repo
 
     def cache_function(self, fun, *args, **kwargs):
@@ -120,12 +119,7 @@ class CacheManager:
             return (value,)
 
     def _on_data_source_update(self, data_source, entity):
-        DataUpdatePropagator(
-            self.data_sources,
-            self._options,
-            self.store,
-            self._scheduler
-        ).handle_update(data_source, entity)
+        DataUpdatePropagator().handle_update(data_source, entity)
 
     def _fun_key(self, fun, *args, **kwargs):
         return self._function_serializer.serialized_fun(fun, *args, **kwargs)

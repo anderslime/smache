@@ -9,11 +9,9 @@ import smache
 
 
 class DataUpdatePropagator:
-    def __init__(self, data_sources, options, store, scheduler):
+    def __init__(self):
         self._function_serializer = FunctionSerializer()
-        self.data_sources         = data_sources
-        self.store                = store
-        self._scheduler           = scheduler
+        self.store                = RedisStore(smache.smache_options.redis_con)
 
     def handle_update(self, data_source, entity):
         depending_keys = smache.dependency_graph.values_depending_on(data_source.data_source_id, entity.id)
@@ -35,7 +33,7 @@ class DataUpdatePropagator:
         return reduce(lambda x, y: x | y, depending_relation_keys, set())
 
     def _fun_values_depending_on(self, computed_source, computed_fun):
-        data_source = next(source for source in self.data_sources if source.for_entity(computed_source))
+        data_source = next(source for source in smache._data_sources if source.for_entity(computed_source))
         return smache.dependency_graph.fun_values_depending_on(
             data_source.data_source_id,
             computed_source.id,
@@ -62,7 +60,7 @@ class DataUpdatePropagator:
         fun_names = [self._fun_name_from_key(key) for key in keys]
         indexes = [sorted_nodes.index(fun_name) for fun_name in fun_names]
         sorted_keys = [key for key, _ in sorted(zip(keys, indexes), key=lambda x: x[1])]
-        self._scheduler.schedule_write_through(sorted_keys)
+        smache.scheduler.schedule_write_through(sorted_keys)
 
     def _fun_key(self, fun, *args, **kwargs):
         return self._function_serializer.serialized_fun(fun, *args, **kwargs)
@@ -76,7 +74,7 @@ class DataUpdatePropagator:
 
     def _dependency_graph(self):
         return build_dependency_graph(
-            self.data_sources,
+            smache._data_sources,
             smache.computed_repo.computed_funs
         )
 
