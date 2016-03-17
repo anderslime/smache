@@ -3,13 +3,11 @@ from computed_function import ComputedFunction
 from dependency_graph_builder import build_dependency_graph
 from topological_sort import topological_sort
 from computed_function_repository import ComputedFunctionRepository
-from relation_dependency_repository import RelationDependencyRepository
-
 from collections import namedtuple as struct
 from smache.smache_logging import logger
 
 class CacheManager:
-    def __init__(self, store, dep_graph, computed_repo, scheduler, function_serializer, options):
+    def __init__(self, store, dep_graph, computed_repo, scheduler, function_serializer, relation_deps_repo, options):
         self.store                = store
         self.dep_graph            = dep_graph
         self._options             = options
@@ -17,7 +15,7 @@ class CacheManager:
         self._function_serializer = function_serializer
         self.computed_repo        = computed_repo
         self.data_sources         = []
-        self._relation_deps_repo  = RelationDependencyRepository()
+        self._relation_deps_repo  = relation_deps_repo
 
     def cache_function(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)

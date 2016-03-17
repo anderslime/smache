@@ -6,6 +6,7 @@ from stores import RedisStore
 from dependency_graphs import RedisDependencyGraph
 from cache_manager import CacheManager
 from computed_function_repository import ComputedFunctionRepository
+from relation_dependency_repository import RelationDependencyRepository
 from function_serializer import FunctionSerializer
 from data_sources import MongoDataSource
 
@@ -14,8 +15,9 @@ from schedulers import AsyncScheduler, InProcessScheduler
 from smache_logging import logger
 import logging, sys
 
-global computed_repo
+global computed_repo, relation_deps_repo
 computed_repo = ComputedFunctionRepository()
+relation_reps_repo = RelationDependencyRepository()
 
 class Smache:
     def __init__(self, **kwargs):
@@ -24,8 +26,9 @@ class Smache:
         redis_con = self._options.redis_con
         worker_queue = self._options.worker_queue
 
-        global computed_repo
+        global computed_repo, relation_reps_repo
         computed_repo       = ComputedFunctionRepository()
+        relation_deps_repo  = RelationDependencyRepository()
         store               = RedisStore(redis_con)
         dep_graph           = RedisDependencyGraph(redis_con)
         function_serializer = FunctionSerializer()
@@ -36,6 +39,7 @@ class Smache:
                                            computed_repo,
                                            scheduler,
                                            function_serializer,
+                                           relation_deps_repo,
                                            self._options)
 
         # Delegates
