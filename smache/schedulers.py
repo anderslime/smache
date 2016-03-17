@@ -13,8 +13,10 @@ class DataUpdatePropagator:
         self._function_serializer = FunctionSerializer()
         self.store                = RedisStore(smache.smache_options.redis_con)
 
-    def handle_update(self, data_source, entity):
-        depending_keys = smache.dependency_graph.values_depending_on(data_source.data_source_id, entity.id)
+    def handle_update(self, data_source_id, entity_id):
+        data_source = [source for source in smache._data_sources if source.data_source_id == data_source_id][0]
+        entity = data_source.find(entity_id)
+        depending_keys = smache.dependency_graph.values_depending_on(data_source_id, entity_id)
         depending_relation_keys = self._depending_relation_keys(data_source, entity)
         self._invalidate_keys(depending_keys | depending_relation_keys)
 
@@ -87,6 +89,12 @@ class AsyncScheduler:
         logger.debug("Schedule write through update on: {}".format(keys))
         reduce(self._enqueue_execute, keys, None)
 
+    def schedule_update_handle(self, data_source_id, entity_id):
+        self.worker_queue.enqueue_call(
+            func=_handle_data_source_update,
+            args=(data_source_id, entity_id)
+        )
+
     def _enqueue_execute(self, last_job, key):
         return self.worker_queue.enqueue_call(
             func=_execute,
@@ -100,6 +108,11 @@ class InProcessScheduler:
         for key in keys:
             _execute(key)
 
+    def schedule_update_handle(self, data_source_id, entity_id):
+        _handle_data_source_update(data_source_id, entity_id)
+
+def _handle_data_source_update(data_source_id, entity_id):
+    DataUpdatePropagator().handle_update(data_source_id, entity_id)
 
 def _execute(key):
     logger.debug("EXECUTE on {}".format(key))

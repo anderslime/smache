@@ -24,18 +24,19 @@ class Smache:
         redis_con = self._options.redis_con
         worker_queue = self._options.worker_queue
 
-        self.computed_repo       = ComputedFunctionRepository()
-        self.relation_deps_repo  = RelationDependencyRepository()
-        self.dependency_graph    = RedisDependencyGraph(redis_con)
-        self.scheduler           = self._options.scheduler
-        self.data_sources        = []
-        store               = RedisStore(redis_con)
-        function_serializer = FunctionSerializer()
+        self.computed_repo      = ComputedFunctionRepository()
+        self.relation_deps_repo = RelationDependencyRepository()
+        self.dependency_graph   = RedisDependencyGraph(redis_con)
+        self.scheduler          = self._options.scheduler
+        self.data_sources       = []
+        store                   = RedisStore(redis_con)
+        function_serializer     = FunctionSerializer()
 
         self._cache_manager = CacheManager(store,
                                            self.dependency_graph,
                                            self.computed_repo,
                                            self.data_sources,
+                                           self.scheduler,
                                            function_serializer,
                                            self.relation_deps_repo,
                                            self._options)
@@ -64,8 +65,6 @@ class Smache:
         smache_options     = self._options
         scheduler          = self.scheduler
         _data_sources      = self.data_sources
-
-
 
     def log(self, something):
         logger.debug("LOGGING FROM SMACHE: {}".format(something))
@@ -130,6 +129,7 @@ class Options:
         return prop in options and options[prop] == test_value
 
 def reset_globals():
-    global computed_repo, relation_deps_repo
-    computed_repo = ComputedFunctionRepository()
+    global computed_repo, relation_deps_repo, data_sources
+    computed_repo      = ComputedFunctionRepository()
     relation_deps_repo = RelationDependencyRepository()
+    data_sources       = []

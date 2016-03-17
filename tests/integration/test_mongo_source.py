@@ -25,6 +25,9 @@ def name(a):
 def score():
     return 50
 
+def teardown_module(module):
+    a.disconnect()
+
 # Tests
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
