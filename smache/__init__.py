@@ -61,9 +61,9 @@ class Smache:
         global _computed_repo, _relation_deps_repo, _dependency_graph, _options, _scheduler, _data_sources
         _computed_repo      = self._computed_repo
         _relation_deps_repo = self._relation_deps_repo
-        _dependency_graph    = self._dependency_graph
-        _options      = self._options
-        _scheduler           = self._scheduler
+        _dependency_graph   = self._dependency_graph
+        _options            = self._options
+        _scheduler          = self._scheduler
         _data_sources       = self.data_sources
 
     def log(self, something):
