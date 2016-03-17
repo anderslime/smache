@@ -13,7 +13,7 @@ class CacheManager:
         self._options             = options
         self._function_serializer = function_serializer
         self._scheduler            = scheduler
-        self.computed_repo        = computed_repo
+        self._computed_repo        = computed_repo
         self.data_sources         = data_sources
         self._relation_deps_repo  = relation_deps_repo
 
@@ -70,11 +70,11 @@ class CacheManager:
     def dependency_graph(self):
         return build_dependency_graph(
             self.data_sources,
-            self.computed_repo.computed_funs
+            self._computed_repo.computed_funs
         )
 
     def _computed_key(self, fun, *args, **kwargs):
-        computed_fun = self.computed_repo.get(fun)
+        computed_fun = self._computed_repo.get(fun)
         return self._fun_key(
             computed_fun.arg_deps,
             computed_fun.fun,
@@ -83,13 +83,13 @@ class CacheManager:
         )
 
     def _get_computed(self, fun):
-        return self.computed_repo.get(fun)
+        return self._computed_repo.get(fun)
 
     def _set_computed(self, computed_fun):
-        self.computed_repo.add(computed_fun)
+        self._computed_repo.add(computed_fun)
 
     def _add_data_source_dependencies(self, fun, key):
-        data_source_deps = self.computed_repo.get(fun).data_source_deps
+        data_source_deps = self._computed_repo.get(fun).data_source_deps
         for data_source_dep in data_source_deps:
             self.dep_graph.add_data_source_dependency(
                 data_source_dep.data_source_id,

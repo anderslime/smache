@@ -15,7 +15,7 @@ from schedulers import AsyncScheduler, InProcessScheduler
 from smache_logging import logger
 import logging, sys
 
-global computed_repo, relation_deps_repo, dependency_graph, smache_options, scheduler, _data_sources
+global _computed_repo, _relation_deps_repo, _dependency_graph, _options, _scheduler, _data_sources
 
 class Smache:
     def __init__(self, **kwargs):
@@ -24,21 +24,21 @@ class Smache:
         redis_con = self._options.redis_con
         worker_queue = self._options.worker_queue
 
-        self.computed_repo      = ComputedFunctionRepository()
-        self.relation_deps_repo = RelationDependencyRepository()
-        self.dependency_graph   = RedisDependencyGraph(redis_con)
-        self.scheduler          = self._options.scheduler
-        self.data_sources       = []
-        store                   = RedisStore(redis_con)
-        function_serializer     = FunctionSerializer()
+        self._computed_repo      = ComputedFunctionRepository()
+        self._relation_deps_repo = RelationDependencyRepository()
+        self._dependency_graph   = RedisDependencyGraph(redis_con)
+        self._scheduler          = self._options.scheduler
+        self.data_sources        = []
+        store                    = RedisStore(redis_con)
+        function_serializer      = FunctionSerializer()
 
         self._cache_manager = CacheManager(store,
-                                           self.dependency_graph,
-                                           self.computed_repo,
+                                           self._dependency_graph,
+                                           self._computed_repo,
                                            self.data_sources,
-                                           self.scheduler,
+                                           self._scheduler,
                                            function_serializer,
-                                           self.relation_deps_repo,
+                                           self._relation_deps_repo,
                                            self._options)
 
         # Delegates
@@ -58,21 +58,21 @@ class Smache:
             logger.setLevel(logging.DEBUG)
 
     def set_globals(self):
-        global computed_repo, relation_deps_repo, dependency_graph, smache_options, scheduler, _data_sources
-        computed_repo      = self.computed_repo
-        relation_deps_repo = self.relation_deps_repo
-        dependency_graph   = self.dependency_graph
-        smache_options     = self._options
-        scheduler          = self.scheduler
-        _data_sources      = self.data_sources
+        global _computed_repo, _relation_deps_repo, _dependency_graph, _options, _scheduler, _data_sources
+        _computed_repo      = self._computed_repo
+        _relation_deps_repo = self._relation_deps_repo
+        _dependency_graph    = self._dependency_graph
+        _options      = self._options
+        _scheduler           = self._scheduler
+        _data_sources       = self.data_sources
 
     def log(self, something):
         logger.debug("LOGGING FROM SMACHE: {}".format(something))
 
     def draw(self, filename='graph'):
-        draw_graph(self._dependency_graph().values(), filename)
+        draw_graph(self._build_dependency_graph().values(), filename)
 
-    def _dependency_graph(self):
+    def _build_dependency_graph(self):
         return self._cache_manager.dependency_graph()
 
     def _use_or_default(self, value, default_lambda):
@@ -129,7 +129,6 @@ class Options:
         return prop in options and options[prop] == test_value
 
 def reset_globals():
-    global computed_repo, relation_deps_repo, data_sources
-    computed_repo      = ComputedFunctionRepository()
-    relation_deps_repo = RelationDependencyRepository()
-    data_sources       = []
+    global _computed_repo, _relation_deps_repo, data_sources
+    _computed_repo      = ComputedFunctionRepository()
+    _relation_deps_repo = RelationDependencyRepository()
