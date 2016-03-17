@@ -1,7 +1,7 @@
 from data_sources import DummyDataSource
+from schedulers import DataUpdatePropagator
 from computed_function import ComputedFunction
 from dependency_graph_builder import build_dependency_graph
-from topological_sort import topological_sort
 from computed_function_repository import ComputedFunctionRepository
 from collections import namedtuple as struct
 from smache.smache_logging import logger
@@ -82,10 +82,6 @@ class CacheManager:
             **kwargs
         )
 
-    def _node_ids_in_topological_order(self):
-        topologically_sorted_nodes = topological_sort(self.dependency_graph())
-        return [node.id for node in topologically_sorted_nodes]
-
     def _get_computed(self, fun):
         return self.computed_repo.get(fun)
 
@@ -122,56 +118,16 @@ class CacheManager:
             return (value,)
 
     def _on_data_source_update(self, data_source, entity):
-        depending_keys = self.dep_graph.values_depending_on(data_source.data_source_id, entity.id)
-        depending_relation_keys = self._depending_relation_keys(data_source, entity)
-        self._invalidate_keys(depending_keys | depending_relation_keys)
-
-    def _depending_relation_keys(self, data_source, entity):
-        depending_relations = self._relation_deps_repo.get(data_source.data_source_id)
-        depending_relation_keys = [self._rel_keys(relation_fun, entity, computed_fun) for relation_fun, computed_fun in depending_relations]
-        return self._flattened_sets(depending_relation_keys)
-
-    def _rel_keys(self, relation_fun, entity, computed_fun):
-        computed_sources = relation_fun(entity)
-        rel_keys = [self._fun_values_depending_on(computed_source, computed_fun)
-                    for computed_source in self._list(computed_sources)]
-        return self._flattened_sets(rel_keys)
-
-    def _flattened_sets(self, depending_relation_keys):
-        return reduce(lambda x, y: x | y, depending_relation_keys, set())
-
-    def _fun_values_depending_on(self, computed_source, computed_fun):
-        data_source = next(source for source in self.data_sources if source.for_entity(computed_source))
-        return self.dep_graph.fun_values_depending_on(
-            data_source.data_source_id,
-            computed_source.id,
-            computed_fun.id
-        )
-
-    def _list(self, value):
-        if isinstance(value, list):
-            return value
-        else:
-            return [value]
-
-    def _invalidate_keys(self, keys):
-        self._mark_invalidation(keys)
-        if self._options.write_through:
-            self._write_through_invalidation(keys)
-
-    def _mark_invalidation(self, keys):
-        for key in keys:
-            self.store.mark_as_stale(key)
-
-    def _write_through_invalidation(self, keys):
-        sorted_nodes = self._node_ids_in_topological_order()
-        fun_names = [self._fun_name_from_key(key) for key in keys]
-        indexes = [sorted_nodes.index(fun_name) for fun_name in fun_names]
-        sorted_keys = [key for key, _ in sorted(zip(keys, indexes), key=lambda x: x[1])]
-        self._scheduler.schedule_write_through(sorted_keys)
+        DataUpdatePropagator(
+            self.dep_graph,
+            self._relation_deps_repo,
+            self._function_serializer,
+            self.data_sources,
+            self._options,
+            self.store,
+            self._scheduler
+        ).handle_update(data_source, entity)
 
     def _fun_key(self, fun, *args, **kwargs):
         return self._function_serializer.serialized_fun(fun, *args, **kwargs)
 
-    def _fun_name_from_key(self, fun_key):
-        return self._function_serializer.fun_name(fun_key)
