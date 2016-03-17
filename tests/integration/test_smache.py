@@ -1,6 +1,7 @@
 from smache import Smache, RedisStore
 from smache.data_sources.dummy_data_source import DummyEntity
 from smache.data_sources import DummyDataSource, RawDataSource
+from smache.schedulers import InProcessScheduler
 
 from collections import namedtuple
 import pytest
@@ -8,7 +9,7 @@ import pytest
 import redis
 
 # Definitions
-smache = Smache()
+smache = Smache(scheduler=InProcessScheduler())
 a = DummyDataSource('A')
 b = DummyDataSource('B')
 c = DummyDataSource('C')

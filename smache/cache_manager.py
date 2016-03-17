@@ -118,7 +118,7 @@ class CacheManager:
             return (value,)
 
     def _on_data_source_update(self, data_source, entity):
-        DataUpdatePropagator().handle_update(data_source.data_source_id, entity.id)
+        self._scheduler.schedule_update_handle(data_source.data_source_id, entity.id)
 
     def _fun_key(self, fun, *args, **kwargs):
         return self._function_serializer.serialized_fun(fun, *args, **kwargs)

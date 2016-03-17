@@ -1,5 +1,6 @@
 from smache import Smache, RedisStore, RedisDependencyGraph
 from smache.data_sources import MongoDataSource
+from smache.schedulers import InProcessScheduler
 from mongoengine import Document, StringField, IntField, connect
 from tests.mongo_helper import User, test_connect
 
@@ -11,7 +12,7 @@ import redis
 # Definitions
 test_connect()
 
-smache = Smache()
+smache = Smache(scheduler=InProcessScheduler())
 
 a = MongoDataSource(User)
 
