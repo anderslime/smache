@@ -40,6 +40,32 @@ def test_subscriber_is_notified_on_update():
 
     data_source.disconnect()
 
+def test_subscriber_is_notified_on_delete():
+    data_source = MongoDataSource(User)
+
+    user = User(name='Anders', age=12)
+    user.save()
+
+    notified = {
+        'notified_data_source': None,
+        'notified_entity_id': None
+    }
+
+    def notify(data_source, entity):
+        notified['notified_data_source'] = data_source
+        notified['notified_entity_id'] = entity.id
+
+    data_source.subscribe(notify)
+
+    user.delete()
+
+    assert notified == {
+        'notified_data_source': data_source,
+        'notified_entity_id': user.id
+    }
+
+    data_source.disconnect()
+
 def test_serialization():
     data_source = MongoDataSource(User)
 

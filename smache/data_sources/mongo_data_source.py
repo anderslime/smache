@@ -14,6 +14,10 @@ class MongoDataSource:
             self._mongoengine_post_save,
             sender=self.document
         )
+        signals.post_delete.connect(
+            self._mongoengine_post_save,
+            sender=self.document
+        )
 
     def for_entity(self, document_instance):
         return self.data_source_id == document_instance.__class__.__name__
@@ -26,6 +30,7 @@ class MongoDataSource:
 
     def disconnect(self):
         signals.post_save.disconnect(self._mongoengine_post_save)
+        signals.post_delete.disconnect(self._mongoengine_post_save)
 
     def _mongoengine_post_save(self, sender, document, **kwargs):
         logger.debug("{}({}) updated - notifying subscriber {}".format(document, str(document.id), self._subscriber.__name__))
