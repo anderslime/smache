@@ -13,12 +13,12 @@ class DataUpdatePropagator:
 
     def __init__(self):
         self._function_serializer = FunctionSerializer()
-        self.store = RedisStore(smache._options.redis_con)
+        self.store = RedisStore(smache._instance._options.redis_con)
 
     def handle_update(self, data_source_id, entity_id):
         data_source = self._find_data_source(data_source_id)
         entity = data_source.find(entity_id)
-        depending_keys = smache._dependency_graph.values_depending_on(
+        depending_keys = smache._instance._dependency_graph.values_depending_on(
             data_source_id,
             entity_id
         )
@@ -30,7 +30,7 @@ class DataUpdatePropagator:
 
     def _depending_relation_keys(self, data_source, entity):
         data_source_id = data_source.data_source_id
-        depending_relations = smache._relation_deps_repo.get(data_source_id)
+        depending_relations = smache._instance._relation_deps_repo.get(data_source_id)
         depending_relation_keys = self._map_relation_keys(
             entity,
             depending_relations
@@ -42,7 +42,7 @@ class DataUpdatePropagator:
 
     def _fun_values_depending_on(self, computed_source, computed_fun):
         data_source = self._find_data_source_for_entity(computed_source)
-        return smache._dependency_graph.fun_values_depending_on(
+        return smache._instance._dependency_graph.fun_values_depending_on(
             data_source.data_source_id,
             computed_source.id,
             computed_fun.id
@@ -56,7 +56,7 @@ class DataUpdatePropagator:
 
     def _invalidate_keys(self, keys):
         self._mark_invalidation(keys)
-        if smache._options.write_through:
+        if smache._instance._options.write_through:
             self._write_through_invalidation(keys)
 
     def _mark_invalidation(self, keys):
@@ -68,7 +68,7 @@ class DataUpdatePropagator:
         fun_names = [self._fun_name_from_key(key) for key in keys]
         indices = [sorted_nodes.index(fun_name) for fun_name in fun_names]
         sorted_keys = self._keys_sorted_by_index(keys, indices)
-        smache._scheduler.schedule_write_through(sorted_keys)
+        smache._instance._scheduler.schedule_write_through(sorted_keys)
 
     def _keys_sorted_by_index(self, keys, indices):
         keys_with_indices = sorted(zip(keys, indices), key=lambda x: x[1])
@@ -86,16 +86,16 @@ class DataUpdatePropagator:
 
     def _dependency_graph(self):
         return build_dependency_graph(
-            smache._data_sources,
-            smache._computed_repo.computed_funs
+            smache._instance._data_sources,
+            smache._instance._computed_repo.computed_funs
         )
 
     def _find_data_source(self, data_source_id):
-        return [source for source in smache._data_sources
+        return [source for source in smache._instance._data_sources
                 if source.data_source_id == data_source_id][0]
 
     def _find_data_source_for_entity(self, computed_source):
-        return next(source for source in smache._data_sources
+        return next(source for source in smache._instance._data_sources
                     if source.for_entity(computed_source))
 
     def _map_relation_keys(self, entity, depending_relations):
@@ -152,6 +152,6 @@ def _execute(key):
     store = RedisStore(redis_con)
 
     fun_name, args = FunctionSerializer().deserialized_fun(key)
-    computed_fun = smache._computed_repo.get_from_id(fun_name)
+    computed_fun = smache._instance._computed_repo.get_from_id(fun_name)
     computed_value = computed_fun(*args)
     return store.store(key, computed_value)

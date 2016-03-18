@@ -8,9 +8,7 @@ from .function_serializer import FunctionSerializer
 from .options import Options
 from .smache_logging import setup_logger
 
-global _computed_repo, _relation_deps_repo, _dependency_graph, _options, \
-    _scheduler, _data_sources
-
+global _instance
 
 class Smache:
 
@@ -52,14 +50,8 @@ class Smache:
         draw_graph(self._build_dependency_graph().values(), filename)
 
     def _set_globals(self):
-        global _computed_repo, _relation_deps_repo, _dependency_graph, \
-            _options, _scheduler, _data_sources
-        _computed_repo = self._computed_repo
-        _relation_deps_repo = self._relation_deps_repo
-        _dependency_graph = self._dependency_graph
-        _options = self._options
-        _scheduler = self._scheduler
-        _data_sources = self._data_sources
+        global _instance
+        _instance = self
 
     def _build_dependency_graph(self):
         return self._cache_manager.dependency_graph()
