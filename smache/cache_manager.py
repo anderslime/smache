@@ -3,30 +3,29 @@ from schedulers import DataUpdatePropagator
 from computed_function import ComputedFunction
 from dependency_graph_builder import build_dependency_graph
 from computed_function_repository import ComputedFunctionRepository
-from collections import namedtuple as struct
 from smache.smache_logging import logger
 
 class CacheManager:
     def __init__(self, store, dep_graph, computed_repo, data_sources, scheduler, function_serializer, relation_deps_repo, options):
-        self.store                = store
-        self.dep_graph            = dep_graph
+        self._store               = store
+        self._dep_graph           = dep_graph
         self._options             = options
         self._function_serializer = function_serializer
-        self._scheduler            = scheduler
-        self._computed_repo        = computed_repo
-        self.data_sources         = data_sources
+        self._scheduler           = scheduler
+        self._computed_repo       = computed_repo
+        self._data_sources        = data_sources
         self._relation_deps_repo  = relation_deps_repo
 
     def cache_function(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
         self._add_entity_dependencies(fun, args, key)
         self._add_data_source_dependencies(fun, key)
-        cache_result = self.store.lookup(key)
+        cache_result = self._store.lookup(key)
         if cache_result.is_fresh:
             return cache_result.value
         else:
             computed_value = fun(*args)
-            self.store.store(key, computed_value)
+            self._store.store(key, computed_value)
             return computed_value
 
     def computed(self, *deps, **kwargs):
@@ -41,7 +40,7 @@ class CacheManager:
 
     def add_sources(self, *data_sources):
         for data_source in data_sources:
-            self.data_sources.append(data_source)
+            self._data_sources.append(data_source)
             data_source.subscribe(self._on_data_source_update)
 
     def add_computed(self, fun, arg_deps, kwargs):
@@ -57,19 +56,19 @@ class CacheManager:
         self._set_computed(computed_fun)
 
     def is_fresh(self, key):
-        return self.store.is_fresh(key)
+        return self._store.is_fresh(key)
 
     def is_fun_fresh(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
-        return self.store.is_fresh(key)
+        return self._store.is_fresh(key)
 
     def function_cache_value(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
-        return self.store.lookup(key).value
+        return self._store.lookup(key).value
 
     def dependency_graph(self):
         return build_dependency_graph(
-            self.data_sources,
+            self._data_sources,
             self._computed_repo.computed_funs
         )
 
@@ -91,7 +90,7 @@ class CacheManager:
     def _add_data_source_dependencies(self, fun, key):
         data_source_deps = self._computed_repo.get(fun).data_source_deps
         for data_source_dep in data_source_deps:
-            self.dep_graph.add_data_source_dependency(
+            self._dep_graph.add_data_source_dependency(
                 data_source_dep.data_source_id,
                 key
             )
@@ -99,12 +98,12 @@ class CacheManager:
     def _add_entity_dependencies(self, fun, args, key):
         arg_deps = self._get_computed(fun).arg_deps
         for data_source, data_source_entity in zip(arg_deps, args):
-            self.dep_graph.add_dependency(
+            self._dep_graph.add_dependency(
                 data_source.data_source_id,
                 data_source.serialize(data_source_entity),
                 key
             )
-            self.dep_graph.add_fun_dependency(
+            self._dep_graph.add_fun_dependency(
                 data_source.data_source_id,
                 data_source.serialize(data_source_entity),
                 ComputedFunction.id_from_fun(fun),
