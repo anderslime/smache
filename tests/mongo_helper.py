@@ -1,4 +1,5 @@
-from mongoengine import Document, StringField, IntField, connect, ListField, ReferenceField
+from mongoengine import Document, StringField, IntField, connect, ListField, \
+    ReferenceField
 
 
 def test_connect():

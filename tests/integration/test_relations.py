@@ -21,8 +21,12 @@ def f(a, c, d):
     return a.value * b.value
 
 
-relations = [(B, lambda b: [A.find('1'), A.find('2')])]
-@smache.computed(A, raw, raw, relations=relations)
+@smache.computed(
+    A,
+    raw,
+    raw,
+    relations=[(B, lambda b: [A.find('1'), A.find('2')])]
+)
 def h(a, c, d):
     b = B.find('2')
     return a.value * b.value

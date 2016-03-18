@@ -28,10 +28,10 @@ def test_serialization():
 
     fun_serializer = FunctionSerializer()
 
-    expected_serialization = '"tests.integration.test_function_serialization/score"~~~1~~~"2"~~~500'
+    e = '"tests.integration.test_function_serialization/score"~~~1~~~"2"~~~500'
 
     key = fun_serializer.serialized_fun([a, b, raw], score, ax, bx, 500)
-    assert key == expected_serialization
+    assert key == e
 
     expected_deserialization = (
         "tests.integration.test_function_serialization/score", [1, '2', 500]
