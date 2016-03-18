@@ -72,9 +72,3 @@ class Smache:
 
     def __repr__(self):
         return "<Smache deps={}>".format(str(self._dependency_graph().values()))
-
-
-def reset_globals():
-    global _computed_repo, _relation_deps_repo, data_sources
-    _computed_repo      = ComputedFunctionRepository()
-    _relation_deps_repo = RelationDependencyRepository()

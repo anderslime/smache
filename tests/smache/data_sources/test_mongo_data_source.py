@@ -5,9 +5,6 @@ import smache, pytest
 
 test_connect()
 
-def teardown_module(module):
-    smache.reset_globals()
-
 def test_subscriber_is_notified_on_update():
     data_source = MongoDataSource(User)
 
