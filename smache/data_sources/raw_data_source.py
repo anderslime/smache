@@ -1,4 +1,5 @@
 class RawDataSource:
+
     def __init__(self):
         self.data_source_id = 'raw_value'
 

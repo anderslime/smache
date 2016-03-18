@@ -1,6 +1,8 @@
 from .cache_result import CacheResult
 
+
 class InMemoryStore:
+
     def __init__(self):
         self._data = {}
 
@@ -22,4 +24,3 @@ class InMemoryStore:
         if old_value is not None:
             old_value['is_fresh'] = False
             self._data[key] = old_value
-

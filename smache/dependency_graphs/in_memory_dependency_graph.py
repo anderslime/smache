@@ -1,4 +1,5 @@
 class InMemoryDependencyGraph:
+
     def __init__(self):
         self._dependencies = {}
 
@@ -14,7 +15,8 @@ class InMemoryDependencyGraph:
 
     def values_depending_on(self, data_source_id, entity_id):
         data_source_deps = self._dependencies[data_source_id]
-        return data_source_deps.get('all', set()) | data_source_deps.get(entity_id, set())
+        return data_source_deps.get('all', set()) | \
+            data_source_deps.get(entity_id, set())
 
     def _entity_key(self, data_source_id, entity_id):
         return '/'.join([data_source_id, str(entity_id)])

@@ -1,17 +1,21 @@
 from collections import namedtuple
 
+
 class DummyEntity:
+
     def __init__(self, data_source_id, id, value):
         self.data_source_id = data_source_id
-        self.id             = id
-        self.value          = value
+        self.id = id
+        self.value = value
 
     @property
     def __name__(self):
         return self.data_source_id
 
+
 class DummyDataSource:
-    def __init__(self, data_source_id, data = {}):
+
+    def __init__(self, data_source_id, data={}):
         self.data_source_id = data_source_id
         self.original_data = data.copy()
         self.data = data
@@ -39,7 +43,8 @@ class DummyDataSource:
     def find(self, input_value):
         raw_data = self.data.get(self._key(input_value))
         if raw_data:
-            return DummyEntity(self.data_source_id, input_value, raw_data['value'])
+            return DummyEntity(self.data_source_id,
+                               input_value, raw_data['value'])
 
     def reset(self):
         self.data = self.original_data.copy()
