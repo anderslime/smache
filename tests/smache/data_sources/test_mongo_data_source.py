@@ -5,11 +5,6 @@ import smache, pytest
 
 test_connect()
 
-@pytest.yield_fixture(autouse=True)
-def reset_before_each_test():
-    smache.reset_globals()
-    yield
-
 def teardown_module(module):
     smache.reset_globals()
 

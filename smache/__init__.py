@@ -47,9 +47,12 @@ class Smache:
 
         setup_logger(self._options)
 
-        self.set_globals()
+        self._set_globals()
 
-    def set_globals(self):
+    def draw(self, filename='graph'):
+        draw_graph(self._build_dependency_graph().values(), filename)
+
+    def _set_globals(self):
         global _computed_repo, _relation_deps_repo, _dependency_graph, _options, _scheduler, _data_sources
         _computed_repo      = self._computed_repo
         _relation_deps_repo = self._relation_deps_repo
@@ -57,9 +60,6 @@ class Smache:
         _options            = self._options
         _scheduler          = self._scheduler
         _data_sources       = self.data_sources
-
-    def draw(self, filename='graph'):
-        draw_graph(self._build_dependency_graph().values(), filename)
 
     def _build_dependency_graph(self):
         return self._cache_manager.dependency_graph()
@@ -72,7 +72,6 @@ class Smache:
 
     def __repr__(self):
         return "<Smache deps={}>".format(str(self._dependency_graph().values()))
-
 
 
 def reset_globals():
