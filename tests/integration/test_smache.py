@@ -3,7 +3,8 @@ from smache.data_sources.dummy_data_source import DummyEntity
 from smache.data_sources import DummyDataSource, RawDataSource
 from smache.schedulers import InProcessScheduler
 
-import pytest, redis
+import pytest
+import redis
 
 # Definitions
 smache = Smache(scheduler=InProcessScheduler())
@@ -14,17 +15,21 @@ raw = RawDataSource()
 
 smache.add_sources(a, b, c, raw)
 
+
 @smache.computed(a, sources=(b, c))
 def score(a):
     return a.value + 5 + 10
+
 
 @smache.computed(b, c)
 def h(b, c):
     return b.value + c.value
 
+
 @smache.computed(a, b, c)
 def f(a, b, c):
     return a.value * h(b, c)
+
 
 @smache.computed(a, b, raw)
 def with_raw(a, b, static_value):
@@ -33,10 +38,12 @@ def with_raw(a, b, static_value):
 # Tests
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
+
 @pytest.yield_fixture(autouse=True)
 def flush_before_each_test_case():
     redis_con.flushall()
     yield
+
 
 def test_cache():
 
@@ -69,6 +76,7 @@ def test_cache():
     assert smache.is_fun_fresh(score, ax) == False
     assert smache.is_fun_fresh(f, ax, bx, cx) == False
     assert smache.is_fun_fresh(h, bx, cx) == False
+
 
 def test_with_raw_value():
     ax = DummyEntity(a.data_source_id, 1, 10)

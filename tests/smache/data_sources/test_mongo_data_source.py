@@ -3,6 +3,7 @@ from tests.mongo_helper import User, test_connect
 
 test_connect()
 
+
 def test_subscriber_is_notified_on_update():
     data_source = MongoDataSource(User)
 
@@ -30,6 +31,7 @@ def test_subscriber_is_notified_on_update():
 
     data_source.disconnect()
 
+
 def test_subscriber_is_notified_on_delete():
     data_source = MongoDataSource(User)
 
@@ -56,6 +58,7 @@ def test_subscriber_is_notified_on_delete():
 
     data_source.disconnect()
 
+
 def test_serialization():
     data_source = MongoDataSource(User)
 
@@ -65,6 +68,7 @@ def test_serialization():
     assert data_source.serialize(user) == str(user.id)
 
     data_source.disconnect()
+
 
 def test_finding_record():
     data_source = MongoDataSource(User)
@@ -76,10 +80,12 @@ def test_finding_record():
 
     data_source.disconnect()
 
+
 def test_data_source_id():
     data_source = MongoDataSource(User)
     assert data_source.data_source_id == 'User'
     data_source.disconnect()
+
 
 def test_document():
     data_source = MongoDataSource(User)

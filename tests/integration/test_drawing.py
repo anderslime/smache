@@ -1,10 +1,13 @@
 from smache import Smache
 from smache.data_sources.dummy_data_source import DummyDataSource
-import pytest, redis, os
+import pytest
+import redis
+import os
 
 smache = Smache()
 a = DummyDataSource('A')
 smache.add_sources(a)
+
 
 @smache.computed(a)
 def score(a):
@@ -13,10 +16,12 @@ def score(a):
 # Tests
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
+
 @pytest.yield_fixture(autouse=True)
 def flush_before_each_test_case():
     redis_con.flushall()
     yield
+
 
 def test_draw():
     execution_path = os.getcwd()

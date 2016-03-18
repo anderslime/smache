@@ -17,13 +17,16 @@ b = DummyDataSource('B', {'1': {'value': 'world'}})
 
 smache.add_sources(a, b)
 
+
 @smache.computed(a, b)
 def hyphen(a, b):
     return ' - '.join([a.value, b.value])
 
+
 @smache.computed(sources=(a))
 def slash():
     return '/'.join([a.find('1').value, a.find('2').value])
+
 
 @pytest.yield_fixture(autouse=True)
 def flush_before_each_test_case():
@@ -32,6 +35,7 @@ def flush_before_each_test_case():
     b.reset()
     redis_con.flushall()
     yield
+
 
 def test_write_through():
     ax = DummyEntity(a.data_source_id, 1, 'hello')
@@ -48,7 +52,9 @@ def test_write_through():
 
     assert smache.is_fun_fresh(hyphen, ax, bx) == True
 
-    assert smache._cache_manager.function_cache_value(hyphen, ax, bx) == 'wtf - world'
+    assert smache._cache_manager.function_cache_value(
+        hyphen, ax, bx
+    ) == 'wtf - world'
 
 
 def test_write_through_with_collection_wide_subscription():

@@ -8,8 +8,10 @@ b = DummyDataSource('B')
 
 raw = RawDataSource()
 
+
 def score(a, raw_value):
     return a.value + raw_value
+
 
 def test_computed_function():
     computed_fun = ComputedFunction(score, (a, raw), (b), tuple())
