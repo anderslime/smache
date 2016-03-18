@@ -3,8 +3,6 @@ from smache.data_sources.dummy_data_source import DummyEntity
 from smache.data_sources import DummyDataSource, RawDataSource
 from smache.function_serializer import FunctionSerializer
 
-import redis
-
 # Definitions
 smache = Smache()
 a = DummyDataSource('A')

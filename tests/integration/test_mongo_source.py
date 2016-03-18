@@ -1,13 +1,9 @@
-from smache import Smache, RedisStore, RedisDependencyGraph
+from smache import Smache
 from smache.data_sources import MongoDataSource
 from smache.schedulers import InProcessScheduler
-from mongoengine import Document, StringField, IntField, connect
 from tests.mongo_helper import User, test_connect
 
-from collections import namedtuple
-import pytest
-
-import redis
+import pytest, redis
 
 # Definitions
 test_connect()

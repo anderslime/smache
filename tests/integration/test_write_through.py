@@ -1,4 +1,4 @@
-from smache import Smache, RedisStore, RedisDependencyGraph
+from smache import Smache
 from smache.data_sources.dummy_data_source import DummyEntity, DummyDataSource
 from tests.helper import execute_all_jobs
 
@@ -8,7 +8,6 @@ import redis
 from rq import Queue
 
 # Definitions
-from redis import Redis
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 worker_queue = Queue('test_queue', connection=redis_con)
 smache = Smache(worker_queue=worker_queue, write_through=True)
@@ -33,8 +32,6 @@ def flush_before_each_test_case():
     b.reset()
     redis_con.flushall()
     yield
-
-from time import sleep
 
 def test_write_through():
     ax = DummyEntity(a.data_source_id, 1, 'hello')

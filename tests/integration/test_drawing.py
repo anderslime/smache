@@ -1,9 +1,6 @@
 from smache import Smache
 from smache.data_sources.dummy_data_source import DummyDataSource
-import pytest
-import redis
-import os
-import inspect
+import pytest, redis, os
 
 smache = Smache()
 a = DummyDataSource('A')

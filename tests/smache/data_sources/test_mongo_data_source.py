@@ -1,8 +1,6 @@
 from smache.data_sources import MongoDataSource
 from tests.mongo_helper import User, test_connect
 
-import smache, pytest
-
 test_connect()
 
 def test_subscriber_is_notified_on_update():

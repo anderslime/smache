@@ -3,10 +3,7 @@ from smache.data_sources.dummy_data_source import DummyEntity
 from smache.data_sources import DummyDataSource, RawDataSource
 from smache.schedulers import InProcessScheduler
 
-from collections import namedtuple
-import pytest
-
-import redis
+import pytest, redis
 
 # Definitions
 smache = Smache(scheduler=InProcessScheduler())
