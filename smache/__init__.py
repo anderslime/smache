@@ -9,8 +9,8 @@ from function_serializer import FunctionSerializer
 
 from options import Options
 
-from smache_logging import logger
-import logging, sys
+from smache_logging import setup_logger
+
 
 global _computed_repo, _relation_deps_repo, _dependency_graph, _options, _scheduler, _data_sources
 
@@ -45,14 +45,9 @@ class Smache:
 
         self.is_fun_fresh = self._cache_manager.is_fun_fresh
 
+        setup_logger(self._options)
+
         self.set_globals()
-
-        if self._options.debug:
-            handler = logging.StreamHandler(sys.stdout)
-            handler.setLevel(logging.DEBUG)
-
-            logger.addHandler(handler)
-            logger.setLevel(logging.DEBUG)
 
     def set_globals(self):
         global _computed_repo, _relation_deps_repo, _dependency_graph, _options, _scheduler, _data_sources
@@ -62,9 +57,6 @@ class Smache:
         _options            = self._options
         _scheduler          = self._scheduler
         _data_sources       = self.data_sources
-
-    def log(self, something):
-        logger.debug("LOGGING FROM SMACHE: {}".format(something))
 
     def draw(self, filename='graph'):
         draw_graph(self._build_dependency_graph().values(), filename)
