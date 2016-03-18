@@ -1,6 +1,8 @@
-import logging, sys
+import logging
+import sys
 
 logger = logging.getLogger('smache')
+
 
 def setup_logger(options):
     if options.debug:

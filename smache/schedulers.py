@@ -1,40 +1,47 @@
-import redis, smache
+import redis
+import smache
 
 from .topological_sort import topological_sort
 from .stores import RedisStore
 from .function_serializer import FunctionSerializer
 from .dependency_graph_builder import build_dependency_graph
 from .smache_logging import logger
+from functools import reduce
 
 
 class DataUpdatePropagator:
+
     def __init__(self):
         self._function_serializer = FunctionSerializer()
-        self.store                = RedisStore(smache._options.redis_con)
+        self.store = RedisStore(smache._options.redis_con)
 
     def handle_update(self, data_source_id, entity_id):
-        data_source = [source for source in smache._data_sources if source.data_source_id == data_source_id][0]
+        data_source = self._find_data_source(data_source_id)
         entity = data_source.find(entity_id)
-        depending_keys = smache._dependency_graph.values_depending_on(data_source_id, entity_id)
-        depending_relation_keys = self._depending_relation_keys(data_source, entity)
+        depending_keys = smache._dependency_graph.values_depending_on(
+            data_source_id,
+            entity_id
+        )
+        depending_relation_keys = self._depending_relation_keys(
+            data_source,
+            entity
+        )
         self._invalidate_keys(depending_keys | depending_relation_keys)
 
     def _depending_relation_keys(self, data_source, entity):
-        depending_relations = smache._relation_deps_repo.get(data_source.data_source_id)
-        depending_relation_keys = [self._rel_keys(relation_fun, entity, computed_fun) for relation_fun, computed_fun in depending_relations]
+        data_source_id = data_source.data_source_id
+        depending_relations = smache._relation_deps_repo.get(data_source_id)
+        depending_relation_keys = self._map_relation_keys(
+            entity,
+            depending_relations
+        )
         return self._flattened_sets(depending_relation_keys)
-
-    def _rel_keys(self, relation_fun, entity, computed_fun):
-        computed_sources = relation_fun(entity)
-        rel_keys = [self._fun_values_depending_on(computed_source, computed_fun)
-                    for computed_source in self._list(computed_sources)]
-        return self._flattened_sets(rel_keys)
 
     def _flattened_sets(self, depending_relation_keys):
         return reduce(lambda x, y: x | y, depending_relation_keys, set())
 
     def _fun_values_depending_on(self, computed_source, computed_fun):
-        data_source = next(source for source in smache._data_sources if source.for_entity(computed_source))
+        data_source = self._find_data_source_for_entity(computed_source)
         return smache._dependency_graph.fun_values_depending_on(
             data_source.data_source_id,
             computed_source.id,
@@ -59,9 +66,13 @@ class DataUpdatePropagator:
     def _write_through_invalidation(self, keys):
         sorted_nodes = self._node_ids_in_topological_order()
         fun_names = [self._fun_name_from_key(key) for key in keys]
-        indexes = [sorted_nodes.index(fun_name) for fun_name in fun_names]
-        sorted_keys = [key for key, _ in sorted(zip(keys, indexes), key=lambda x: x[1])]
+        indices = [sorted_nodes.index(fun_name) for fun_name in fun_names]
+        sorted_keys = self._keys_sorted_by_index(keys, indices)
         smache._scheduler.schedule_write_through(sorted_keys)
+
+    def _keys_sorted_by_index(self, keys, indices):
+        keys_with_indices = sorted(zip(keys, indices), key=lambda x: x[1])
+        return [key for key, _ in keys_with_indices]
 
     def _fun_key(self, fun, *args, **kwargs):
         return self._function_serializer.serialized_fun(fun, *args, **kwargs)
@@ -79,7 +90,27 @@ class DataUpdatePropagator:
             smache._computed_repo.computed_funs
         )
 
+    def _find_data_source(self, data_source_id):
+        return [source for source in smache._data_sources
+                if source.data_source_id == data_source_id][0]
+
+    def _find_data_source_for_entity(self, computed_source):
+        return next(source for source in smache._data_sources
+                    if source.for_entity(computed_source))
+
+    def _map_relation_keys(self, entity, depending_relations):
+        return [self._rel_keys(relation_fun, entity, computed_fun)
+                for relation_fun, computed_fun in depending_relations]
+
+    def _rel_keys(self, relation_fun, entity, computed_fun):
+        computed_sources = relation_fun(entity)
+        rel_keys = [self._fun_values_depending_on(computed_source, computed_fun)
+                    for computed_source in self._list(computed_sources)]
+        return self._flattened_sets(rel_keys)
+
+
 class AsyncScheduler:
+
     def __init__(self, worker_queue):
         self.worker_queue = worker_queue
 
@@ -100,7 +131,9 @@ class AsyncScheduler:
             depends_on=last_job
         )
 
+
 class InProcessScheduler:
+
     def schedule_write_through(self, keys):
         for key in keys:
             _execute(key)
@@ -108,15 +141,17 @@ class InProcessScheduler:
     def schedule_update_handle(self, data_source_id, entity_id):
         _handle_data_source_update(data_source_id, entity_id)
 
+
 def _handle_data_source_update(data_source_id, entity_id):
     DataUpdatePropagator().handle_update(data_source_id, entity_id)
 
+
 def _execute(key):
     logger.debug("EXECUTE on {}".format(key))
-    redis_con      = redis.StrictRedis(host='localhost', port=6379, db=0)
-    store          = RedisStore(redis_con)
+    redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
+    store = RedisStore(redis_con)
 
     fun_name, args = FunctionSerializer().deserialized_fun(key)
-    computed_fun   = smache._computed_repo.get_from_id(fun_name)
+    computed_fun = smache._computed_repo.get_from_id(fun_name)
     computed_value = computed_fun(*args)
     return store.store(key, computed_value)

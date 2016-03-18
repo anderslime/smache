@@ -5,16 +5,19 @@ from .dependency_graph_builder import build_dependency_graph
 from .computed_function_repository import ComputedFunctionRepository
 from .smache_logging import logger
 
+
 class CacheManager:
-    def __init__(self, store, dep_graph, computed_repo, data_sources, scheduler, function_serializer, relation_deps_repo, options):
-        self._store               = store
-        self._dep_graph           = dep_graph
-        self._options             = options
+
+    def __init__(self, store, dep_graph, computed_repo, data_sources,
+                 scheduler, function_serializer, relation_deps_repo, options):
+        self._store = store
+        self._dep_graph = dep_graph
+        self._options = options
         self._function_serializer = function_serializer
-        self._scheduler           = scheduler
-        self._computed_repo       = computed_repo
-        self._data_sources        = data_sources
-        self._relation_deps_repo  = relation_deps_repo
+        self._scheduler = scheduler
+        self._computed_repo = computed_repo
+        self._data_sources = data_sources
+        self._relation_deps_repo = relation_deps_repo
 
     def cache_function(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
@@ -45,9 +48,10 @@ class CacheManager:
 
     def add_computed(self, fun, arg_deps, kwargs):
         data_source_deps = self._parse_deps(kwargs.get('sources', ()))
-        computed_deps    = self._parse_deps(kwargs.get('computed_deps', ()))
-        relation_deps    = kwargs.get('relations', ())
-        computed_dep_funs = [self._get_computed(computed_dep) for computed_dep in computed_deps]
+        computed_deps = self._parse_deps(kwargs.get('computed_deps', ()))
+        relation_deps = kwargs.get('relations', ())
+        computed_dep_funs = [self._get_computed(computed_dep)
+                             for computed_dep in computed_deps]
         computed_fun = ComputedFunction(fun,
                                         arg_deps,
                                         data_source_deps,
@@ -117,7 +121,10 @@ class CacheManager:
             return (value,)
 
     def _on_data_source_update(self, data_source, entity):
-        self._scheduler.schedule_update_handle(data_source.data_source_id, entity.id)
+        self._scheduler.schedule_update_handle(
+            data_source.data_source_id,
+            entity.id
+        )
 
     def _fun_key(self, fun, *args, **kwargs):
         return self._function_serializer.serialized_fun(fun, *args, **kwargs)

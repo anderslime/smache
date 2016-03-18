@@ -1,4 +1,6 @@
-import dagger, os
+import dagger
+import os
+
 
 def draw_graph(nodes, filename):
     dag = dagger.dagger()
@@ -7,6 +9,7 @@ def draw_graph(nodes, filename):
     dotfile = "{}.dot".format(filename)
     dag.dot(dotfile)
     os.system("dot -Tpng {} > {}.png".format(dotfile, filename))
+
 
 def _recursive_add(dag, nodes):
     for node in nodes:

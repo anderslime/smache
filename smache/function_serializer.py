@@ -1,5 +1,7 @@
 import json
 from .computed_function import ComputedFunction
+from functools import reduce
+
 
 class FunctionSerializer:
     seperator_token = '~~~'
@@ -27,7 +29,8 @@ class FunctionSerializer:
         return [json.loads(element) for element in elements[1:]]
 
     def _serialized_args(self, arguments, arg_types):
-        return [self._serialized_arg(argument, arg_type) for argument, arg_type in zip(arguments, arg_types)]
+        return [self._serialized_arg(argument, arg_type)
+                for argument, arg_type in zip(arguments, arg_types)]
 
     def _serialized_arg(self, argument, arg_type):
         return json.dumps(arg_type.serialize(argument))

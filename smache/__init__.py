@@ -8,27 +8,30 @@ from .function_serializer import FunctionSerializer
 from .options import Options
 from .smache_logging import setup_logger
 
-global _computed_repo, _relation_deps_repo, _dependency_graph, _options, _scheduler, _data_sources
+global _computed_repo, _relation_deps_repo, _dependency_graph, _options, \
+    _scheduler, _data_sources
+
 
 class Smache:
+
     def __init__(self, **kwargs):
         self._options = Options(**kwargs)
 
         redis_con = self._options.redis_con
         worker_queue = self._options.worker_queue
 
-        self._computed_repo      = ComputedFunctionRepository()
+        self._computed_repo = ComputedFunctionRepository()
         self._relation_deps_repo = RelationDependencyRepository()
-        self._dependency_graph   = RedisDependencyGraph(redis_con)
-        self._scheduler          = self._options.scheduler
-        self.data_sources        = []
-        store                    = RedisStore(redis_con)
-        function_serializer      = FunctionSerializer()
+        self._dependency_graph = RedisDependencyGraph(redis_con)
+        self._scheduler = self._options.scheduler
+        self._data_sources = []
+        store = RedisStore(redis_con)
+        function_serializer = FunctionSerializer()
 
         self._cache_manager = CacheManager(store,
                                            self._dependency_graph,
                                            self._computed_repo,
-                                           self.data_sources,
+                                           self._data_sources,
                                            self._scheduler,
                                            function_serializer,
                                            self._relation_deps_repo,
@@ -49,22 +52,24 @@ class Smache:
         draw_graph(self._build_dependency_graph().values(), filename)
 
     def _set_globals(self):
-        global _computed_repo, _relation_deps_repo, _dependency_graph, _options, _scheduler, _data_sources
-        _computed_repo      = self._computed_repo
+        global _computed_repo, _relation_deps_repo, _dependency_graph, \
+            _options, _scheduler, _data_sources
+        _computed_repo = self._computed_repo
         _relation_deps_repo = self._relation_deps_repo
-        _dependency_graph   = self._dependency_graph
-        _options            = self._options
-        _scheduler          = self._scheduler
-        _data_sources       = self.data_sources
+        _dependency_graph = self._dependency_graph
+        _options = self._options
+        _scheduler = self._scheduler
+        _data_sources = self._data_sources
 
     def _build_dependency_graph(self):
         return self._cache_manager.dependency_graph()
 
     def _use_or_default(self, value, default_lambda):
-        if value != None:
+        if value is not None:
             return value
         else:
             return default_lambda()
 
     def __repr__(self):
-        return "<Smache deps={}>".format(str(self._dependency_graph().values()))
+        return "<Smache deps={}>".format(
+            str(self._dependency_graph().values()))

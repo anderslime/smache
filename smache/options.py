@@ -2,6 +2,7 @@ import redis
 from rq import Queue
 from .schedulers import AsyncScheduler, InProcessScheduler
 
+
 class Options:
     defaults = {
         'write_through': False,
@@ -12,10 +13,10 @@ class Options:
         self.options = self.defaults.update(options)
 
         self.write_through = self._value_equal(options, 'write_through', True)
-        self.debug         = self._value_equal(options, 'debug', True)
-        self.redis_con     = self._redis_con(options)
-        self.worker_queue  = self._worker_queue(options, self.redis_con)
-        self.scheduler     = self._scheduler(options, self.worker_queue)
+        self.debug = self._value_equal(options, 'debug', True)
+        self.redis_con = self._redis_con(options)
+        self.worker_queue = self._worker_queue(options, self.redis_con)
+        self.scheduler = self._scheduler(options, self.worker_queue)
 
     def _worker_queue(self, options, redis_con):
         return self._use_or_default(
@@ -35,9 +36,8 @@ class Options:
             lambda: AsyncScheduler(worker_queue)
         )
 
-
     def _use_or_default(self, value, default_lambda):
-        if value != None:
+        if value is not None:
             return value
         else:
             return default_lambda()
