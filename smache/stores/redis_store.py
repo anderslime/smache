@@ -1,5 +1,5 @@
 import json
-from cache_result import CacheResult
+from .cache_result import CacheResult
 
 class RedisStore:
     def __init__(self, redis_con):

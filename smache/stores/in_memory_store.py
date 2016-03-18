@@ -1,4 +1,4 @@
-from cache_result import CacheResult
+from .cache_result import CacheResult
 
 class InMemoryStore:
     def __init__(self):

@@ -1,5 +1,5 @@
 import json
-from computed_function import ComputedFunction
+from .computed_function import ComputedFunction
 
 class FunctionSerializer:
     seperator_token = '~~~'

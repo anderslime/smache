@@ -1,5 +1,5 @@
 from mongoengine import signals
-from smache.smache_logging import logger
+from ..smache_logging import logger
 
 class MongoDataSource:
     def __init__(self, document):

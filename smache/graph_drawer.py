@@ -1,5 +1,4 @@
-import dagger
-import os
+import dagger, os
 
 def draw_graph(nodes, filename):
     dag = dagger.dagger()

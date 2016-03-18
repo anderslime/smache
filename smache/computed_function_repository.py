@@ -1,4 +1,4 @@
-from computed_function import ComputedFunction
+from .computed_function import ComputedFunction
 
 class ComputedFunctionRepository:
     def __init__(self, computed_funs = None):

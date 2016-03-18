@@ -1,11 +1,10 @@
-import redis
-from topological_sort import topological_sort
-from stores import RedisStore
-from function_serializer import FunctionSerializer
-from dependency_graph_builder import build_dependency_graph
+import redis, smache
 
-from smache.smache_logging import logger
-import smache
+from .topological_sort import topological_sort
+from .stores import RedisStore
+from .function_serializer import FunctionSerializer
+from .dependency_graph_builder import build_dependency_graph
+from .smache_logging import logger
 
 
 class DataUpdatePropagator:

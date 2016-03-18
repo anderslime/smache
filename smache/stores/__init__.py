@@ -1,1 +1,1 @@
-from redis_store import RedisStore
+from .redis_store import RedisStore

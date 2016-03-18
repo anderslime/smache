@@ -1,16 +1,12 @@
-from smache.graph_drawer import draw_graph
-
-from stores import RedisStore
-from dependency_graphs import RedisDependencyGraph
-from cache_manager import CacheManager
-from computed_function_repository import ComputedFunctionRepository
-from relation_dependency_repository import RelationDependencyRepository
-from function_serializer import FunctionSerializer
-
-from options import Options
-
-from smache_logging import setup_logger
-
+from .graph_drawer import draw_graph
+from .stores import RedisStore
+from .dependency_graphs import RedisDependencyGraph
+from .cache_manager import CacheManager
+from .computed_function_repository import ComputedFunctionRepository
+from .relation_dependency_repository import RelationDependencyRepository
+from .function_serializer import FunctionSerializer
+from .options import Options
+from .smache_logging import setup_logger
 
 global _computed_repo, _relation_deps_repo, _dependency_graph, _options, _scheduler, _data_sources
 

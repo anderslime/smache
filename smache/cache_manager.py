@@ -1,9 +1,9 @@
-from data_sources import DummyDataSource
-from schedulers import DataUpdatePropagator
-from computed_function import ComputedFunction
-from dependency_graph_builder import build_dependency_graph
-from computed_function_repository import ComputedFunctionRepository
-from smache.smache_logging import logger
+from .data_sources import DummyDataSource
+from .schedulers import DataUpdatePropagator
+from .computed_function import ComputedFunction
+from .dependency_graph_builder import build_dependency_graph
+from .computed_function_repository import ComputedFunctionRepository
+from .smache_logging import logger
 
 class CacheManager:
     def __init__(self, store, dep_graph, computed_repo, data_sources, scheduler, function_serializer, relation_deps_repo, options):
