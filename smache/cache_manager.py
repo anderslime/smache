@@ -3,6 +3,7 @@ from .computed_function import ComputedFunction
 from .dependency_graph_builder import build_dependency_graph
 from .computed_function_repository import ComputedFunctionRepository
 from .smache_logging import logger
+from .schedulers import execute
 
 
 class CacheManager:
@@ -26,9 +27,7 @@ class CacheManager:
         if cache_result.is_fresh:
             return cache_result.value
         else:
-            computed_value = fun(*args)
-            self._store.store(key, computed_value)
-            return computed_value
+            return execute(self._store, key, fun, *args, **kwargs)
 
     def computed(self, *deps, **kwargs):
         def _computed(fun):

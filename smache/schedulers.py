@@ -25,7 +25,7 @@ class AsyncScheduler:
 
     def _enqueue_execute(self, last_job, key):
         return self.worker_queue.enqueue_call(
-            func=_execute,
+            func=_execute_from_key,
             args=(key,),
             depends_on=last_job
         )
@@ -35,7 +35,7 @@ class InProcessScheduler:
 
     def schedule_write_through(self, keys):
         for key in keys:
-            _execute(key)
+            _execute_from_key(key)
 
     def schedule_update_handle(self, data_source_id, entity_id):
         _handle_data_source_update(data_source_id, entity_id)
@@ -45,12 +45,16 @@ def _handle_data_source_update(data_source_id, entity_id):
     DataUpdatePropagator().handle_update(data_source_id, entity_id)
 
 
-def _execute(key):
+def _execute_from_key(key):
     logger.debug("EXECUTE on {}".format(key))
     redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
     store = RedisStore(redis_con)
 
     fun_name, args = FunctionSerializer().deserialized_fun(key)
     computed_fun = smache._instance._computed_repo.get_from_id(fun_name)
+    return execute(store, key, computed_fun, *args)
+
+def execute(store, key, computed_fun, *args, **kwargs):
     computed_value = computed_fun(*args)
-    return store.store(key, computed_value)
+    store.store(key, computed_value)
+    return computed_value
