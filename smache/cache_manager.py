@@ -1,5 +1,4 @@
 from .data_sources import DummyDataSource
-from .schedulers import DataUpdatePropagator
 from .computed_function import ComputedFunction
 from .dependency_graph_builder import build_dependency_graph
 from .computed_function_repository import ComputedFunctionRepository
