@@ -15,7 +15,8 @@ To run the tests, run:
 
 ```
 brew install terminal-notifier
-pip install pytest-watch pytest-flakes pytest-pep8
+python setup.py develop
+pip install -rrequirements_dev.txt
 ```
 
 #### Usage

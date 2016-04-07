@@ -1,0 +1,5 @@
+--index-url https://pypi.python.org/simple/
+-e .
+pytest-flakes==1.0.1
+pytest-pep8==1.0.6
+pytest-watch==4.0.0
