@@ -14,7 +14,8 @@ class RedisStore:
         raw_cache_result = self._get_all(key) or {}
         return CacheResult(
             self._deserialize_json(raw_cache_result.get('value')),
-            self._deserialize_bool(raw_cache_result.get('is_fresh'))
+            self._deserialize_bool(raw_cache_result.get('is_fresh')),
+            self._deserialize_bool(raw_cache_result.get('timestamp'))
         )
 
     def is_fresh(self, key):

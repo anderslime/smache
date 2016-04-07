@@ -13,7 +13,8 @@ class InMemoryStore:
         raw_cache_result = self._data.get(key, {})
         return CacheResult(
             raw_cache_result.get('value', None),
-            raw_cache_result.get('is_fresh', False)
+            raw_cache_result.get('is_fresh', False),
+            None
         )
 
     def is_fresh(self, key):
