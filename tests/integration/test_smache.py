@@ -1,4 +1,4 @@
-from smache import Smache, RedisStore
+from smache import Smache
 from smache.data_sources.dummy_data_source import DummyEntity
 from smache.data_sources import DummyDataSource, RawDataSource
 from smache.schedulers import InProcessScheduler
@@ -83,18 +83,3 @@ def test_with_raw_value():
     bx = DummyEntity(b.data_source_id, 2, 2)
 
     assert with_raw(ax, bx, 1000) == 12000
-
-
-def test_redis():
-    key = 'hello_world'
-    value = {'key': 'muthafucka'}
-
-    store = RedisStore(redis_con)
-    store.store(key, value)
-
-    assert store.lookup(key).value == value
-    assert store.is_fresh(key) == True
-
-    store.mark_as_stale(key)
-
-    assert store.is_fresh(key) == False

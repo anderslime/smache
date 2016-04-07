@@ -7,6 +7,7 @@ from .relation_dependency_repository import RelationDependencyRepository
 from .function_serializer import FunctionSerializer
 from .options import Options
 from .smache_logging import setup_logger
+from .timestamp_registry import TimestampRegistry
 
 global _instance
 
@@ -22,6 +23,7 @@ class Smache:
         self._relation_deps_repo = RelationDependencyRepository()
         self._dependency_graph = RedisDependencyGraph(redis_con)
         self._scheduler = self._options.scheduler
+        self._timestamp_registry = TimestampRegistry(redis_con)
         self._data_sources = []
         store = RedisStore(redis_con)
         function_serializer = FunctionSerializer()

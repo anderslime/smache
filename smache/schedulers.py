@@ -56,5 +56,6 @@ def _execute_from_key(key):
 
 def execute(store, key, computed_fun, *args, **kwargs):
     computed_value = computed_fun(*args)
-    store.store(key, computed_value)
+    timestamp = smache._instance._timestamp_registry.next_timestamp(key)
+    store.store(key, computed_value, timestamp)
     return computed_value

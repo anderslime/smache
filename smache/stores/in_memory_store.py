@@ -6,7 +6,7 @@ class InMemoryStore:
     def __init__(self):
         self._data = {}
 
-    def store(self, key, value):
+    def store(self, key, value, timestamp=None):
         self._data[key] = {'is_fresh': True, 'value': value}
 
     def lookup(self, key):
