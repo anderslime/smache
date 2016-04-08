@@ -1,17 +1,16 @@
 from smache import Smache, Raw
 from smache.schedulers import InProcessScheduler
-from tests.helper import DummyA, DummyB, DummyC
+from tests.helper import DummyA, DummyB, DummyC, redis_con
 
 import pytest
 import redis
 
-# Tests
-redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 @pytest.yield_fixture(autouse=True)
 def flush_before_each_test_case():
     redis_con.flushall()
     yield
+
 
 def setup_module(module):
     global smache, score, h, f, with_raw
