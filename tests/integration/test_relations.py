@@ -17,22 +17,14 @@ def setup_module(module):
 
     smache = Smache(scheduler=InProcessScheduler())
 
-    @smache.computed(
-        DummyA,
-        Raw,
-        Raw,
-        relations=[(DummyB, lambda b: DummyA.find('1'))]
-    )
+    @smache.relations((DummyB, lambda b: DummyA.find('1')))
+    @smache.computed(DummyA, Raw, Raw)
     def f(a, c, d):
         b = DummyB.find('2')
         return a.value * b.value
 
-    @smache.computed(
-        DummyA,
-        Raw,
-        Raw,
-        relations=[(DummyB, lambda b: [DummyA.find('1'), DummyA.find('2')])]
-    )
+    @smache.relations((DummyB, lambda b: [DummyA.find('1'), DummyA.find('2')]))
+    @smache.computed(DummyA, Raw, Raw)
     def h(a, c, d):
         b = DummyB.find('2')
         return a.value * b.value
