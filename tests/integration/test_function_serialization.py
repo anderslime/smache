@@ -1,17 +1,10 @@
 from smache import Smache
-from smache.data_sources.dummy_data_source import DummyEntity
 from smache.data_sources import DummyDataSource, RawDataSource, Raw
 from smache.function_serializer import FunctionSerializer
+from tests.helper import DummyA, DummyB
 
 # Definitions
 smache = Smache()
-
-class DummyA(DummyEntity):
-    pass
-
-class DummyB(DummyEntity):
-    pass
-
 smache.add_sources(DummyA, DummyB, Raw)
 
 

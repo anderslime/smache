@@ -1,11 +1,9 @@
 from smache import Smache
-from smache.data_sources.dummy_data_source import DummyEntity, DummyDataSource
 from tests.helper import execute_all_jobs, redis_con, DummyA, DummyB
 import pytest
-import redis
 from rq import Queue
 
-# Definitions
+
 def setup_module(module):
     global smache, hyphen, slash, worker_queue
     worker_queue = Queue('test_queue', connection=redis_con)
@@ -15,7 +13,6 @@ def setup_module(module):
     @smache.computed(DummyA, DummyB)
     def hyphen(a, b):
         return ' - '.join([a.value, b.value])
-
 
     @smache.computed(sources=(DummyA))
     def slash():

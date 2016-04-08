@@ -1,9 +1,7 @@
 from smache import Smache, Raw
 from smache.schedulers import InProcessScheduler
 from tests.helper import DummyA, DummyB, DummyC, redis_con
-
 import pytest
-import redis
 
 
 @pytest.yield_fixture(autouse=True)
@@ -25,20 +23,18 @@ def setup_module(module):
     def score(a):
         return a.value + 5 + 10
 
-
     @smache.computed(DummyB, DummyC)
     def h(b, c):
         return b.value + c.value
-
 
     @smache.computed(DummyA, DummyB, DummyC)
     def f(a, b, c):
         return a.value * h(b, c)
 
-
     @smache.computed(DummyA, DummyB, Raw)
     def with_raw(a, b, static_value):
         return (a.value + b.value) * static_value
+
 
 def teardown_module(module):
     DummyA.unsubscribe_all()

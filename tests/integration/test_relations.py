@@ -1,9 +1,7 @@
 from smache import Smache, Raw
-from smache.data_sources import DummyDataSource, RawDataSource
 from smache.schedulers import InProcessScheduler
 from tests.helper import DummyA, DummyB, redis_con
 import pytest
-import redis
 
 
 @pytest.yield_fixture(autouse=True)
@@ -14,17 +12,11 @@ def flush_before_each_test_case():
     yield
 
 
-def teardown_module(module):
-    DummyA.unsubscribe_all()
-    DummyB.unsubscribe_all()
-
-
 def setup_module(module):
     global smache, f, h
 
     smache = Smache(scheduler=InProcessScheduler())
     smache.add_sources(DummyA, DummyB, Raw)
-
 
     @smache.computed(
         DummyA,
@@ -35,7 +27,6 @@ def setup_module(module):
     def f(a, c, d):
         b = DummyB.find('2')
         return a.value * b.value
-
 
     @smache.computed(
         DummyA,
