@@ -10,6 +10,7 @@ from .smache_logging import setup_logger
 from .timestamp_registry import TimestampRegistry
 from .data_update_propagator import DataUpdatePropagator
 from .data_source_repository import DataSourceRepository
+from .dsl import DSL
 from .data_sources.raw_data_source import Raw  # NOQA
 
 global _instance
@@ -46,8 +47,8 @@ class Smache:
                                            self._options)
 
         # Delegates
-        self.cache_function = self._cache_manager.cache_function
-        self.computed = self._cache_manager.computed
+        dsl = DSL(self._data_source_repository, self._cache_manager)
+        self.computed = dsl.computed
 
         self.is_fun_fresh = self._cache_manager.is_fun_fresh
 

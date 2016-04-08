@@ -29,49 +29,14 @@ class CacheManager:
         else:
             return execute(self._store, key, fun, *args, **kwargs)
 
-    def computed(self, *deps, **kwargs):
-        def _computed(fun):
-            def wrapper(*args, **kwargs):
-                return self.cache_function(fun, *args, **kwargs)
-            self.add_computed(fun, deps, kwargs)
-            wrapper.__name__ = fun.__name__
-            wrapper.__module__ = fun.__module__
-            return wrapper
-        return _computed
+    def add_computed(self, computed_fun):
+        self._set_computed(computed_fun)
 
-    def add_computed(self, fun, arg_entity_class_deps, kwargs):
-        entity_class_deps = self._parse_deps(kwargs.get('sources', ()))
-        computed_deps = self._parse_deps(kwargs.get('computed_deps', ()))
-        relation_deps = kwargs.get('relations', ())
-        computed_dep_funs = [self._get_computed(computed_dep)
-                             for computed_dep in computed_deps]
-        arg_deps = [self._find_or_register_data_source(entity_class)
-                    for entity_class in arg_entity_class_deps]
-        data_source_deps = [self._find_or_register_data_source(entity_class)
-                            for entity_class in entity_class_deps]
-        relation_data_source_deps = self._relation_data_sources(relation_deps)
-        computed_fun = ComputedFunction(fun,
-                                        arg_deps,
-                                        data_source_deps,
-                                        computed_dep_funs)
+    def add_relation_deps(self, computed_fun, relation_data_source_deps):
         self._relation_deps_repo.add_all(
             relation_data_source_deps,
             computed_fun
         )
-        self._set_computed(computed_fun)
-
-    def _relation_data_sources(self, relation_deps):
-        return [(self._find_or_register_data_source(entity_class), rel_fun)
-                for (entity_class, rel_fun) in relation_deps]
-
-    def _find_or_register_data_source(self, entity_class):
-        return self._data_source_repo.find_or_register_data_source(
-            entity_class,
-            self._on_data_source_update
-        )
-
-    def is_fresh(self, key):
-        return self._store.is_fresh(key)
 
     def is_fun_fresh(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
@@ -124,12 +89,6 @@ class CacheManager:
                 ComputedFunction.id_from_fun(fun),
                 key
             )
-
-    def _parse_deps(self, value):
-        if isinstance(value, tuple):
-            return value
-        else:
-            return (value,)
 
     def _on_data_source_update(self, data_source, entity):
         self._scheduler.schedule_update_handle(
