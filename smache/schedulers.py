@@ -3,7 +3,6 @@ import smache
 
 from .stores import RedisStore
 from .function_serializer import FunctionSerializer
-from .data_update_propagator import DataUpdatePropagator
 from .smache_logging import logger
 from functools import reduce
 
@@ -42,7 +41,10 @@ class InProcessScheduler:
 
 
 def _handle_data_source_update(data_source_id, entity_id):
-    DataUpdatePropagator().handle_update(data_source_id, entity_id)
+    smache._instance._data_update_propagator.handle_update(
+        data_source_id,
+        entity_id
+    )
 
 
 def _execute_from_key(key):

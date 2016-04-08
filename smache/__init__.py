@@ -8,6 +8,7 @@ from .function_serializer import FunctionSerializer
 from .options import Options
 from .smache_logging import setup_logger
 from .timestamp_registry import TimestampRegistry
+from .data_update_propagator import DataUpdatePropagator
 from .data_sources.raw_data_source import Raw  # NOQA
 
 global _instance
@@ -28,6 +29,8 @@ class Smache:
         self._data_sources = []
         store = RedisStore(redis_con)
         function_serializer = FunctionSerializer()
+        self._data_update_propagator = \
+            DataUpdatePropagator(function_serializer, store)
 
         self._cache_manager = CacheManager(store,
                                            self._dependency_graph,

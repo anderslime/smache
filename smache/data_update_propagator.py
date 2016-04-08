@@ -8,9 +8,9 @@ from functools import reduce
 
 class DataUpdatePropagator:
 
-    def __init__(self):
-        self._function_serializer = FunctionSerializer()
-        self.store = RedisStore(smache._instance._options.redis_con)
+    def __init__(self, function_serializer, store):
+        self._function_serializer = function_serializer
+        self._store = store
 
     def handle_update(self, data_source_id, entity_id):
         data_source = self._find_data_source(data_source_id)
@@ -58,7 +58,7 @@ class DataUpdatePropagator:
 
     def _mark_invalidation(self, keys):
         for key in keys:
-            self.store.mark_as_stale(key)
+            self._store.mark_as_stale(key)
 
     def _write_through_invalidation(self, keys):
         sorted_nodes = self._node_ids_in_topological_order()
