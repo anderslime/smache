@@ -64,24 +64,26 @@ class CacheManager:
                     for entity_class in arg_entity_class_deps]
         data_source_deps = [self._find_data_source(entity_class)
                             for entity_class in entity_class_deps]
+        relation_data_source_deps = [(self._find_data_source(entity_class), rel_fun)
+                                     for (entity_class, rel_fun) in relation_deps]
         computed_fun = ComputedFunction(fun,
                                         arg_deps,
                                         data_source_deps,
                                         computed_dep_funs)
-        self._relation_deps_repo.add_all(relation_deps, computed_fun)
+        self._relation_deps_repo.add_all(relation_data_source_deps, computed_fun)
         self._set_computed(computed_fun)
 
     def _find_data_source(self, entity_class):
         for data_source in self._data_sources:
             if data_source.__class__.is_instance(entity_class):
                 return data_source
-        raise Exception("No data source for {}".format(entity_class))
+        raise Exception("No data source instance for {}".format(entity_class))
 
     def _find_data_source_type(self, entity_class):
         for data_source_class in self._known_data_source_types:
             if data_source_class.is_instance(entity_class):
                 return data_source_class
-        raise Exception("No data source for {}".format(entity_class))
+        raise Exception("No data source type for {}".format(entity_class))
 
     def is_fresh(self, key):
         return self._store.is_fresh(key)
