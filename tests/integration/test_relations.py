@@ -1,4 +1,4 @@
-from smache import Smache
+from smache import Smache, Raw
 from smache.data_sources.dummy_data_source import DummyEntity
 from smache.data_sources import DummyDataSource, RawDataSource
 from smache.schedulers import InProcessScheduler
@@ -7,25 +7,30 @@ import redis
 
 # Definitions
 smache = Smache(scheduler=InProcessScheduler())
+print smache
 
-A = DummyDataSource('A', {'1': {'value': 10}, '2': {'value': 500}})
-B = DummyDataSource('B', {'2': {'value': 20}})
-raw = RawDataSource()
-
-smache.add_sources(A, B)
+class DummyA:
+    data = {'1': {'value': 10}, '2': {'value': 500}}
 
 
-@smache.computed(A, raw, raw, relations=[(B, lambda b: A.find('1'))])
+class DummyB:
+    data = {'2': {'value': 20}}
+
+
+smache.add_sources(DummyA, DummyB, Raw)
+
+
+@smache.computed(DummyA, Raw, Raw, relations=[(DummyB, lambda b: A.find('1'))])
 def f(a, c, d):
     b = B.find('2')
     return a.value * b.value
 
 
 @smache.computed(
-    A,
-    raw,
-    raw,
-    relations=[(B, lambda b: [A.find('1'), A.find('2')])]
+    DummyA,
+    Raw,
+    Raw,
+    relations=[(DummyB, lambda b: [A.find('1'), A.find('2')])]
 )
 def h(a, c, d):
     b = B.find('2')
@@ -38,8 +43,8 @@ redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 @pytest.yield_fixture(autouse=True)
 def flush_before_each_test_case():
     smache._set_globals()
-    A.reset()
-    B.reset()
+    DummyA.reset()
+    DummyB.reset()
     redis_con.flushall()
     yield
 
@@ -51,7 +56,7 @@ def test_computed_function_are_updated_when_relations_are():
     assert f(ax, 5, 10) == 200
     assert f(ax2, 5, 10) == 10000
 
-    B.update('1', {'value': 30})
+    DummyB.update('1', {'value': 30})
 
     assert smache.is_fun_fresh(f, ax, 5, 10) == False
     assert smache.is_fun_fresh(f, ax2, 5, 10) == True
@@ -64,7 +69,7 @@ def test_relations_with_list():
     assert h(ax, 5, 10) == 200
     assert h(ax2, 5, 10) == 10000
 
-    B.update('2', {'value': 30})
+    DummyB.update('2', {'value': 30})
 
     assert smache.is_fun_fresh(h, ax, 5, 10) == False
     assert smache.is_fun_fresh(h, ax2, 5, 10) == False

@@ -13,6 +13,10 @@ class DummyEntity:
             subscriber(serialized_id)
 
     @classmethod
+    def reset(cls):
+        cls.data = getattr(cls, 'original_data', {})
+
+    @classmethod
     def find(cls, entity_id):
         return cls.data.get(entity_id)
 
@@ -24,6 +28,8 @@ class DummyEntity:
         self.id = id
         self.value = value
         self.data_source_id = self.__class__.__name__
+
+        self.__class__.original_data = self.__class__.data.copy()
 
     @property
     def __name__(self):
