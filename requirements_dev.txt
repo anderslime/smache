@@ -3,3 +3,4 @@
 pytest-flake8==0.2.0
 pytest-watch==4.0.0
 pytest-benchmark==3.0.0
+pytest-cov==2.2.1
