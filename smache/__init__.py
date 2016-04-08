@@ -67,4 +67,4 @@ class Smache:
 
     def __repr__(self):
         return "<Smache deps={}>".format(
-            str(self._dependency_graph().values()))
+            str(self._cache_manager.dependency_graph().values()))
