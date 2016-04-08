@@ -44,9 +44,7 @@ class CacheManager:
     def add_sources(self, *entity_classes):
         data_sources = []
         for entity_class in entity_classes:
-            data_source_class = [data_source_class
-                                 for data_source_class in self._known_data_source_types
-                                 if data_source_class.is_instance(entity_class)][0]
+            data_source_class = self._find_data_source_type(entity_class)
             data_sources.append(data_source_class(entity_class))
         for data_source in data_sources:
             self._data_sources.append(data_source)
@@ -73,6 +71,13 @@ class CacheManager:
         for data_source in self._data_sources:
             if data_source.__class__.is_instance(entity_class):
                 return data_source
+        raise Exception("No data source for {}".format(entity_class))
+
+    def _find_data_source_type(self, entity_class):
+        for data_source_class in self._known_data_source_types:
+            if data_source_class.is_instance(entity_class):
+                return data_source_class
+        raise Exception("No data source for {}".format(entity_class))
 
     def is_fresh(self, key):
         return self._store.is_fresh(key)
