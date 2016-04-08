@@ -17,12 +17,21 @@ class DummyEntity:
         cls.data = getattr(cls, 'original_data', {})
 
     @classmethod
-    def find(cls, entity_id):
-        return cls.data.get(entity_id)
+    def find(cls, input_value):
+        raw_data = cls.data.get(cls._key(input_value))
+        if raw_data:
+            return cls(input_value, raw_data['value'])
 
     @classmethod
     def subscribe(cls, subscriber):
         cls.subscribers.append(subscriber)
+
+    @classmethod
+    def _key(self, input_value):
+        if isinstance(input_value, int) or isinstance(input_value, str):
+            return str(input_value)
+        else:
+            return input_value.id
 
     def __init__(self, id, value):
         self.id = id
@@ -55,21 +64,14 @@ class DummyDataSource:
         return self.data_source_id == entity_instance.data_source_id
 
     def did_update(self, entity_id):
-        entity = self.find(entity_id)
+        entity = self.dummy_entity_class.find(entity_id)
         if not entity:
             entity = self.dummy_entity_class(entity_id, None)
         self.subscriber(self, entity)
 
+    def find(self, entity_id):
+        return self.dummy_entity_class.find(entity_id)
+
     def serialize(self, dummy_entity):
         return dummy_entity.id
 
-    def find(self, input_value):
-        raw_data = self.dummy_entity_class.find(self._key(input_value))
-        if raw_data:
-            return self.dummy_entity_class(input_value, raw_data['value'])
-
-    def _key(self, input_value):
-        if isinstance(input_value, int) or isinstance(input_value, str):
-            return str(input_value)
-        else:
-            return input_value.id
