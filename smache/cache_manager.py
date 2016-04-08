@@ -1,8 +1,6 @@
 from .data_sources import DummyDataSource, RawDataSource, MongoDataSource
 from .computed_function import ComputedFunction
 from .dependency_graph_builder import build_dependency_graph
-from .computed_function_repository import ComputedFunctionRepository
-from .smache_logging import logger
 from .schedulers import execute
 
 
@@ -64,14 +62,21 @@ class CacheManager:
                     for entity_class in arg_entity_class_deps]
         data_source_deps = [self._find_data_source(entity_class)
                             for entity_class in entity_class_deps]
-        relation_data_source_deps = [(self._find_data_source(entity_class), rel_fun)
-                                     for (entity_class, rel_fun) in relation_deps]
+        relation_data_source_deps = self._relation_data_sources(relation_deps)
         computed_fun = ComputedFunction(fun,
                                         arg_deps,
                                         data_source_deps,
                                         computed_dep_funs)
-        self._relation_deps_repo.add_all(relation_data_source_deps, computed_fun)
+        self._relation_deps_repo.add_all(
+            relation_data_source_deps,
+            computed_fun
+        )
         self._set_computed(computed_fun)
+
+    def _relation_data_sources(self, relation_deps):
+        return [(self._find_data_source(entity_class), rel_fun)
+                for (entity_class, rel_fun) in relation_deps]
+
 
     def _find_data_source(self, entity_class):
         for data_source in self._data_sources:
