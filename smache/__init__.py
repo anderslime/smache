@@ -44,7 +44,6 @@ class Smache:
         # Delegates
         self.cache_function = self._cache_manager.cache_function
         self.computed = self._cache_manager.computed
-        self.add_sources = self._cache_manager.add_sources
 
         self.is_fun_fresh = self._cache_manager.is_fun_fresh
 

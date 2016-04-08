@@ -11,8 +11,6 @@ test_connect()
 
 smache = Smache(scheduler=InProcessScheduler())
 
-smache.add_sources(User)
-
 
 @smache.computed(User)
 def name(a):

@@ -9,7 +9,6 @@ class DummyA(DummyEntity):
     pass
 
 smache = Smache()
-smache.add_sources(DummyA)
 
 
 @smache.computed(DummyA)

@@ -5,7 +5,6 @@ from tests.helper import DummyA, DummyB
 
 # Definitions
 smache = Smache()
-smache.add_sources(DummyA, DummyB, Raw)
 
 
 @smache.computed(DummyA, DummyB, Raw)

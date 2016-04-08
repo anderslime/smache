@@ -43,19 +43,15 @@ class CacheManager:
             return wrapper
         return _computed
 
-    def add_sources(self, *entity_classes):
-        for entity_class in entity_classes:
-            self._register_data_source(entity_class)
-
     def add_computed(self, fun, arg_entity_class_deps, kwargs):
         entity_class_deps = self._parse_deps(kwargs.get('sources', ()))
         computed_deps = self._parse_deps(kwargs.get('computed_deps', ()))
         relation_deps = kwargs.get('relations', ())
         computed_dep_funs = [self._get_computed(computed_dep)
                              for computed_dep in computed_deps]
-        arg_deps = [self._find_data_source_or_raise(entity_class)
+        arg_deps = [self._find_or_register_data_source(entity_class)
                     for entity_class in arg_entity_class_deps]
-        data_source_deps = [self._find_data_source_or_raise(entity_class)
+        data_source_deps = [self._find_or_register_data_source(entity_class)
                             for entity_class in entity_class_deps]
         relation_data_source_deps = self._relation_data_sources(relation_deps)
         computed_fun = ComputedFunction(fun,
@@ -69,14 +65,15 @@ class CacheManager:
         self._set_computed(computed_fun)
 
     def _relation_data_sources(self, relation_deps):
-        return [(self._find_data_source(entity_class), rel_fun)
+        return [(self._find_or_register_data_source(entity_class), rel_fun)
                 for (entity_class, rel_fun) in relation_deps]
 
-    def _find_data_source_or_raise(self, entity_class):
+    def _find_or_register_data_source(self, entity_class):
         data_source = self._find_data_source(entity_class)
         if data_source is not None:
             return data_source
-        raise Exception("No data source instance for {}".format(entity_class))
+        else:
+            return self._register_data_source(entity_class)
 
     def _find_data_source(self, entity_class):
         for data_source in self._data_sources:
@@ -89,6 +86,7 @@ class CacheManager:
             data_source = data_source_class(entity_class)
             self._data_sources.append(data_source)
             data_source.subscribe(self._on_data_source_update)
+            return data_source
 
     def _find_data_source_type(self, entity_class):
         for data_source_class in self._known_data_source_types:

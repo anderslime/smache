@@ -17,7 +17,6 @@ def setup_module(module):
     DummyC.unsubscribe_all()
 
     smache = Smache(scheduler=InProcessScheduler())
-    smache.add_sources(DummyA, DummyB, DummyC, Raw)
 
     @smache.computed(DummyA, sources=(DummyB, DummyC))
     def score(a):

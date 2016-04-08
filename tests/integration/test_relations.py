@@ -16,7 +16,6 @@ def setup_module(module):
     global smache, f, h
 
     smache = Smache(scheduler=InProcessScheduler())
-    smache.add_sources(DummyA, DummyB, Raw)
 
     @smache.computed(
         DummyA,

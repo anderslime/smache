@@ -8,7 +8,6 @@ def setup_module(module):
     global smache, hyphen, slash, worker_queue
     worker_queue = Queue('test_queue', connection=redis_con)
     smache = Smache(worker_queue=worker_queue, write_through=True)
-    smache.add_sources(DummyA, DummyB)
 
     @smache.computed(DummyA, DummyB)
     def hyphen(a, b):

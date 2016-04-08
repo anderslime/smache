@@ -8,8 +8,6 @@ redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 worker_queue = Queue('test_queue', connection=redis_con)
 smache = Smache(worker_queue=worker_queue, write_through=True)
 
-smache.add_sources(User, Handin)
-
 @smache.computed(User, relations=[(Handin, lambda handin: handin.users)])
 def score(user):
     handins = Handin.objects(users=user)
