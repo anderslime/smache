@@ -83,15 +83,19 @@ def restore_test_db(db_alias):
         todb=test_db_name(db_alias)
     )
 
+
 def test_db_base_name(name):
     return "test_db_base_{}".format(name)
+
 
 def test_db_name(name):
     return "test_db_{}".format(name)
 
+
 def clean_dbs():
     for test_set in test_sets:
         clean_db(test_set.db_alias)
+
 
 def clean_db(db_alias):
     db = connect_db(db_alias)
@@ -99,10 +103,12 @@ def clean_db(db_alias):
 
     restore_test_db(db_alias)
 
+
 def connect_db_setup(db_name):
     def setup():
         connect_db(db_name)
     return setup
+
 
 def connect_db(db_alias):
     disconnect('default')
