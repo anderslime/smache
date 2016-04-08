@@ -1,6 +1,3 @@
-from collections import namedtuple
-
-
 class DummyEntity:
     data = {}
     subscribers = []
@@ -85,4 +82,3 @@ class DummyDataSource:
 
     def serialize(self, dummy_entity):
         return dummy_entity.id
-

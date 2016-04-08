@@ -1,6 +1,6 @@
 import redis
 from rq import Queue
-from .schedulers import AsyncScheduler, InProcessScheduler
+from .schedulers import AsyncScheduler
 
 
 class Options:

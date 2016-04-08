@@ -1,10 +1,9 @@
 import smache
 
 from .topological_sort import topological_sort
-from .stores import RedisStore
-from .function_serializer import FunctionSerializer
 from .dependency_graph_builder import build_dependency_graph
 from functools import reduce
+
 
 class DataUpdatePropagator:
 
@@ -15,7 +14,7 @@ class DataUpdatePropagator:
     def handle_update(self, data_source_id, entity_id):
         data_source = self._find_data_source(data_source_id)
         entity = data_source.find(entity_id)
-        depending_keys = smache._instance._dependency_graph.values_depending_on(
+        depending_keys = self._smache_dependency_graph.values_depending_on(
             data_source_id,
             entity_id
         )
@@ -27,12 +26,20 @@ class DataUpdatePropagator:
 
     def _depending_relation_keys(self, data_source, entity):
         data_source_id = data_source.data_source_id
-        depending_relations = smache._instance._relation_deps_repo.get(data_source_id)
+        depending_relations = self._relation_deps_repo.get(data_source_id)
         depending_relation_keys = self._map_relation_keys(
             entity,
             depending_relations
         )
         return self._flattened_sets(depending_relation_keys)
+
+    @property
+    def _smache_dependency_graph(self):
+        return smache._instance._dependency_graph
+
+    @property
+    def _relation_deps_repo(self):
+        return smache._instance._relation_deps_repo
 
     def _flattened_sets(self, depending_relation_keys):
         return reduce(lambda x, y: x | y, depending_relation_keys, set())
@@ -104,6 +111,6 @@ class DataUpdatePropagator:
 
     def _rel_keys(self, relation_fun, entity, computed_fun):
         computed_sources = relation_fun(entity)
-        rel_keys = [self._fun_values_depending_on(computed_source, computed_fun)
-                    for computed_source in self._list(computed_sources)]
+        rel_keys = [self._fun_values_depending_on(source, computed_fun)
+                    for source in self._list(computed_sources)]
         return self._flattened_sets(rel_keys)

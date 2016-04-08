@@ -77,7 +77,6 @@ class CacheManager:
         return [(self._find_data_source(entity_class), rel_fun)
                 for (entity_class, rel_fun) in relation_deps]
 
-
     def _find_data_source(self, entity_class):
         for data_source in self._data_sources:
             if data_source.for_entity_class(entity_class):

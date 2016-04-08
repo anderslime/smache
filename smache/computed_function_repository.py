@@ -23,7 +23,7 @@ class ComputedFunctionRepository:
         return ComputedFunction.id_from_fun(fun)
 
     def _function_not_found_message(self, fun_id, funs):
-        return "Could not find computed function {} from computed_funs: {}".format(
+        return "Could not find computed function {} from list: {}".format(
             fun_id,
             funs
         )

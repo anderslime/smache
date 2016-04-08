@@ -10,8 +10,10 @@ class RedisStore:
     def __init__(self, redis_con, **options):
         self.redis_con = redis_con
         self._store_retries = 5
-        default_retry_backoff = lambda total, left: time.sleep(random.random())
-        self._retry_backoff = options.get('retry_backoff', default_retry_backoff)
+        self._retry_backoff = options.get(
+            'retry_backoff',
+            lambda: time.sleep(random.random())
+        )
 
     def store(self, key, value, timestamp):
         pipe = self.redis_con.pipeline()
@@ -35,7 +37,7 @@ class RedisStore:
         return boolean == 'True'
 
     def _deserialize_int(self, integer):
-        if integer == None:
+        if integer is None:
             return None
         return int(integer)
 
@@ -48,12 +50,16 @@ class RedisStore:
         try:
             if retries > 0:
                 pipe.watch(key)
-                current_timestamp = self._get_field(key, 'timestamp')
-                if current_timestamp == None or int(timestamp) > int(current_timestamp):
+                if self._is_old_timestamp(key, timestamp):
                     self._update_cache_entry(key, value, timestamp, pipe)
         except WatchError:
             self._retry_backoff(self._store_retries, retries - 1)
             self._store_entry(key, value, timestamp, pipe, retries - 1)
+
+    def _is_old_timestamp(self, key, timestamp):
+        current_timestamp = self._get_field(key, 'timestamp')
+        return current_timestamp is None or \
+            int(timestamp) > int(current_timestamp)
 
     def _update_cache_entry(self, key, value, timestamp, pipe):
         pipe.multi()

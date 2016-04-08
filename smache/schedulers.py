@@ -6,6 +6,7 @@ from .function_serializer import FunctionSerializer
 from .smache_logging import logger
 from functools import reduce
 
+
 class AsyncScheduler:
 
     def __init__(self, worker_queue):
@@ -19,7 +20,7 @@ class AsyncScheduler:
         self.worker_queue.enqueue_call(
             func=_handle_data_source_update,
             args=(data_source_id, entity_id),
-            at_front=True # TODO: Use queue prioritization instead of this
+            at_front=True  # TODO: Use queue prioritization instead of this
         )
 
     def _enqueue_execute(self, last_job, key):
@@ -55,6 +56,7 @@ def _execute_from_key(key):
     fun_name, args = FunctionSerializer().deserialized_fun(key)
     computed_fun = smache._instance._computed_repo.get_from_id(fun_name)
     return execute(store, key, computed_fun, *args)
+
 
 def execute(store, key, computed_fun, *args, **kwargs):
     computed_value = computed_fun(*args)
