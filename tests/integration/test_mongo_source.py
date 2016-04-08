@@ -11,23 +11,23 @@ test_connect()
 
 smache = Smache(scheduler=InProcessScheduler())
 
-a = MongoDataSource(User)
-
-smache.add_sources(a)
+smache.add_sources(User)
 
 
-@smache.computed(a)
+@smache.computed(User)
 def name(a):
     return a.name
 
 
-@smache.computed(sources=(a))
+@smache.computed(sources=(User))
 def score():
     return 50
 
 
 def teardown_module(module):
-    a.disconnect()
+    for data_source in smache._data_sources:
+        if isinstance(data_source, MongoDataSource):
+            data_source.disconnect()
 
 # Tests
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)

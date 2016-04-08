@@ -1,8 +1,12 @@
-from mongoengine import signals
+from mongoengine import signals, Document
 from ..smache_logging import logger
 
 
 class MongoDataSource:
+
+    @classmethod
+    def is_instance(cls, document_class):
+        return issubclass(document_class, Document)
 
     def __init__(self, document):
         self.document = document

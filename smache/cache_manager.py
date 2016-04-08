@@ -1,4 +1,4 @@
-from .data_sources import DummyDataSource, RawDataSource
+from .data_sources import DummyDataSource, RawDataSource, MongoDataSource
 from .computed_function import ComputedFunction
 from .dependency_graph_builder import build_dependency_graph
 from .computed_function_repository import ComputedFunctionRepository
@@ -19,7 +19,11 @@ class CacheManager:
         self._data_sources = data_sources
         self._relation_deps_repo = relation_deps_repo
         self._data_source_repo = {}
-        self._known_data_source_types = [RawDataSource, DummyDataSource]
+        self._known_data_source_types = [
+            RawDataSource,
+            DummyDataSource,
+            MongoDataSource
+        ]
 
     def cache_function(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
