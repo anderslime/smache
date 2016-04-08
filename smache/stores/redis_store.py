@@ -53,7 +53,7 @@ class RedisStore:
                 if self._is_old_timestamp(key, timestamp):
                     self._update_cache_entry(key, value, timestamp, pipe)
         except WatchError:
-            self._retry_backoff(self._store_retries, retries - 1)
+            self._retry_backoff()
             self._store_entry(key, value, timestamp, pipe, retries - 1)
 
     def _is_old_timestamp(self, key, timestamp):

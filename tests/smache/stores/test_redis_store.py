@@ -63,7 +63,7 @@ def test_value_is_only_written_when_newer_then_current():
 # But it tests that we retry transactions and
 def test_retry_method_works(monkeypatch):
     import json
-    redis_store = RedisStore(redis_con, retry_backoff=lambda a, b: 0)
+    redis_store = RedisStore(redis_con, retry_backoff=lambda: 0)
     global retries
     retries = 0
 
