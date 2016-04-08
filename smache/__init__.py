@@ -8,7 +8,7 @@ from .function_serializer import FunctionSerializer
 from .options import Options
 from .smache_logging import setup_logger
 from .timestamp_registry import TimestampRegistry
-from .data_sources.raw_data_source import Raw
+from .data_sources.raw_data_source import Raw  # NOQA
 
 global _instance
 
