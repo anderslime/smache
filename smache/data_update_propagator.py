@@ -88,8 +88,11 @@ class DataUpdatePropagator:
         )
 
     def _find_data_source(self, data_source_id):
-        return [source for source in smache._instance._data_sources
-                if source.data_source_id == data_source_id][0]
+        try:
+            return next(source for source in smache._instance._data_sources
+                        if source.data_source_id == data_source_id)
+        except StopIteration:
+            raise Exception("No data source for id={}".format(data_source_id))
 
     def _find_data_source_for_entity(self, computed_source):
         return next(source for source in smache._instance._data_sources
