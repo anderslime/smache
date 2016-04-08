@@ -7,6 +7,7 @@ import redis
 
 # Definitions
 smache = Smache(scheduler=InProcessScheduler())
+print smache
 
 
 class DummyA(DummyEntity):
