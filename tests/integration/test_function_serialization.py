@@ -1,32 +1,39 @@
 from smache import Smache
 from smache.data_sources.dummy_data_source import DummyEntity
-from smache.data_sources import DummyDataSource, RawDataSource
+from smache.data_sources import DummyDataSource, RawDataSource, Raw
 from smache.function_serializer import FunctionSerializer
 
 # Definitions
 smache = Smache()
-a = DummyDataSource('A')
-b = DummyDataSource('B')
-raw = RawDataSource()
 
-smache.add_sources(a, b, raw)
+class DummyA(DummyEntity):
+    pass
+
+class DummyB(DummyEntity):
+    pass
+
+smache.add_sources(DummyA, DummyB, Raw)
 
 
-@smache.computed(a, b, raw)
+@smache.computed(DummyA, DummyB, Raw)
 def score(a, b, static):
     return (a.value + b.value) * static
 
 
-@smache.computed(sources=(a, b))
+@smache.computed(sources=(DummyA, DummyB))
 def no_args():
     return "NO ARG IS FUN"
 
 
 def test_serialization():
-    ax = DummyEntity(a.data_source_id, 1, 10)
-    bx = DummyEntity(b.data_source_id, '2', 2)
+    ax = DummyA(1, 10)
+    bx = DummyB('2', 2)
 
     fun_serializer = FunctionSerializer()
+
+    a = DummyDataSource(DummyA)
+    b = DummyDataSource(DummyB)
+    raw = RawDataSource()
 
     e = '"tests.integration.test_function_serialization/score"~~~1~~~"2"~~~500'
 
