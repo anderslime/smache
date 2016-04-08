@@ -1,15 +1,18 @@
 from smache import Smache
-from smache.data_sources.dummy_data_source import DummyDataSource
+from smache.data_sources.dummy_data_source import DummyEntity
 import pytest
 import redis
 import os
 
+
+class DummyA(DummyEntity):
+    pass
+
 smache = Smache()
-a = DummyDataSource('A')
-smache.add_sources(a)
+smache.add_sources(DummyA)
 
 
-@smache.computed(a)
+@smache.computed(DummyA)
 def score(a):
     return a.value
 
