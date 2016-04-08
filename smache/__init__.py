@@ -12,13 +12,13 @@ from .data_sources.raw_data_source import Raw  # NOQA
 
 global _instance
 
+
 class Smache:
 
     def __init__(self, **kwargs):
         self._options = Options(**kwargs)
 
         redis_con = self._options.redis_con
-        worker_queue = self._options.worker_queue
 
         self._computed_repo = ComputedFunctionRepository()
         self._relation_deps_repo = RelationDependencyRepository()
