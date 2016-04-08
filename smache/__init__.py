@@ -9,6 +9,7 @@ from .options import Options
 from .smache_logging import setup_logger
 from .timestamp_registry import TimestampRegistry
 from .data_update_propagator import DataUpdatePropagator
+from .data_source_repository import DataSourceRepository
 from .data_sources.raw_data_source import Raw  # NOQA
 
 global _instance
@@ -31,6 +32,8 @@ class Smache:
         function_serializer = FunctionSerializer()
         self._data_update_propagator = \
             DataUpdatePropagator(function_serializer, store)
+        self._data_source_repository = \
+            DataSourceRepository(self._data_sources)
 
         self._cache_manager = CacheManager(store,
                                            self._dependency_graph,
@@ -39,6 +42,7 @@ class Smache:
                                            self._scheduler,
                                            function_serializer,
                                            self._relation_deps_repo,
+                                           self._data_source_repository,
                                            self._options)
 
         # Delegates

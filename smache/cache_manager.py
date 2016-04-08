@@ -1,4 +1,3 @@
-from .data_sources import DummyDataSource, RawDataSource, MongoDataSource
 from .computed_function import ComputedFunction
 from .dependency_graph_builder import build_dependency_graph
 from .schedulers import execute
@@ -7,7 +6,8 @@ from .schedulers import execute
 class CacheManager:
 
     def __init__(self, store, dep_graph, computed_repo, data_sources,
-                 scheduler, function_serializer, relation_deps_repo, options):
+                 scheduler, function_serializer, relation_deps_repo,
+                 data_source_repo, options):
         self._store = store
         self._dep_graph = dep_graph
         self._options = options
@@ -17,11 +17,7 @@ class CacheManager:
         self._data_sources = data_sources
         self._relation_deps_repo = relation_deps_repo
         self._data_source_repo = {}
-        self._known_data_source_types = [
-            RawDataSource,
-            DummyDataSource,
-            MongoDataSource
-        ]
+        self._data_source_repo = data_source_repo
 
     def cache_function(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
@@ -69,30 +65,10 @@ class CacheManager:
                 for (entity_class, rel_fun) in relation_deps]
 
     def _find_or_register_data_source(self, entity_class):
-        data_source = self._find_data_source(entity_class)
-        if data_source is not None:
-            return data_source
-        else:
-            return self._register_data_source(entity_class)
-
-    def _find_data_source(self, entity_class):
-        for data_source in self._data_sources:
-            if data_source.for_entity_class(entity_class):
-                return data_source
-
-    def _register_data_source(self, entity_class):
-        if self._find_data_source(entity_class) is None:
-            data_source_class = self._find_data_source_type(entity_class)
-            data_source = data_source_class(entity_class)
-            self._data_sources.append(data_source)
-            data_source.subscribe(self._on_data_source_update)
-            return data_source
-
-    def _find_data_source_type(self, entity_class):
-        for data_source_class in self._known_data_source_types:
-            if data_source_class.is_instance(entity_class):
-                return data_source_class
-        raise Exception("No data source type for {}".format(entity_class))
+        return self._data_source_repo.find_or_register_data_source(
+            entity_class,
+            self._on_data_source_update
+        )
 
     def is_fresh(self, key):
         return self._store.is_fresh(key)

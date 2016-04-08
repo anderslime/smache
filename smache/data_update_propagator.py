@@ -95,15 +95,14 @@ class DataUpdatePropagator:
         )
 
     def _find_data_source(self, data_source_id):
-        try:
-            return next(source for source in smache._instance._data_sources
-                        if source.data_source_id == data_source_id)
-        except StopIteration:
-            raise Exception("No data source for id={}".format(data_source_id))
+        return smache._instance._data_source_repository.find_by_data_source_id(
+            data_source_id
+        )
 
     def _find_data_source_for_entity(self, computed_source):
-        return next(source for source in smache._instance._data_sources
-                    if source.for_entity(computed_source))
+        return smache._instance._data_source_repository.find_by_entity(
+            computed_source
+        )
 
     def _map_relation_keys(self, entity, depending_relations):
         return [self._rel_keys(relation_fun, entity, computed_fun)
