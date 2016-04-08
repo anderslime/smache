@@ -1,15 +1,18 @@
-from mongoengine import Document, StringField, IntField, connect, ListField, ReferenceField
+from mongoengine import (Document, StringField, IntField, ListField,
+                         ReferenceField)
 from mongoengine.connection import connect, disconnect
 from pymongo import MongoClient
-from collections import namedtuple
+
 
 class User(Document):
     name = StringField()
     age = IntField()
 
+
 class Handin(Document):
     users = ListField(ReferenceField(User))
     score = IntField()
+
 
 class TestSet:
     def __init__(self, db_alias, num_of_users, num_of_handins):
@@ -29,6 +32,7 @@ test_sets = [
     TestSet('humongous', 62500, 160)
 ]
 
+
 def build_base_dbs():
     for test_set in test_sets:
         connect(test_db_base_name(test_set.db_alias))
@@ -37,17 +41,27 @@ def build_base_dbs():
 
         print "==== STARTING {} ====".format(test_set.db_alias)
         print "CREATING USERS"
-        users = [User(name='Joe', age=25) for _ in range(test_set.num_of_users)]
+        users = [User(name='Joe', age=25)
+                 for _ in range(test_set.num_of_users)]
         User.objects.insert(users)
 
         print "BUILDING HANDINS"
-        handins = [Handin(score=10) for _ in range(test_set.num_of_handins)]
+        handins = [Handin(score=10)
+                   for _ in range(test_set.num_of_handins)]
 
         print "APPENDING USERS TO HANDINS"
         handins = []
         users = User.objects()
-        for i in range(0, test_set.num_of_handins, test_set.num_of_users_per_handin):
-            handins.append(Handin(score=i, users=users[i:i+test_set.num_of_users_per_handin]))
+        test_indices = range(0,
+                             test_set.num_of_handins,
+                             test_set.num_of_users_per_handin):
+        for i in
+            handins.append(
+                Handin(
+                    score=i,
+                    users=users[i:i+test_set.num_of_users_per_handin]
+                )
+            )
 
         print "INSERTING HANDINS"
         Handin.objects.insert(handins)

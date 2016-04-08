@@ -12,6 +12,7 @@ __doc__ = """
 Lots of description
 """
 
+
 class ToxTestCommand(TestCommand):
 
     def finalize_options(self):
@@ -42,4 +43,3 @@ setup(
     url='http://limecode.dk',
     cmdclass={'test': ToxTestCommand}
 )
-
