@@ -60,8 +60,7 @@ class DummyDataSource:
     def find(self, input_value):
         raw_data = self.dummy_entity_class.find(self._key(input_value))
         if raw_data:
-            return DummyEntity(self.data_source_id,
-                               input_value, raw_data['value'])
+            return self.dummy_entity_class(input_value, raw_data['value'])
 
     def _key(self, input_value):
         if isinstance(input_value, int) or isinstance(input_value, str):
