@@ -1,6 +1,14 @@
-class RawDataSource:
+import inspect
 
-    def __init__(self):
+class Raw:
+    pass
+
+class RawDataSource:
+    @classmethod
+    def is_instance(cls, value):
+        return issubclass(value, Raw)
+
+    def __init__(self, entity_class=None):
         self.data_source_id = 'raw_value'
 
     def serialize(self, raw_value):

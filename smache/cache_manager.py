@@ -1,4 +1,4 @@
-from .data_sources import DummyDataSource
+from .data_sources import DummyDataSource, RawDataSource
 from .computed_function import ComputedFunction
 from .dependency_graph_builder import build_dependency_graph
 from .computed_function_repository import ComputedFunctionRepository
@@ -18,6 +18,8 @@ class CacheManager:
         self._computed_repo = computed_repo
         self._data_sources = data_sources
         self._relation_deps_repo = relation_deps_repo
+        self._data_source_repo = {}
+        self._known_data_source_types = [RawDataSource, DummyDataSource]
 
     def cache_function(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
@@ -39,23 +41,38 @@ class CacheManager:
             return wrapper
         return _computed
 
-    def add_sources(self, *data_sources):
+    def add_sources(self, *entity_classes):
+        data_sources = []
+        for entity_class in entity_classes:
+            data_source_class = [data_source_class
+                                 for data_source_class in self._known_data_source_types
+                                 if data_source_class.is_instance(entity_class)][0]
+            data_sources.append(data_source_class(entity_class))
         for data_source in data_sources:
             self._data_sources.append(data_source)
             data_source.subscribe(self._on_data_source_update)
 
-    def add_computed(self, fun, arg_deps, kwargs):
-        data_source_deps = self._parse_deps(kwargs.get('sources', ()))
+    def add_computed(self, fun, arg_entity_class_deps, kwargs):
+        entity_class_deps = self._parse_deps(kwargs.get('sources', ()))
         computed_deps = self._parse_deps(kwargs.get('computed_deps', ()))
         relation_deps = kwargs.get('relations', ())
         computed_dep_funs = [self._get_computed(computed_dep)
                              for computed_dep in computed_deps]
+        arg_deps = [self._find_data_source(entity_class)
+                    for entity_class in arg_entity_class_deps]
+        data_source_deps = [self._find_data_source(entity_class)
+                            for entity_class in entity_class_deps]
         computed_fun = ComputedFunction(fun,
                                         arg_deps,
                                         data_source_deps,
                                         computed_dep_funs)
         self._relation_deps_repo.add_all(relation_deps, computed_fun)
         self._set_computed(computed_fun)
+
+    def _find_data_source(self, entity_class):
+        for data_source in self._data_sources:
+            if data_source.__class__.is_instance(entity_class):
+                return data_source
 
     def is_fresh(self, key):
         return self._store.is_fresh(key)
@@ -76,7 +93,7 @@ class CacheManager:
 
     def _computed_key(self, fun, *args, **kwargs):
         computed_fun = self._computed_repo.get(fun)
-        return self._fun_key(
+        return self._function_serializer.serialized_fun(
             computed_fun.arg_deps,
             computed_fun.fun,
             *args,
@@ -123,6 +140,3 @@ class CacheManager:
             data_source.data_source_id,
             entity.id
         )
-
-    def _fun_key(self, fun, *args, **kwargs):
-        return self._function_serializer.serialized_fun(fun, *args, **kwargs)

@@ -1,6 +1,5 @@
-from smache import Smache
+from smache import Smache, Raw
 from smache.data_sources.dummy_data_source import DummyEntity
-from smache.data_sources import DummyDataSource, RawDataSource
 from smache.schedulers import InProcessScheduler
 
 import pytest
@@ -8,30 +7,38 @@ import redis
 
 # Definitions
 smache = Smache(scheduler=InProcessScheduler())
-a = DummyDataSource('A')
-b = DummyDataSource('B')
-c = DummyDataSource('C')
-raw = RawDataSource()
-
-smache.add_sources(a, b, c, raw)
 
 
-@smache.computed(a, sources=(b, c))
+class DummyA(DummyEntity):
+    pass
+
+
+class DummyB(DummyEntity):
+    pass
+
+
+class DummyC(DummyEntity):
+    pass
+
+smache.add_sources(DummyA, DummyB, DummyC, Raw)
+
+
+@smache.computed(DummyA, sources=(DummyB, DummyC))
 def score(a):
     return a.value + 5 + 10
 
 
-@smache.computed(b, c)
+@smache.computed(DummyB, DummyC)
 def h(b, c):
     return b.value + c.value
 
 
-@smache.computed(a, b, c)
+@smache.computed(DummyA, DummyB, DummyC)
 def f(a, b, c):
     return a.value * h(b, c)
 
 
-@smache.computed(a, b, raw)
+@smache.computed(DummyA, DummyB, Raw)
 def with_raw(a, b, static_value):
     return (a.value + b.value) * static_value
 
@@ -47,9 +54,9 @@ def flush_before_each_test_case():
 
 def test_cache():
 
-    ax = DummyEntity(a.data_source_id, 1, 10)
-    bx = DummyEntity(b.data_source_id, 2, 2)
-    cx = DummyEntity(c.data_source_id, 3, 3)
+    ax = DummyA(1, 10)
+    bx = DummyB(2, 2)
+    cx = DummyC(3, 3)
 
     assert f(ax, bx, cx) == 50
     assert h(bx, cx) == 5
@@ -59,19 +66,19 @@ def test_cache():
     assert smache.is_fun_fresh(f, ax, bx, cx) == True
     assert smache.is_fun_fresh(h, bx, cx) == True
 
-    b.did_update(0)
+    DummyB.update(0, {})
 
     assert smache.is_fun_fresh(score, ax) == False
     assert smache.is_fun_fresh(f, ax, bx, cx) == True
     assert smache.is_fun_fresh(h, bx, cx) == True
 
-    a.did_update(1)
+    DummyA.update(1, {})
 
     assert smache.is_fun_fresh(score, ax) == False
     assert smache.is_fun_fresh(f, ax, bx, cx) == False
     assert smache.is_fun_fresh(h, bx, cx) == True
 
-    b.did_update(2)
+    DummyB.update(2, {})
 
     assert smache.is_fun_fresh(score, ax) == False
     assert smache.is_fun_fresh(f, ax, bx, cx) == False
@@ -79,7 +86,7 @@ def test_cache():
 
 
 def test_with_raw_value():
-    ax = DummyEntity(a.data_source_id, 1, 10)
-    bx = DummyEntity(b.data_source_id, 2, 2)
+    ax = DummyA(1, 10)
+    bx = DummyB(2, 2)
 
     assert with_raw(ax, bx, 1000) == 12000
