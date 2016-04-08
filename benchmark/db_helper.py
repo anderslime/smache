@@ -54,8 +54,8 @@ def build_base_dbs():
         users = User.objects()
         test_indices = range(0,
                              test_set.num_of_handins,
-                             test_set.num_of_users_per_handin):
-        for i in
+                             test_set.num_of_users_per_handin)
+        for i in test_indices:
             handins.append(
                 Handin(
                     score=i,
