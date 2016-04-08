@@ -11,6 +11,9 @@ class RawDataSource:
     def __init__(self, entity_class=None):
         self.data_source_id = 'raw_value'
 
+    def for_entity_class(self, entity_class):
+        return entity_class == Raw
+
     def serialize(self, raw_value):
         return raw_value
 

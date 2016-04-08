@@ -75,7 +75,7 @@ class CacheManager:
 
     def _find_data_source(self, entity_class):
         for data_source in self._data_sources:
-            if data_source.__class__.is_instance(entity_class):
+            if data_source.for_entity_class(entity_class):
                 return data_source
         raise Exception("No data source instance for {}".format(entity_class))
 

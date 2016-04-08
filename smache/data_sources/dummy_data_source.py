@@ -13,8 +13,12 @@ class DummyEntity:
             subscriber(serialized_id)
 
     @classmethod
-    def reset(cls):
-        cls.data = getattr(cls, 'original_data', {})
+    def set_data(cls, new_data={}):
+        cls.data = new_data
+
+    @classmethod
+    def unsubscribe_all(cls):
+        cls.subscribers = []
 
     @classmethod
     def find(cls, input_value):
@@ -48,6 +52,10 @@ class DummyEntity:
 class DummyDataSource:
 
     @classmethod
+    def data_source_id(cls, document):
+        return document.__name__
+
+    @classmethod
     def is_instance(cls, entity_class):
         return issubclass(entity_class, DummyEntity)
 
@@ -62,6 +70,9 @@ class DummyDataSource:
 
     def for_entity(self, entity_instance):
         return self.data_source_id == entity_instance.data_source_id
+
+    def for_entity_class(self, document):
+        return self.data_source_id == self.__class__.data_source_id(document)
 
     def did_update(self, entity_id):
         entity = self.dummy_entity_class.find(entity_id)

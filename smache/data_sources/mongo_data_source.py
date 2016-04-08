@@ -5,12 +5,16 @@ from ..smache_logging import logger
 class MongoDataSource:
 
     @classmethod
+    def data_source_id(cls, document):
+        return document.__name__
+
+    @classmethod
     def is_instance(cls, document_class):
         return issubclass(document_class, Document)
 
     def __init__(self, document):
         self.document = document
-        self.data_source_id = document.__name__
+        self.data_source_id = self.__class__.data_source_id(document)
         self._subscriber = lambda x: x
 
     def subscribe(self, fun):
@@ -29,6 +33,9 @@ class MongoDataSource:
 
     def for_entity(self, document_instance):
         return self.data_source_id == document_instance.__class__.__name__
+
+    def for_entity_class(self, document):
+        return self.data_source_id == self.__class__.data_source_id(document)
 
     def serialize(self, entity):
         return str(entity.id)

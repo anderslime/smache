@@ -1,50 +1,61 @@
 from smache import Smache, Raw
 from smache.data_sources import DummyDataSource, RawDataSource
 from smache.schedulers import InProcessScheduler
-from tests.dummy_data_source_helper import DummyA, DummyB
+from tests.helper import DummyA, DummyB, redis_con
 import pytest
 import redis
-
-# Definitions
-smache = Smache(scheduler=InProcessScheduler())
-
-smache.add_sources(DummyA, DummyB, Raw)
-
-
-@smache.computed(
-    DummyA,
-    Raw,
-    Raw,
-    relations=[(DummyB, lambda b: DummyA.find('1'))]
-)
-def f(a, c, d):
-    b = DummyB.find('2')
-    return a.value * b.value
-
-
-@smache.computed(
-    DummyA,
-    Raw,
-    Raw,
-    relations=[(DummyB, lambda b: [DummyA.find('1'), DummyA.find('2')])]
-)
-def h(a, c, d):
-    b = DummyB.find('2')
-    return a.value * b.value
-
-# Tests
-redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
 @pytest.yield_fixture(autouse=True)
 def flush_before_each_test_case():
     redis_con.flushall()
+    DummyA.set_data({'1': {'value': 10}, '2': {'value': 500}})
+    DummyB.set_data({'2': {'value': 20}})
     yield
+
+
+def teardown_module(module):
+    DummyA.unsubscribe_all()
+    DummyB.unsubscribe_all()
+
+
+def setup_module(module):
+    global smache, f, h
+
+    smache = Smache(scheduler=InProcessScheduler())
+    smache.add_sources(DummyA, DummyB, Raw)
+
+
+    @smache.computed(
+        DummyA,
+        Raw,
+        Raw,
+        relations=[(DummyB, lambda b: DummyA.find('1'))]
+    )
+    def f(a, c, d):
+        b = DummyB.find('2')
+        return a.value * b.value
+
+
+    @smache.computed(
+        DummyA,
+        Raw,
+        Raw,
+        relations=[(DummyB, lambda b: [DummyA.find('1'), DummyA.find('2')])]
+    )
+    def h(a, c, d):
+        b = DummyB.find('2')
+        return a.value * b.value
+
+
+def teardown_module(module):
+    DummyA.unsubscribe_all()
+    DummyB.unsubscribe_all()
 
 
 def test_computed_function_are_updated_when_relations_are():
     ax = DummyA('1', 10)
-    ax2 = DummyB('2', 500)
+    ax2 = DummyA('2', 500)
 
     assert f(ax, 5, 10) == 200
     assert f(ax2, 5, 10) == 10000
@@ -57,7 +68,7 @@ def test_computed_function_are_updated_when_relations_are():
 
 def test_relations_with_list():
     ax = DummyA('1', 10)
-    ax2 = DummyB('2', 500)
+    ax2 = DummyA('2', 500)
 
     assert h(ax, 5, 10) == 200
     assert h(ax2, 5, 10) == 10000
