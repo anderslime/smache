@@ -47,7 +47,9 @@ class Smache:
                                            self._options)
 
         # Delegates
-        dsl = DSL(self._data_source_repository, self._cache_manager)
+        dsl = DSL(self._data_source_repository,
+                  self._cache_manager,
+                  self._computed_repo)
         self.computed = dsl.computed
         self.relations = dsl.relations
         self.sources = dsl.sources

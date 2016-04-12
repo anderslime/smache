@@ -2,9 +2,10 @@ from .computed_function import ComputedFunction
 
 
 class DSL:
-    def __init__(self, data_source_repo, cache_manager):
+    def __init__(self, data_source_repo, cache_manager, computed_repo):
         self._data_source_repo = data_source_repo
         self._cache_manager = cache_manager
+        self._computed_repo = computed_repo
         self.cache_function = self._cache_manager.cache_function
 
     def computed(self, *deps, **kwargs):
@@ -30,7 +31,7 @@ class DSL:
         return _sources
 
     def _add_relations(self, fun, *relation_deps):
-        computed_fun = self._cache_manager._get_computed(fun)
+        computed_fun = self._get_computed(fun)
         relation_data_source_deps = self._relation_data_sources(relation_deps)
         self._cache_manager.add_relation_deps(
             computed_fun,
@@ -41,12 +42,12 @@ class DSL:
         entity_class_deps = self._parse_deps(sources)
         data_source_deps = [self._find_or_register_data_source(entity_class)
                             for entity_class in entity_class_deps]
-        computed_fun = self._cache_manager._get_computed(fun)
+        computed_fun = self._get_computed(fun)
         computed_fun.set_data_source_deps(data_source_deps)
 
     def _add_computed(self, fun, arg_entity_class_deps, kwargs):
         computed_deps = self._parse_deps(kwargs.get('computed_deps', ()))
-        computed_dep_funs = [self._cache_manager._get_computed(computed_dep)
+        computed_dep_funs = [self._get_computed(computed_dep)
                              for computed_dep in computed_deps]
         arg_deps = [self._find_or_register_data_source(entity_class)
                     for entity_class in arg_entity_class_deps]
@@ -62,6 +63,9 @@ class DSL:
             entity_class,
             self._cache_manager._on_data_source_update
         )
+
+    def _get_computed(self, fun):
+        return self._computed_repo.get(fun)
 
     def _parse_deps(self, value):
         if isinstance(value, tuple):
