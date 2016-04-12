@@ -17,7 +17,8 @@ def name(a):
     return a.name
 
 
-@smache.computed(sources=(User))
+@smache.sources(User)
+@smache.computed()
 def score():
     return 50
 

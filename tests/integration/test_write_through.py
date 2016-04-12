@@ -13,7 +13,8 @@ def setup_module(module):
     def hyphen(a, b):
         return ' - '.join([a.value, b.value])
 
-    @smache.computed(sources=(DummyA))
+    @smache.sources(DummyA)
+    @smache.computed()
     def slash():
         return '/'.join([DummyA.find('1').value, DummyA.find('2').value])
 

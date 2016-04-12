@@ -50,6 +50,7 @@ class Smache:
         dsl = DSL(self._data_source_repository, self._cache_manager)
         self.computed = dsl.computed
         self.relations = dsl.relations
+        self.sources = dsl.sources
 
         self.is_fun_fresh = self._cache_manager.is_fun_fresh
 

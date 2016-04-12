@@ -18,7 +18,8 @@ def setup_module(module):
 
     smache = Smache(scheduler=InProcessScheduler())
 
-    @smache.computed(DummyA, sources=(DummyB, DummyC))
+    @smache.sources(DummyB, DummyC)
+    @smache.computed(DummyA)
     def score(a):
         return a.value + 5 + 10
 
