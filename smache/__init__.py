@@ -24,14 +24,15 @@ class Smache:
 
         redis_con = self._options.redis_con
 
-        self._computed_repo = ComputedFunctionRepository()
+        self._function_serializer = FunctionSerializer()
+        self._computed_repo = \
+            ComputedFunctionRepository(self._function_serializer)
         self._relation_deps_repo = RelationDependencyRepository()
         self._dependency_graph = RedisDependencyGraph(redis_con)
         self._scheduler = self._options.scheduler
         self._timestamp_registry = TimestampRegistry(redis_con)
         self._data_sources = []
         self._store = RedisStore(redis_con)
-        self._function_serializer = FunctionSerializer()
         self._data_update_propagator = \
             DataUpdatePropagator(self._function_serializer, self._store)
         self._data_source_repository = \
@@ -47,14 +48,19 @@ class Smache:
         self.relations = dsl.relations
         self.sources = dsl.sources
 
-        self.is_fun_fresh = self._cache_manager.is_fun_fresh
-
         setup_logger(self._options)
 
         self._set_globals()
 
     def draw(self, filename='graph'):
         draw_graph(self._build_dependency_graph().values(), filename)
+
+    def is_fun_fresh(self, fun, *args, **kwargs):
+        key = self._computed_key(fun, *args, **kwargs)
+        return self._store.is_fresh(key)
+
+    def _computed_key(self, fun, *args, **kwargs):
+        return self._computed_repo.computed_key(fun, *args, **kwargs)
 
     def _build_cache_manager(self):
         return CacheManager(

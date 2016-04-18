@@ -1,5 +1,4 @@
 from .computed_function import ComputedFunction
-from .dependency_graph_builder import build_dependency_graph
 from .schedulers import execute
 
 
@@ -38,22 +37,12 @@ class CacheManager:
             computed_fun
         )
 
-    def is_fun_fresh(self, fun, *args, **kwargs):
-        key = self._computed_key(fun, *args, **kwargs)
-        return self._store.is_fresh(key)
-
     def function_cache_value(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
         return self._store.lookup(key).value
 
     def _computed_key(self, fun, *args, **kwargs):
-        computed_fun = self._computed_repo.get(fun)
-        return self._function_serializer.serialized_fun(
-            computed_fun.arg_deps,
-            computed_fun.fun,
-            *args,
-            **kwargs
-        )
+        return self._computed_repo.computed_key(fun, *args, **kwargs)
 
     def _get_computed(self, fun):
         return self._computed_repo.get(fun)
