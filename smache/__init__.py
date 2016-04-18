@@ -59,6 +59,10 @@ class Smache:
         key = self._computed_key(fun, *args, **kwargs)
         return self._store.is_fresh(key)
 
+    def function_cache_value(self, fun, *args, **kwargs):
+        key = self._computed_key(fun, *args, **kwargs)
+        return self._store.lookup(key).value
+
     def _computed_key(self, fun, *args, **kwargs):
         return self._computed_repo.computed_key(fun, *args, **kwargs)
 

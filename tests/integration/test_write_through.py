@@ -43,7 +43,7 @@ def test_write_through():
 
     assert smache.is_fun_fresh(hyphen, ax, bx) == True
 
-    assert smache._cache_manager.function_cache_value(
+    assert smache.function_cache_value(
         hyphen, ax, bx
     ) == 'wtf - world'
 
@@ -55,4 +55,4 @@ def test_write_through_with_collection_wide_subscription():
 
     execute_all_jobs(worker_queue, redis_con)
 
-    assert smache._cache_manager.function_cache_value(slash) == 'hello/lol'
+    assert smache.function_cache_value(slash) == 'hello/lol'
