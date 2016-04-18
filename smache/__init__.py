@@ -2,6 +2,7 @@ from .graph_drawer import draw_graph
 from .stores import RedisStore
 from .dependency_graphs import RedisDependencyGraph
 from .cache_manager import CacheManager
+from .dependency_graph_builder import build_dependency_graph
 from .computed_function_repository import ComputedFunctionRepository
 from .relation_dependency_repository import RelationDependencyRepository
 from .function_serializer import FunctionSerializer
@@ -74,7 +75,10 @@ class Smache:
         _instance = self
 
     def _build_dependency_graph(self):
-        return self._cache_manager.dependency_graph()
+        return build_dependency_graph(
+            self._data_sources,
+            self._computed_repo.computed_funs
+        )
 
     def _use_or_default(self, value, default_lambda):
         if value is not None:

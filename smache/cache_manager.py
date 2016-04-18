@@ -46,12 +46,6 @@ class CacheManager:
         key = self._computed_key(fun, *args, **kwargs)
         return self._store.lookup(key).value
 
-    def dependency_graph(self):
-        return build_dependency_graph(
-            self._data_sources,
-            self._computed_repo.computed_funs
-        )
-
     def _computed_key(self, fun, *args, **kwargs):
         computed_fun = self._computed_repo.get(fun)
         return self._function_serializer.serialized_fun(
