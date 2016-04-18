@@ -2,11 +2,13 @@ from .computed_function import ComputedFunction
 
 
 class DSL:
-    def __init__(self, data_source_repo, cache_manager, computed_repo):
+    def __init__(self, data_source_repo, cache_manager, function_proxy,
+                 computed_repo):
         self._data_source_repo = data_source_repo
         self._cache_manager = cache_manager
         self._computed_repo = computed_repo
-        self.cache_function = self._cache_manager.cache_function
+        self._function_proxy = function_proxy
+        self.cache_function = self._function_proxy.cache_function
 
     def computed(self, *deps, **kwargs):
         def _computed(fun):

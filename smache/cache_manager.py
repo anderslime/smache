@@ -1,24 +1,14 @@
 from .computed_function import ComputedFunction
 from .schedulers import execute
-from .cached_function_proxy import CachedFunctionProxy
 
 
 class CacheManager:
 
-    def __init__(self, store, dep_graph, computed_repo, scheduler,
-                 relation_deps_repo):
-        self._store = store
+    def __init__(self, dep_graph, computed_repo, scheduler, rel_deps_repo):
         self._dep_graph = dep_graph
         self._scheduler = scheduler
         self._computed_repo = computed_repo
-        self._relation_deps_repo = relation_deps_repo
-
-    def cache_function(self, fun, *args, **kwargs):
-        return CachedFunctionProxy(
-            self,
-            self._computed_repo,
-            self._store
-        ).cache_function(fun, *args, **kwargs)
+        self._relation_deps_repo = rel_deps_repo
 
     def add_computed(self, computed_fun):
         self._set_computed(computed_fun)

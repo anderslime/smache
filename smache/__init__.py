@@ -2,6 +2,7 @@ from .graph_drawer import draw_graph
 from .stores import RedisStore
 from .dependency_graphs import RedisDependencyGraph
 from .cache_manager import CacheManager
+from .cached_function_proxy import CachedFunctionProxy
 from .dependency_graph_builder import build_dependency_graph
 from .computed_function_repository import ComputedFunctionRepository
 from .relation_dependency_repository import RelationDependencyRepository
@@ -39,10 +40,16 @@ class Smache:
             DataSourceRepository(self._data_sources)
 
         self._cache_manager = self._build_cache_manager()
+        self._cached_function_proxy = CachedFunctionProxy(
+            self._cache_manager,
+            self._computed_repo,
+            self._store
+        )
 
         # Delegates
         dsl = DSL(self._data_source_repository,
                   self._cache_manager,
+                  self._cached_function_proxy,
                   self._computed_repo)
         self.computed = dsl.computed
         self.relations = dsl.relations
@@ -68,7 +75,6 @@ class Smache:
 
     def _build_cache_manager(self):
         return CacheManager(
-            self._store,
             self._dependency_graph,
             self._computed_repo,
             self._scheduler,
