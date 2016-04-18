@@ -29,22 +29,14 @@ class Smache:
         self._scheduler = self._options.scheduler
         self._timestamp_registry = TimestampRegistry(redis_con)
         self._data_sources = []
-        store = RedisStore(redis_con)
-        function_serializer = FunctionSerializer()
+        self._store = RedisStore(redis_con)
+        self._function_serializer = FunctionSerializer()
         self._data_update_propagator = \
-            DataUpdatePropagator(function_serializer, store)
+            DataUpdatePropagator(self._function_serializer, self._store)
         self._data_source_repository = \
             DataSourceRepository(self._data_sources)
 
-        self._cache_manager = CacheManager(store,
-                                           self._dependency_graph,
-                                           self._computed_repo,
-                                           self._data_sources,
-                                           self._scheduler,
-                                           function_serializer,
-                                           self._relation_deps_repo,
-                                           self._data_source_repository,
-                                           self._options)
+        self._cache_manager = self._build_cache_manager()
 
         # Delegates
         dsl = DSL(self._data_source_repository,
@@ -62,6 +54,20 @@ class Smache:
 
     def draw(self, filename='graph'):
         draw_graph(self._build_dependency_graph().values(), filename)
+
+    def _build_cache_manager(self):
+        return CacheManager(
+            self._store,
+            self._dependency_graph,
+            self._computed_repo,
+            self._data_sources,
+            self._scheduler,
+            self._function_serializer,
+            self._relation_deps_repo,
+            self._data_source_repository,
+            self._options
+        )
+
 
     def _set_globals(self):
         global _instance
