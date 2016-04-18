@@ -61,7 +61,7 @@ class DSL:
     def _find_or_register_data_source(self, entity_class):
         return self._data_source_repo.find_or_register_data_source(
             entity_class,
-            self._cache_manager._on_data_source_update
+            self._cache_manager.on_data_source_update
         )
 
     def _get_computed(self, fun):

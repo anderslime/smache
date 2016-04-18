@@ -71,14 +71,9 @@ class Smache:
             self._store,
             self._dependency_graph,
             self._computed_repo,
-            self._data_sources,
             self._scheduler,
-            self._function_serializer,
-            self._relation_deps_repo,
-            self._data_source_repository,
-            self._options
+            self._relation_deps_repo
         )
-
 
     def _set_globals(self):
         global _instance
