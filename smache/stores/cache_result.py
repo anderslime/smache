@@ -1,3 +1,3 @@
 from collections import namedtuple as struct
 
-CacheResult = struct("CacheResult", ["value", "is_fresh", "timestamp"])
+CacheResult = struct("CacheResult", ["value"])

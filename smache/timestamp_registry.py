@@ -28,8 +28,8 @@ class TimestampRegistry:
             self._state_ts_key(key),
             self.value_ts_key(key)
         )
-        print state_ts, value_ts
-        return value_ts is None or state_ts == value_ts
+        return state_ts is not None and \
+            (value_ts is None or state_ts == value_ts)
 
     def set_value_timestamp(self, pipe, key, timestamp):
         current_state_timestamp = self._redis_con.get(self._state_ts_key(key))

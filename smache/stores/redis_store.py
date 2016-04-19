@@ -30,8 +30,6 @@ class RedisStore:
         raw_cache_result = self._get_all(key) or {}
         return CacheResult(
             self._deserialize_json(raw_cache_result.get('value')),
-            self._deserialize_bool(raw_cache_result.get('is_fresh')),
-            self._deserialize_int(raw_cache_result.get('timestamp'))
         )
 
     def is_fresh(self, key):
@@ -39,9 +37,6 @@ class RedisStore:
 
     def mark_as_stale(self, key):
         self._timestamp_registry.increment_state_timestamp(key)
-
-    def _deserialize_bool(self, boolean):
-        return boolean == 'True'
 
     def _deserialize_int(self, integer):
         if integer is None:
