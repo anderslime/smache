@@ -13,13 +13,9 @@ class CachedFunctionProxy:
         self._cache_manager.add_entity_dependencies(fun, args, key)
         self._cache_manager.add_data_source_dependencies(fun, key)
         cache_result = self._store.lookup(key)
-        print fun.__name__
-        print "TOLERATE STALE?"
-        print self._tolerate_stale
         if self._tolerate_stale and cache_result.value:
             return cache_result.value
         else:
-            print "EXECUTING"
             return execute(self._store, key, fun, *args, **kwargs)
 
     def _computed_key(self, fun, *args, **kwargs):

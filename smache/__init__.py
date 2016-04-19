@@ -113,8 +113,6 @@ class Transaction:
     def __enter__(self):
         self._default_proxy = _instance._cached_function_proxy
         _instance._cached_function_proxy = self._proxy
-        print "ENTERING TRANSACTION"
 
     def __exit__(self, type, value, traceback):
         _instance._cached_function_proxy = self._default_proxy
-        print "EXITING TRANSACTION"
