@@ -12,6 +12,7 @@ def flush_before_each_test_case():
     redis_con.flushall()
     yield
 
+
 @pytest.yield_fixture
 def redis_store():
     yield RedisStore(redis_con, TimestampRegistry(redis_con))
@@ -39,12 +40,6 @@ def test_key_marked_as_stale_is_not_fresh(redis_store):
     assert redis_store.is_fresh("hello") == False
 
 
-def test_timestamp_is_set(redis_store):
-    redis_store.store("hello", "world", 60)
-
-    assert redis_store.lookup("hello").timestamp == 60
-
-
 def test_value_is_only_written_when_newer_then_current(redis_store):
     redis_store.store("hello", "world", 5)
 
@@ -59,11 +54,15 @@ def test_value_is_only_written_when_newer_then_current(redis_store):
     assert redis_store.lookup("hello").value == "new_world"
 
 
-# This test is really NOT a bad practice. It tests "private methods"
+# This test is really NOT a good practice. It tests "private methods"
 # But it tests that we retry transactions and
 def test_retry_method_works(monkeypatch):
     import json
-    redis_store = RedisStore(redis_con, TimestampRegistry(redis_con), retry_backoff=lambda: 0)
+    redis_store = RedisStore(
+        redis_con,
+        TimestampRegistry(redis_con),
+        retry_backoff=lambda: 0
+    )
     global retries
     retries = 0
 

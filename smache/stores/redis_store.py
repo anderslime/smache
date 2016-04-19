@@ -57,22 +57,23 @@ class RedisStore:
         try:
             if retries > 0:
                 pipe.watch(key)
+                self._timestamp_registry.watch_value_timestamp(pipe, key)
                 if self._is_old_timestamp(key, state_timestamp):
                     self._update_cache_entry(key, value, state_timestamp, pipe)
         except WatchError:
             self._retry_backoff()
             self._store_entry(key, value, state_timestamp, pipe, retries - 1)
 
-    def _is_old_timestamp(self, key, timestamp):
-        current_timestamp = self._get_field(key, 'timestamp')
+    def _is_old_timestamp(self, key, state_timestamp):
+        current_timestamp = self._timestamp_registry.value_timestamp(key)
         return current_timestamp is None or \
-            int(timestamp) > int(current_timestamp)
+            int(state_timestamp) > int(current_timestamp)
 
     def _update_cache_entry(self, key, value, state_timestamp, pipe):
         pipe.multi()
         pipe.hset(key, 'value', json.dumps(value))
         pipe.hset(key, 'is_fresh', True)
-        pipe.hset(key, 'timestamp', state_timestamp)
+        self._timestamp_registry.set_value_timestamp(pipe, key, state_timestamp)
         pipe.execute()
 
     def _get_all(self, key):
