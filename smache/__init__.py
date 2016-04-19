@@ -33,7 +33,7 @@ class Smache:
         self._scheduler = self._options.scheduler
         self._timestamp_registry = TimestampRegistry(redis_con)
         self._data_sources = []
-        self._store = RedisStore(redis_con)
+        self._store = RedisStore(redis_con, self._timestamp_registry)
         self._data_update_propagator = \
             DataUpdatePropagator(self._function_serializer, self._store)
         self._data_source_repository = \

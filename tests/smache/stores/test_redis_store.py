@@ -2,6 +2,7 @@ import redis
 import pytest
 
 from smache.stores import RedisStore
+from smache.timestamp_registry import TimestampRegistry
 
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
@@ -11,9 +12,12 @@ def flush_before_each_test_case():
     redis_con.flushall()
     yield
 
+@pytest.yield_fixture
+def redis_store():
+    yield RedisStore(redis_con, TimestampRegistry(redis_con))
 
-def test_stored_elements_can_be_lookued_up():
-    redis_store = RedisStore(redis_con)
+
+def test_stored_elements_can_be_lookued_up(redis_store):
     redis_store.store("hello", "world", 0)
 
     stored_element = redis_store.lookup("hello")
@@ -21,15 +25,13 @@ def test_stored_elements_can_be_lookued_up():
     assert stored_element.value == "world"
 
 
-def test_newly_stored_elements_are_fresh():
-    redis_store = RedisStore(redis_con)
+def test_newly_stored_elements_are_fresh(redis_store):
     redis_store.store("hello", "world", 0)
 
     assert redis_store.is_fresh("hello") == True
 
 
-def test_key_marked_as_stale_is_not_fresh():
-    redis_store = RedisStore(redis_con)
+def test_key_marked_as_stale_is_not_fresh(redis_store):
     redis_store.store("hello", "world", 0)
 
     redis_store.mark_as_stale("hello")
@@ -37,15 +39,13 @@ def test_key_marked_as_stale_is_not_fresh():
     assert redis_store.is_fresh("hello") == False
 
 
-def test_timestamp_is_set():
-    redis_store = RedisStore(redis_con)
+def test_timestamp_is_set(redis_store):
     redis_store.store("hello", "world", 60)
 
     assert redis_store.lookup("hello").timestamp == 60
 
 
-def test_value_is_only_written_when_newer_then_current():
-    redis_store = RedisStore(redis_con)
+def test_value_is_only_written_when_newer_then_current(redis_store):
     redis_store.store("hello", "world", 5)
 
     redis_store.store("hello", "old_world", 3)
@@ -63,7 +63,7 @@ def test_value_is_only_written_when_newer_then_current():
 # But it tests that we retry transactions and
 def test_retry_method_works(monkeypatch):
     import json
-    redis_store = RedisStore(redis_con, retry_backoff=lambda: 0)
+    redis_store = RedisStore(redis_con, TimestampRegistry(redis_con), retry_backoff=lambda: 0)
     global retries
     retries = 0
 
