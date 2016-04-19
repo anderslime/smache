@@ -39,12 +39,13 @@ class Smache:
         self._data_source_repository = \
             DataSourceRepository(self._data_sources)
 
-        self._cache_manager = self._build_cache_manager()
-        self._cached_function_proxy = CachedFunctionProxy(
-            self._cache_manager,
+        self._cache_manager = CacheManager(
+            self._dependency_graph,
             self._computed_repo,
-            self._store
+            self._scheduler,
+            self._relation_deps_repo
         )
+        self._cached_function_proxy = self._build_cached_function_proxy()
 
         # Delegates
         dsl = DSL(self._data_source_repository,
@@ -70,16 +71,19 @@ class Smache:
         key = self._computed_key(fun, *args, **kwargs)
         return self._store.lookup(key).value
 
+    def without_staleness(self):
+        return Transaction(self._build_cached_function_proxy(stale=False))
+
+    def _build_cached_function_proxy(self, **proxy_options):
+        return CachedFunctionProxy(
+            self._cache_manager,
+            self._computed_repo,
+            self._store,
+            **proxy_options
+        )
+
     def _computed_key(self, fun, *args, **kwargs):
         return self._computed_repo.computed_key(fun, *args, **kwargs)
-
-    def _build_cache_manager(self):
-        return CacheManager(
-            self._dependency_graph,
-            self._computed_repo,
-            self._scheduler,
-            self._relation_deps_repo
-        )
 
     def _set_globals(self):
         global _instance
@@ -99,4 +103,18 @@ class Smache:
 
     def __repr__(self):
         return "<Smache deps={}>".format(
-            str(self._cache_manager.dependency_graph().values()))
+            str(self._build_dependency_graph().values()))
+
+class Transaction:
+    def __init__(self, proxy):
+        self._proxy = proxy
+        self._default_proxy = None
+
+    def __enter__(self):
+        self._default_proxy = _instance._cached_function_proxy
+        _instance._cached_function_proxy = self._proxy
+        print "ENTERING TRANSACTION"
+
+    def __exit__(self, type, value, traceback):
+        _instance._cached_function_proxy = self._default_proxy
+        print "EXITING TRANSACTION"

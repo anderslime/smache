@@ -1,4 +1,5 @@
 from .computed_function import ComputedFunction
+import smache
 
 
 class DSL:
@@ -13,7 +14,8 @@ class DSL:
     def computed(self, *deps, **kwargs):
         def _computed(fun):
             def wrapper(*args, **kwargs):
-                return self.cache_function(fun, *args, **kwargs)
+                proxy = smache._instance._cached_function_proxy
+                return proxy.cache_function(fun, *args, **kwargs)
             self._add_computed(fun, deps, kwargs)
             wrapper.__name__ = fun.__name__
             wrapper.__module__ = fun.__module__
