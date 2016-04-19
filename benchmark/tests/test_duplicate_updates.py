@@ -1,42 +1,63 @@
+from rq import SimpleWorker
 import benchmark.helper as helper
 
-def make_underlying_data_change(no_of_updates):
-    def run_changes():
-        for i in range(no_of_updates):
-            handin = helper.Handin.objects.first()
-            handin.score = i
-            handin.save()
-    return run_changes
+def execute_all_jobs(worker_queue, redis_con):
+    worker = SimpleWorker([worker_queue], connection=redis_con)
+    worker.work(burst=True)
 
-def run_benchmark(db_alias, benchmark, no_of_updates):
+
+def make_underlying_data_change(no_of_updates):
+    def data_change():
+        execute_all_jobs(helper.worker_queue, helper.redis_con)
+    return data_change
+
+
+def setup_test(db_alias, no_of_updates, run_time):
+    def _setup():
+        helper.connect_db(db_alias)
+        user = helper.User.objects.first()
+        helper.score(user, run_time)
+
+        for i in range(no_of_updates):
+            handin = helper.User.objects.first()
+            handin.name = str(i)
+            handin.save()
+
+    return _setup
+
+
+def run_benchmark(db_alias, benchmark, no_of_updates, run_time):
     benchmark.pedantic(make_underlying_data_change(no_of_updates),
-                       setup=helper.connect_db_setup(db_alias),
+                       setup=setup_test(db_alias, no_of_updates, run_time),
                        iterations=1,
-                       rounds=4)
+                       rounds=1)
 
 def setup_module():
     helper.clean_dbs()
 
-def test_relation_updates_with_db_small_and_50_updates(benchmark):
-    run_benchmark('small', benchmark, 50)
+def setup_function(fun):
+    helper.redis_con.flushall()
 
-def test_relation_updates_with_db_small_and_100_updates(benchmark):
-    run_benchmark('small', benchmark, 100)
 
-def test_relation_updates_with_db_small_and_200_updates(benchmark):
-    run_benchmark('small', benchmark, 200)
+def test_duplicate_updates_with_db_medium_and_10_updates_0_1sec(benchmark):
+    run_benchmark('medium', benchmark, 10, 0.1)
 
-def test_relation_updates_with_db_medium_and_50_updates(benchmark):
-    run_benchmark('medium', benchmark, 50)
 
-def test_relation_updates_with_db_medium_and_100_updates(benchmark):
-    run_benchmark('medium', benchmark, 100)
+def test_duplicate_updates_with_db_medium_and_10_updates_0_5sec(benchmark):
+    run_benchmark('medium', benchmark, 10, 0.5)
 
-def test_relation_updates_with_db_medium_and_200_updates(benchmark):
-    run_benchmark('medium', benchmark, 200)
 
-# def test_relation_updates_with_db_large(benchmark):
-#     run_benchmark('large', benchmark)
-#
-# def test_relation_updates_with_db_humongous(benchmark):
-#     run_benchmark('humongous', benchmark)
+def test_duplicate_updates_with_db_medium_and_10_updates_1sec(benchmark):
+    run_benchmark('medium', benchmark, 10, 1)
+
+
+def test_duplicate_updates_with_db_medium_and_10(benchmark):
+    run_benchmark('medium', benchmark, 10, 0)
+
+
+def test_duplicate_updates_with_db_medium_and_20(benchmark):
+    run_benchmark('medium', benchmark, 20, 0)
+
+
+def test_duplicate_updates_with_db_medium_and_40(benchmark):
+    run_benchmark('medium', benchmark, 40, 0)

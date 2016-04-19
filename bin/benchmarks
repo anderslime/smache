@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 py.test --benchmark-json benchmark/results/argument_source_updates.json -c "benchmarks.ini" --pyargs benchmark/tests/test_argument_source_updates.py
 py.test --benchmark-json benchmark/results/relation_source_updates.json -c "benchmarks.ini" --pyargs benchmark/tests/test_relation_source_updates.py
-
+py.test --benchmark-json benchmark/results/duplicate_updates.json -c "benchmarks.ini" --pyargs benchmark/tests/test_duplicate_updates.py
