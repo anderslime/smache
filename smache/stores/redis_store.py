@@ -56,8 +56,8 @@ class RedisStore:
     def _store_entry(self, key, value, state_timestamp, pipe, retries):
         try:
             if retries > 0:
-                pipe.watch(key)
-                self._timestamp_registry.watch_value_timestamp(pipe, key)
+                ts_key = self._timestamp_registry.value_ts_key(key)
+                pipe.watch(key, ts_key)
                 if self._is_old_timestamp(key, state_timestamp):
                     self._update_cache_entry(key, value, state_timestamp, pipe)
         except WatchError:

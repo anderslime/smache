@@ -1,4 +1,5 @@
 import redis
+import json
 import pytest
 
 from smache.stores import RedisStore
@@ -56,8 +57,7 @@ def test_value_is_only_written_when_newer_then_current(redis_store):
 
 # This test is really NOT a good practice. It tests "private methods"
 # But it tests that we retry transactions and
-def test_retry_method_works(monkeypatch):
-    import json
+def test_retry_method_works_with_cache_overwrite(monkeypatch):
     redis_store = RedisStore(
         redis_con,
         TimestampRegistry(redis_con),
@@ -73,6 +73,28 @@ def test_retry_method_works(monkeypatch):
 
         pipe.multi()
         pipe.hset(key, "value", json.dumps(value))
+        pipe.execute()
+
+    monkeypatch.setattr(redis_store, '_update_cache_entry', test_cache_update)
+    redis_store.store("hello", "world", 0)
+
+    assert redis_store.lookup("hello").value is None
+    assert retries == 5
+
+def test_retry_method_works_with_timestamp_overwrite(monkeypatch):
+    ts_registry = TimestampRegistry(redis_con)
+    redis_store = RedisStore(redis_con, ts_registry, retry_backoff=lambda: 0)
+    global retries
+    retries = 0
+
+    def test_cache_update(key, value, timestamp, pipe):
+        global retries
+        retries += 1
+        ts_key = ts_registry.value_ts_key(key)
+        redis_con.set(ts_key, -500)
+
+        pipe.multi()
+        pipe.set(ts_key, 5)
         pipe.execute()
 
     monkeypatch.setattr(redis_store, '_update_cache_entry', test_cache_update)
