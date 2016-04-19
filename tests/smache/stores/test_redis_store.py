@@ -2,7 +2,7 @@ import redis
 import json
 import pytest
 
-from smache.stores import RedisStore
+from smache.stores.redis_store import RedisStore
 from smache.timestamp_registry import TimestampRegistry
 
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -42,15 +42,20 @@ def test_key_marked_as_stale_is_not_fresh(redis_store):
 
 
 def test_value_is_only_written_when_newer_then_current(redis_store):
-    redis_store.store("hello", "world", 5)
+    registry = TimestampRegistry(redis_con)
+    redis_store = RedisStore(redis_con, registry)
 
-    redis_store.store("hello", "old_world", 3)
-    redis_store.store("hello", "old_world", 0)
-    redis_store.store("hello", "old_world", 4)
+    redis_store.store("hello", "world", 0)
 
     assert redis_store.lookup("hello").value == "world"
 
-    redis_store.store("hello", "new_world", 6)
+    registry.increment_state_timestamp("hello")
+
+    redis_store.store("hello", "new_world", 0)
+
+    assert redis_store.lookup("hello").value == "world"
+
+    redis_store.store("hello", "new_world", 1)
 
     assert redis_store.lookup("hello").value == "new_world"
 

@@ -35,10 +35,10 @@ class RedisStore:
         )
 
     def is_fresh(self, key):
-        return self._get_field(key, 'is_fresh') == 'True'
+        return self._timestamp_registry.is_timestamps_syncronized(key)
 
     def mark_as_stale(self, key):
-        self.redis_con.hset(key, 'is_fresh', 'False')
+        self._timestamp_registry.increment_state_timestamp(key)
 
     def _deserialize_bool(self, boolean):
         return boolean == 'True'
@@ -58,21 +58,21 @@ class RedisStore:
             if retries > 0:
                 ts_key = self._timestamp_registry.value_ts_key(key)
                 pipe.watch(key, ts_key)
-                if self._is_old_timestamp(key, state_timestamp):
+                if self._is_newest_value(key, state_timestamp):
                     self._update_cache_entry(key, value, state_timestamp, pipe)
         except WatchError:
             self._retry_backoff()
             self._store_entry(key, value, state_timestamp, pipe, retries - 1)
 
-    def _is_old_timestamp(self, key, state_timestamp):
-        current_timestamp = self._timestamp_registry.value_timestamp(key)
-        return current_timestamp is None or \
-            int(state_timestamp) > int(current_timestamp)
+    def _is_newest_value(self, key, state_timestamp):
+        return self._timestamp_registry.is_newer_value_timestamp(
+            key,
+            state_timestamp
+        )
 
     def _update_cache_entry(self, key, value, state_timestamp, pipe):
         pipe.multi()
         pipe.hset(key, 'value', json.dumps(value))
-        pipe.hset(key, 'is_fresh', True)
         self._timestamp_registry.set_value_timestamp(pipe, key, state_timestamp)
         pipe.execute()
 
