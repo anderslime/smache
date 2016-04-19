@@ -73,7 +73,11 @@ class RedisStore:
     def _update_cache_entry(self, key, value, state_timestamp, pipe):
         pipe.multi()
         pipe.hset(key, 'value', json.dumps(value))
-        self._timestamp_registry.set_value_timestamp(pipe, key, state_timestamp)
+        self._timestamp_registry.set_value_timestamp(
+            pipe,
+            key,
+            state_timestamp
+        )
         pipe.execute()
 
     def _get_all(self, key):

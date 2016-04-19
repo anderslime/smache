@@ -105,6 +105,7 @@ class Smache:
         return "<Smache deps={}>".format(
             str(self._build_dependency_graph().values()))
 
+
 class Transaction:
     def __init__(self, proxy):
         self._proxy = proxy

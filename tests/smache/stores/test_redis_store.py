@@ -86,6 +86,7 @@ def test_retry_method_works_with_cache_overwrite(monkeypatch):
     assert redis_store.lookup("hello").value is None
     assert retries == 5
 
+
 def test_retry_method_works_with_timestamp_overwrite(monkeypatch):
     ts_registry = TimestampRegistry(redis_con)
     redis_store = RedisStore(redis_con, ts_registry, retry_backoff=lambda: 0)

@@ -1,5 +1,4 @@
 from .computed_function import ComputedFunction
-from .schedulers import execute
 
 
 class CacheManager:

@@ -66,4 +66,3 @@ class TimestampRegistry:
 
     def _state_ts_key(self, key):
         return 'smache:timestamp:state:{}'.format(key)
-
