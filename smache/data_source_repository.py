@@ -1,6 +1,14 @@
 from .data_sources import DummyDataSource, RawDataSource, MongoDataSource
 
 
+class DataSourceNotFound(Exception):
+    pass
+
+
+class DataSourceTypeNotFound(Exception):
+    pass
+
+
 class DataSourceRepository:
     def __init__(self, data_sources):
         self._data_sources = data_sources
@@ -14,13 +22,15 @@ class DataSourceRepository:
         for data_source in self._data_sources:
             if data_source.data_source_id == data_source_id:
                 return data_source
-        raise Exception("No data source for id={}".format(data_source_id))
+        raise DataSourceNotFound(
+            "No data source for id={}".format(data_source_id)
+        )
 
     def find_by_entity(self, entity):
         for data_source in self._data_sources:
             if data_source.for_entity(entity):
                 return data_source
-        raise Exception("No data source for entity={}".format(entity))
+        raise DataSourceNotFound("No data source for entity={}".format(entity))
 
     def find_or_register_data_source(self, entity_class, on_update=None):
         data_source = self._find_by_entity_class(entity_class)
@@ -46,4 +56,6 @@ class DataSourceRepository:
         for data_source_class in self._known_data_source_types:
             if data_source_class.is_instance(entity_class):
                 return data_source_class
-        raise Exception("No data source type for {}".format(entity_class))
+        raise DataSourceTypeNotFound(
+            "No data source type for {}".format(entity_class)
+        )
