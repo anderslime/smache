@@ -1,0 +1,218 @@
+{
+    "commit_info": {
+        "id": "8434394a2fd27a9104aa30307e7af4b2fdfdd521", 
+        "dirty": false
+    }, 
+    "version": "3.0.0", 
+    "benchmarks": [
+        {
+            "stats": {
+                "q1": 1.1991231441497803, 
+                "q3": 1.1991231441497803, 
+                "iterations": 1, 
+                "min": 1.1991231441497803, 
+                "max": 1.1991231441497803, 
+                "median": 1.1991231441497803, 
+                "iqr": 0.0, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 0, 
+                "ld15iqr": 1.1991231441497803, 
+                "stddev": 0, 
+                "hd15iqr": 1.1991231441497803, 
+                "outliers": "0;0", 
+                "data": [
+                    1.1991231441497803
+                ], 
+                "rounds": 1, 
+                "mean": 1.1991231441497803
+            }, 
+            "fullname": "tests/test_duplicate_updates.py::test_duplicate_updates_by_runtime__milliseconds_100", 
+            "group": null, 
+            "name": "test_duplicate_updates_by_runtime__milliseconds_100", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 5.1850690841674805, 
+                "q3": 5.1850690841674805, 
+                "iterations": 1, 
+                "min": 5.1850690841674805, 
+                "max": 5.1850690841674805, 
+                "median": 5.1850690841674805, 
+                "iqr": 0.0, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 0, 
+                "ld15iqr": 5.1850690841674805, 
+                "stddev": 0, 
+                "hd15iqr": 5.1850690841674805, 
+                "outliers": "0;0", 
+                "data": [
+                    5.1850690841674805
+                ], 
+                "rounds": 1, 
+                "mean": 5.1850690841674805
+            }, 
+            "fullname": "tests/test_duplicate_updates.py::test_duplicate_updates_by_runtime__milliseconds_500", 
+            "group": null, 
+            "name": "test_duplicate_updates_by_runtime__milliseconds_500", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 10.164920091629028, 
+                "q3": 10.164920091629028, 
+                "iterations": 1, 
+                "min": 10.164920091629028, 
+                "max": 10.164920091629028, 
+                "median": 10.164920091629028, 
+                "iqr": 0.0, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 0, 
+                "ld15iqr": 10.164920091629028, 
+                "stddev": 0, 
+                "hd15iqr": 10.164920091629028, 
+                "outliers": "0;0", 
+                "data": [
+                    10.164920091629028
+                ], 
+                "rounds": 1, 
+                "mean": 10.164920091629028
+            }, 
+            "fullname": "tests/test_duplicate_updates.py::test_duplicate_updates_by_runtime__milliseconds_1000", 
+            "group": null, 
+            "name": "test_duplicate_updates_by_runtime__milliseconds_1000", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.12072420120239258, 
+                "q3": 0.12072420120239258, 
+                "iterations": 1, 
+                "min": 0.12072420120239258, 
+                "max": 0.12072420120239258, 
+                "median": 0.12072420120239258, 
+                "iqr": 0.0, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 0, 
+                "ld15iqr": 0.12072420120239258, 
+                "stddev": 0, 
+                "hd15iqr": 0.12072420120239258, 
+                "outliers": "0;0", 
+                "data": [
+                    0.12072420120239258
+                ], 
+                "rounds": 1, 
+                "mean": 0.12072420120239258
+            }, 
+            "fullname": "tests/test_duplicate_updates.py::test_duplicate_updates_by_updates__updates_10", 
+            "group": null, 
+            "name": "test_duplicate_updates_by_updates__updates_10", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.26151609420776367, 
+                "q3": 0.26151609420776367, 
+                "iterations": 1, 
+                "min": 0.26151609420776367, 
+                "max": 0.26151609420776367, 
+                "median": 0.26151609420776367, 
+                "iqr": 0.0, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 0, 
+                "ld15iqr": 0.26151609420776367, 
+                "stddev": 0, 
+                "hd15iqr": 0.26151609420776367, 
+                "outliers": "0;0", 
+                "data": [
+                    0.26151609420776367
+                ], 
+                "rounds": 1, 
+                "mean": 0.26151609420776367
+            }, 
+            "fullname": "tests/test_duplicate_updates.py::test_duplicate_updates_by_updates__updates_20", 
+            "group": null, 
+            "name": "test_duplicate_updates_by_updates__updates_20", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.4954519271850586, 
+                "q3": 0.4954519271850586, 
+                "iterations": 1, 
+                "min": 0.4954519271850586, 
+                "max": 0.4954519271850586, 
+                "median": 0.4954519271850586, 
+                "iqr": 0.0, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 0, 
+                "ld15iqr": 0.4954519271850586, 
+                "stddev": 0, 
+                "hd15iqr": 0.4954519271850586, 
+                "outliers": "0;0", 
+                "data": [
+                    0.4954519271850586
+                ], 
+                "rounds": 1, 
+                "mean": 0.4954519271850586
+            }, 
+            "fullname": "tests/test_duplicate_updates.py::test_duplicate_updates_by_updates__updates_40", 
+            "group": null, 
+            "name": "test_duplicate_updates_by_updates__updates_40", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }
+    ], 
+    "machine_info": {
+        "node": "anderslime.local", 
+        "machine": "x86_64", 
+        "python_version": "2.7.11", 
+        "release": "15.4.0", 
+        "python_compiler": "GCC 4.2.1 Compatible Apple LLVM 7.0.2 (clang-700.1.81)", 
+        "python_implementation": "CPython", 
+        "processor": "i386", 
+        "system": "Darwin"
+    }, 
+    "datetime": "2016-04-20T09:16:46.874887"
+}
