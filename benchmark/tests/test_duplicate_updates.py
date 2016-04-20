@@ -53,12 +53,12 @@ def test_duplicate_updates_by_runtime__milliseconds_1000(benchmark):
 
 
 def test_duplicate_updates_by_updates__updates_10(benchmark):
-    run_benchmark('medium', benchmark, 10, 0)
+    run_benchmark('medium', benchmark, 10, 0.5)
 
 
 def test_duplicate_updates_by_updates__updates_20(benchmark):
-    run_benchmark('medium', benchmark, 20, 0)
+    run_benchmark('medium', benchmark, 20, 0.5)
 
 
 def test_duplicate_updates_by_updates__updates_40(benchmark):
-    run_benchmark('medium', benchmark, 40, 0)
+    run_benchmark('medium', benchmark, 40, 0.5)
