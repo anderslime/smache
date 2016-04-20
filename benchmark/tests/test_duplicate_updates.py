@@ -35,29 +35,30 @@ def run_benchmark(db_alias, benchmark, no_of_updates, run_time):
 def setup_module():
     helper.clean_dbs()
 
+
 def setup_function(fun):
     helper.redis_con.flushall()
 
 
-def test_duplicate_updates_with_db_medium_and_10_updates_0_1sec(benchmark):
+def test_duplicate_updates__10_updates_0_1sec(benchmark):
     run_benchmark('medium', benchmark, 10, 0.1)
 
 
-def test_duplicate_updates_with_db_medium_and_10_updates_0_5sec(benchmark):
+def test_duplicate_updates__10_updates_0_5sec(benchmark):
     run_benchmark('medium', benchmark, 10, 0.5)
 
 
-def test_duplicate_updates_with_db_medium_and_10_updates_1sec(benchmark):
+def test_duplicate_updates__10_updates_1sec(benchmark):
     run_benchmark('medium', benchmark, 10, 1)
 
 
-def test_duplicate_updates_with_db_medium_and_10(benchmark):
+def test_duplicate_updates__10_updates_0sec(benchmark):
     run_benchmark('medium', benchmark, 10, 0)
 
 
-def test_duplicate_updates_with_db_medium_and_20(benchmark):
+def test_duplicate_updates__20_updates_0sec(benchmark):
     run_benchmark('medium', benchmark, 20, 0)
 
 
-def test_duplicate_updates_with_db_medium_and_40(benchmark):
+def test_duplicate_updates__40_updates_0sec(benchmark):
     run_benchmark('medium', benchmark, 40, 0)
