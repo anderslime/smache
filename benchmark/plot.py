@@ -4,48 +4,79 @@ import matplotlib.pyplot as pl
 import json
 from .db_helper import test_sets
 
+class BenchmarkRepo:
+    @classmethod
+    def load(cls, report_path):
+        filename = '/'.join(['benchmark', 'results', report_path])
+        with open(filename) as f:
+            return BenchmarkRepo(json.loads(f.read()))
+
+    def __init__(self, raw_benchmark_dict):
+        self.raw_benchmark_dict = raw_benchmark_dict
+
+    @property
+    def means(self):
+        return [bm_stats['mean'] * 1000 for bm_stats in self.stats]
+
+    @property
+    def stddevs(self):
+        return [bm_stats['stddev'] * 1000 for bm_stats in self.stats]
+
+    @property
+    def name(self):
+        return self.benchmarks[0]['fullname'].split('::')[0]
+
+    def benchmark_names(self, split_by='__'):
+        return [bm['name'].split(split_by)[-1] for bm in self.benchmarks]
+
+    @property
+    def stats(self):
+        return [bm['stats'] for bm in self.benchmarks]
+
+    @property
+    def benchmarks(self):
+        return self.raw_benchmark_dict['benchmarks']
+
+
 def show_plot(report_name):
-    filename = '/'.join(['benchmark', 'results', report_name])
-    old_data_filename = '/'.join(['benchmark', 'results', 'current', report_name])
+    new_bm_repo = BenchmarkRepo.load(report_name)
+    old_bm_repo = BenchmarkRepo.load("current/{}".format(report_name))
 
-    old_means = []
+    benchmark_json = new_bm_repo.raw_benchmark_dict
+    old_benchmark_json = old_bm_repo.raw_benchmark_dict
 
-    with open(old_data_filename) as f:
-        old_benchmark_json = json.loads(f.read())
-        old_means = [bm['stats']['mean'] * 1000 for bm in old_benchmark_json["benchmarks"]]
+    old_means = old_bm_repo.means
+    mean = new_bm_repo.means
 
-    with open(filename) as f:
-        benchmark_json = json.loads(f.read())
-        name           = benchmark_json['benchmarks'][0]['fullname'].split('::')[0]
-        mean           = [bm['stats']['mean'] * 1000 for bm in benchmark_json["benchmarks"]]
-        std            = [bm['stats']['stddev'] * 1000 for bm in benchmark_json["benchmarks"]]
-        db_names       = [bm['name'].split('_')[-1] for bm in benchmark_json['benchmarks']]
+    name           = new_bm_repo.name
+    std            = new_bm_repo.stddevs
+    db_names       = new_bm_repo.benchmark_names('_')
 
-        users = [test_set.num_of_users for test_set in test_sets]
-        handins = [test_set.num_of_handins for test_set in test_sets]
-        users_per_handin = [test_set.num_of_users_per_handin for test_set in test_sets]
+    users = [test_set.num_of_users for test_set in test_sets]
+    handins = [test_set.num_of_handins for test_set in test_sets]
+    users_per_handin = [test_set.num_of_users_per_handin for test_set in test_sets]
 
-        def build_axis(axis, x_axis, x_label):
-            axis.errorbar(x_axis, mean, std)
-            axis.errorbar(x_axis, old_means)
-            axis.set_ylabel('Time (ms)')
-            axis.set_xlabel(x_label)
-            axis.set_title(name)
-            annotate_db_names(axis, x_axis, mean, db_names)
+    def build_axis(axis, x_axis, x_label):
+        axis.errorbar(x_axis, mean, std)
+        axis.errorbar(x_axis, old_means)
+        axis.set_ylabel('Time (ms)')
+        axis.set_xlabel(x_label)
+        axis.set_title(name)
+        annotate_db_names(axis, x_axis, mean, db_names)
 
-        fig = pl.figure()
+    fig = pl.figure()
 
-        a1 = pl.subplot(311)
-        build_axis(a1, handins, 'Handins')
+    a1 = pl.subplot(311)
+    build_axis(a1, handins, 'Handins')
 
-        a2 = pl.subplot(312)
-        build_axis(a2, users, 'Users')
+    a2 = pl.subplot(312)
+    build_axis(a2, users, 'Users')
 
-        a3 = pl.subplot(313)
-        build_axis(a3, users_per_handin, 'Users per Handin')
+    a3 = pl.subplot(313)
+    build_axis(a3, users_per_handin, 'Users per Handin')
 
-        fig.tight_layout()
-        pl.show()
+    fig.tight_layout()
+    pl.show()
 
 
 def annotate_db_names(axis, x_axis, y_axis, db_names):
