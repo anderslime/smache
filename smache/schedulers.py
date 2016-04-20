@@ -54,8 +54,12 @@ def _execute_from_key(key):
 
 
 def execute(store, key, computed_fun, *args, **kwargs):
-    with smache._instance.without_staleness():
-        computed_value = computed_fun(*args)
-        timestamp = smache._instance._timestamp_registry.state_timestamp(key)
-        store.store(key, computed_value, timestamp)
-        return computed_value
+    if store.is_fresh(key):
+        return store.lookup(key).value
+    else:
+        with smache._instance.without_staleness():
+            computed_value = computed_fun(*args)
+            timestamp = \
+                smache._instance._timestamp_registry.state_timestamp(key)
+            store.store(key, computed_value, timestamp)
+            return computed_value

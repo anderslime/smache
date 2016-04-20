@@ -79,6 +79,7 @@ class BenchmarkRepo:
                 for bm_name, benchmarks in grouped_benchmarks]
 
 def show_custom_plot(report_name):
+    old_benchmarks = BenchmarkRepo.load_grouped_benchmarks("current/{}".format(report_name))
     benchmarks = BenchmarkRepo.load_grouped_benchmarks(report_name)
 
     fig = pl.figure()
@@ -92,7 +93,7 @@ def show_custom_plot(report_name):
             a1,
             benchmark.means,
             benchmark.stddevs,
-            benchmark.means,
+            old_benchmarks[index].means,
             benchmark.x_values,
             benchmark.x_label,
             benchmark.name
