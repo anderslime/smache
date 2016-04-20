@@ -61,7 +61,7 @@ class MongoDataSource:
             return documents
         else:
             logger.warn(
-                "Smache: document updates are not received when using " \
+                "Smache: document updates are not received when using "
                 "bulk insert without load"
             )
             return []

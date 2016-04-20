@@ -58,6 +58,7 @@ def test_subscriber_is_notified_on_delete():
 
     data_source.disconnect()
 
+
 def test_subscriber_is_notified_on_bulk_insert_with_load():
     data_source = MongoDataSource(User)
 
