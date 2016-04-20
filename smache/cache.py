@@ -48,10 +48,12 @@ class Smache:
         self._cached_function_proxy = self._build_cached_function_proxy()
 
         # Delegates
-        dsl = DSL(self._data_source_repository,
-                  self._cache_manager,
-                  self._cached_function_proxy,
-                  self._computed_repo)
+        dsl = DSL(
+            self._data_source_repository,
+            self._cache_manager,
+            self._cached_function_proxy,
+            self._computed_repo
+        )
         self.computed = dsl.computed
         self.relations = dsl.relations
         self.sources = dsl.sources
