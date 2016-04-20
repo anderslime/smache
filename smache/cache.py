@@ -96,12 +96,6 @@ class Smache:
             self._computed_repo.computed_funs
         )
 
-    def _use_or_default(self, value, default_lambda):
-        if value is not None:
-            return value
-        else:
-            return default_lambda()
-
     def __repr__(self):
         return "<Smache deps={}>".format(
             str(self._build_dependency_graph().values()))

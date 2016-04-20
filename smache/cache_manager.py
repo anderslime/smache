@@ -47,9 +47,6 @@ class CacheManager:
             entity.id
         )
 
-    def _computed_key(self, fun, *args, **kwargs):
-        return self._computed_repo.computed_key(fun, *args, **kwargs)
-
     def _get_computed(self, fun):
         return self._computed_repo.get(fun)
 
