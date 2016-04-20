@@ -40,25 +40,25 @@ def setup_function(fun):
     helper.redis_con.flushall()
 
 
-def test_duplicate_updates__10_updates_0_1sec(benchmark):
+def test_duplicate_updates_by_runtime__milliseconds_100(benchmark):
     run_benchmark('medium', benchmark, 10, 0.1)
 
 
-def test_duplicate_updates__10_updates_0_5sec(benchmark):
+def test_duplicate_updates_by_runtime__milliseconds_500(benchmark):
     run_benchmark('medium', benchmark, 10, 0.5)
 
 
-def test_duplicate_updates__10_updates_1sec(benchmark):
+def test_duplicate_updates_by_runtime__milliseconds_1000(benchmark):
     run_benchmark('medium', benchmark, 10, 1)
 
 
-def test_duplicate_updates__10_updates_0sec(benchmark):
+def test_duplicate_updates_by_updates__updates_10(benchmark):
     run_benchmark('medium', benchmark, 10, 0)
 
 
-def test_duplicate_updates__20_updates_0sec(benchmark):
+def test_duplicate_updates_by_updates__updates_20(benchmark):
     run_benchmark('medium', benchmark, 20, 0)
 
 
-def test_duplicate_updates__40_updates_0sec(benchmark):
+def test_duplicate_updates_by_updates__updates_40(benchmark):
     run_benchmark('medium', benchmark, 40, 0)
