@@ -30,6 +30,10 @@ class MongoDataSource:
             self._mongoengine_post_save,
             sender=self.document
         )
+        signals.post_bulk_insert.connect(
+            self._mongoengine_post_saves,
+            sender=self.document
+        )
 
     def for_entity(self, document_instance):
         return self.data_source_id == document_instance.__class__.__name__
@@ -46,6 +50,21 @@ class MongoDataSource:
     def disconnect(self):
         signals.post_save.disconnect(self._mongoengine_post_save)
         signals.post_delete.disconnect(self._mongoengine_post_save)
+        signals.post_bulk_insert.disconnect(self._mongoengine_post_saves)
+
+    def _mongoengine_post_saves(self, sender, documents, **kwargs):
+        for document in self._loaded_documents(documents, **kwargs):
+            self._mongoengine_post_save(sender, document, **kwargs)
+
+    def _loaded_documents(self, documents, **kwargs):
+        if kwargs.pop('loaded', True):
+            return documents
+        else:
+            logger.warn(
+                "Smache: document updates are not received when using " \
+                "bulk insert without load"
+            )
+            return []
 
     def _mongoengine_post_save(self, sender, document, **kwargs):
         self._log_notification(document)

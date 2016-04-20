@@ -58,6 +58,33 @@ def test_subscriber_is_notified_on_delete():
 
     data_source.disconnect()
 
+def test_subscriber_is_notified_on_bulk_insert_with_load():
+    data_source = MongoDataSource(User)
+
+    user1 = User(name='Anders', age=12)
+    user2 = User(name='Henrik', age=50)
+
+    notified = {
+        'notified_data_sources': [],
+        'notified_entity_ids': []
+    }
+
+    def notify(data_source, entity):
+        notified['notified_data_sources'].append(data_source)
+        notified['notified_entity_ids'].append(str(entity.id))
+
+    data_source.subscribe(notify)
+
+    users = User.objects.insert([user1, user2])
+    user_ids = [str(user.id) for user in users]
+
+    assert notified == {
+        'notified_data_sources': [data_source, data_source],
+        'notified_entity_ids': user_ids
+    }
+
+    data_source.disconnect()
+
 
 def test_serialization():
     data_source = MongoDataSource(User)
