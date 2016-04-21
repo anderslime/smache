@@ -78,9 +78,6 @@ class DataUpdatePropagator:
         keys_with_indices = sorted(zip(keys, indices), key=lambda x: x[1])
         return [key for key, _ in keys_with_indices]
 
-    def _fun_key(self, fun, *args, **kwargs):
-        return self._function_serializer.serialized_fun(fun, *args, **kwargs)
-
     def _fun_name_from_key(self, fun_key):
         return self._function_serializer.fun_name(fun_key)
 
