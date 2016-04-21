@@ -1,4 +1,4 @@
-class DummyEntity:
+class InMemoryEntity:
     data = {}
     subscribers = []
 
@@ -46,7 +46,7 @@ class DummyEntity:
         return self.data_source_id
 
 
-class DummyDataSource:
+class InMemoryDataSource:
 
     @classmethod
     def data_source_id(cls, document):
@@ -54,7 +54,7 @@ class DummyDataSource:
 
     @classmethod
     def is_instance(cls, entity_class):
-        return issubclass(entity_class, DummyEntity)
+        return issubclass(entity_class, InMemoryEntity)
 
     def __init__(self, dummy_entity_class):
         self.dummy_entity_class = dummy_entity_class

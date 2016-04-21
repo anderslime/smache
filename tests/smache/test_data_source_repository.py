@@ -1,18 +1,18 @@
 import pytest
 
-from smache.data_sources import DummyDataSource, DummyEntity
+from smache.data_sources import InMemoryDataSource, InMemoryEntity
 from smache.data_source_repository import DataSourceRepository, \
     DataSourceNotFound, DataSourceTypeNotFound
 
 
 @pytest.yield_fixture
 def entity():
-    yield DummyEntity(1, 'hello')
+    yield InMemoryEntity(1, 'hello')
 
 
 @pytest.yield_fixture
 def data_source():
-    yield DummyDataSource(DummyEntity)
+    yield InMemoryDataSource(InMemoryEntity)
 
 
 @pytest.yield_fixture
@@ -21,7 +21,7 @@ def repo(data_source):
 
 
 def test_finding_data_source_by_id(repo, data_source):
-    assert repo.find_by_data_source_id('DummyEntity') == data_source
+    assert repo.find_by_data_source_id('InMemoryEntity') == data_source
 
 
 def test_finding_data_source_by_id_does_not_exist(repo):
@@ -51,7 +51,7 @@ def test_registering_data_source():
 
     assert len(repo._data_sources) == 0
 
-    data_source = repo.find_or_register_data_source(DummyEntity, on_update)
+    data_source = repo.find_or_register_data_source(InMemoryEntity, on_update)
 
     assert repo._data_sources[0] == data_source
     assert data_source.subscriber == on_update
@@ -63,7 +63,7 @@ def test_finding_data_source(repo):
 
     assert len(repo._data_sources) == 1
 
-    data_source = repo.find_or_register_data_source(DummyEntity, on_update)
+    data_source = repo.find_or_register_data_source(InMemoryEntity, on_update)
 
     assert len(repo._data_sources) == 1
     assert data_source.subscriber != on_update

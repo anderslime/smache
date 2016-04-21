@@ -1,14 +1,14 @@
 # Heloo
 from smache.computed_function import ComputedFunction
-from smache.data_sources.dummy_data_source import DummyEntity
-from smache.data_sources import DummyDataSource, RawDataSource
+from smache.data_sources.in_memory_data_source import InMemoryEntity
+from smache.data_sources import InMemoryDataSource, RawDataSource
 
 
-class DummyA(DummyEntity):
+class DummyA(InMemoryEntity):
     data = {1: {'value': 10}}
 
 
-class DummyB(DummyEntity):
+class DummyB(InMemoryEntity):
     pass
 
 
@@ -17,8 +17,8 @@ def score(a, raw_value):
 
 
 def test_computed_function():
-    a = DummyDataSource(DummyA)
-    b = DummyDataSource(DummyB)
+    a = InMemoryDataSource(DummyA)
+    b = InMemoryDataSource(DummyB)
     raw = RawDataSource()
 
     computed_fun = ComputedFunction(score, (a, raw), (b), tuple())

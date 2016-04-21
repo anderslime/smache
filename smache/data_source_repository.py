@@ -1,4 +1,4 @@
-from .data_sources import DummyDataSource, RawDataSource, MongoDataSource
+from .data_sources import InMemoryDataSource, RawDataSource, MongoDataSource
 
 
 class DataSourceNotFound(Exception):
@@ -14,7 +14,7 @@ class DataSourceRepository:
         self._data_sources = data_sources
         self._known_data_source_types = [
             RawDataSource,
-            DummyDataSource,
+            InMemoryDataSource,
             MongoDataSource
         ]
 

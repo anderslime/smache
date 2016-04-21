@@ -1,19 +1,19 @@
 from rq import SimpleWorker
-from smache.data_sources.dummy_data_source import DummyEntity
+from smache.data_sources.in_memory_data_source import InMemoryEntity
 import redis
 
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
-class DummyA(DummyEntity):
+class DummyA(InMemoryEntity):
     pass
 
 
-class DummyB(DummyEntity):
+class DummyB(InMemoryEntity):
     pass
 
 
-class DummyC(DummyEntity):
+class DummyC(InMemoryEntity):
     pass
 
 

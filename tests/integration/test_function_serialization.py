@@ -1,5 +1,5 @@
 from smache import Smache
-from smache.data_sources import DummyDataSource, RawDataSource, Raw
+from smache.data_sources import InMemoryDataSource, RawDataSource, Raw
 from smache.function_serializer import FunctionSerializer
 from tests.helper import DummyA, DummyB
 
@@ -23,8 +23,8 @@ def test_serialization():
 
     fun_serializer = FunctionSerializer()
 
-    a = DummyDataSource(DummyA)
-    b = DummyDataSource(DummyB)
+    a = InMemoryDataSource(DummyA)
+    b = InMemoryDataSource(DummyB)
     raw = RawDataSource()
 
     e = '"tests.integration.test_function_serialization/score"~~~1~~~"2"~~~500'

@@ -1,11 +1,11 @@
 from smache import Smache
-from smache.data_sources.dummy_data_source import DummyEntity
+from smache.data_sources.in_memory_data_source import InMemoryEntity
 import pytest
 import redis
 import os
 
 
-class DummyA(DummyEntity):
+class DummyA(InMemoryEntity):
     pass
 
 smache = Smache()
