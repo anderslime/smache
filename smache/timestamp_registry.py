@@ -55,12 +55,6 @@ class TimestampRegistry:
         else:
             return default
 
-    def _set_state_timestamp(self, pipe, key, timestamp):
-        pipe.set(self._state_ts_key(key), timestamp)
-
-    def watch_value_timestamp(self, pipe, key):
-        pipe.watch(self.value_ts_key(key))
-
     def value_ts_key(self, key):
         return 'smache:timestamp:value:{}'.format(key)
 
