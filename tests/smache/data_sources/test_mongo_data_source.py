@@ -1,5 +1,5 @@
 from smache.data_sources import MongoDataSource
-from tests.mongo_helper import User, test_connect
+from tests.mongo_helper import User, Handin, test_connect
 
 test_connect()
 
@@ -87,6 +87,27 @@ def test_subscriber_is_notified_on_bulk_insert_with_load():
     data_source.disconnect()
 
 
+# This is a limitation, not a feature. This just covers the code.
+def test_subscriber_is_not_notified_when_bulk_inserting_without_load():
+    data_source = MongoDataSource(User)
+
+    user1 = User(name='Anders', age=12)
+    user2 = User(name='Henrik', age=50)
+
+    notified = False
+
+    def notify(data_source, entity):
+        notified = True  # NOQA
+
+    data_source.subscribe(notify)
+
+    User.objects.insert([user1, user2], load_bulk=False)
+
+    assert notified == False
+
+    data_source.disconnect()
+
+
 def test_serialization():
     data_source = MongoDataSource(User)
 
@@ -119,3 +140,15 @@ def test_document():
     data_source = MongoDataSource(User)
     assert data_source.document == User
     data_source.disconnect()
+
+
+def test_data_source_for_entity():
+    data_source = MongoDataSource(User)
+    assert data_source.for_entity(User()) == True
+    assert data_source.for_entity(Handin()) == False
+
+
+def test_data_source_for_entity_class():
+    data_source = MongoDataSource(User)
+    assert data_source.for_entity_class(User) == True
+    assert data_source.for_entity_class(Handin) == False
