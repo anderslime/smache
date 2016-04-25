@@ -52,6 +52,6 @@ def test_computed_key_is_build_from_serializer(monkeypatch, computed_fun):
 
     serialized_fun = 'my_serialized_fun'
     monkeypatch.setattr(serializer, 'serialized_fun',
-                        lambda a, b, c: serialized_fun)
+                        lambda a, b: serialized_fun)
 
     assert computed_repo.computed_key(fun_fun, []) == serialized_fun

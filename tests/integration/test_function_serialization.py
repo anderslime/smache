@@ -1,6 +1,7 @@
 from smache import Smache
 from smache.data_sources import InMemoryDataSource, RawDataSource, Raw
 from smache.function_serializer import FunctionSerializer
+from smache.computed_function import ComputedFunction
 from tests.helper import DummyA, DummyB
 
 # Definitions
@@ -29,7 +30,9 @@ def test_serialization():
 
     e = '"tests.integration.test_function_serialization/score"~~~1~~~"2"~~~500'
 
-    key = fun_serializer.serialized_fun([a, b, raw], score, ax, bx, 500)
+    computed_fun = ComputedFunction(score, [a, b, raw], [])
+
+    key = fun_serializer.serialized_fun(computed_fun, ax, bx, 500)
     assert key == e
 
     expected_deserialization = (
@@ -41,7 +44,9 @@ def test_serialization():
 def test_de_and_serialization_of_no_arg_fun():
     fun_serializer = FunctionSerializer()
 
-    key = fun_serializer.serialized_fun([], score)
+    computed_fun = ComputedFunction(score, [], [])
+
+    key = fun_serializer.serialized_fun(computed_fun)
     assert key == '"tests.integration.test_function_serialization/score"'
     assert fun_serializer.deserialized_fun(key) == (
         "tests.integration.test_function_serialization/score", []

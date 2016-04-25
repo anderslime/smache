@@ -1,14 +1,13 @@
 import json
-from .computed_function import ComputedFunction
 from functools import reduce
 
 
 class FunctionSerializer:
     seperator_token = '~~~'
 
-    def serialized_fun(self, arg_types, fun, *args, **kwargs):
-        args = self._serialized_args(args, arg_types)
-        elements = [json.dumps(self._fun_key(fun))] + args
+    def serialized_fun(self, computed_fun, *args, **kwargs):
+        args = self._serialized_args(args, computed_fun.arg_deps)
+        elements = [json.dumps(computed_fun.id)] + args
         return reduce(lambda x, y: x + self.seperator_token + y, elements)
 
     def deserialized_fun(self, fun_key):
@@ -18,9 +17,6 @@ class FunctionSerializer:
     def fun_name(self, fun_key):
         elements = fun_key.split(self.seperator_token)
         return json.loads(elements[0])
-
-    def _fun_key(self, fun):
-        return ComputedFunction.id_from_fun(fun)
 
     def _fun_name(self, elements):
         return json.loads(elements[0])

@@ -23,8 +23,7 @@ class ComputedFunctionRepository:
     def computed_key(self, fun, *args, **kwargs):
         computed_fun = self.get(fun)
         return self._function_serializer.serialized_fun(
-            computed_fun.arg_deps,
-            computed_fun.fun,
+            computed_fun,
             *args,
             **kwargs
         )
