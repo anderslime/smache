@@ -38,11 +38,6 @@ class RedisStore:
     def mark_as_stale(self, key):
         self._timestamp_registry.increment_state_timestamp(key)
 
-    def _deserialize_int(self, integer):
-        if integer is None:
-            return None
-        return int(integer)
-
     def _deserialize_json(self, value):
         if value is None:
             return None
@@ -77,6 +72,3 @@ class RedisStore:
 
     def _get_all(self, key):
         return self.redis_con.hgetall(key)
-
-    def _get_field(self, key, field):
-        return self.redis_con.hget(key, field)

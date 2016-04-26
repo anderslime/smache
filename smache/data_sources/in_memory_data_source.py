@@ -41,10 +41,6 @@ class InMemoryEntity:
 
         self.__class__.original_data = self.__class__.data.copy()
 
-    @property
-    def __name__(self):
-        return self.data_source_id
-
 
 class InMemoryDataSource:
 
