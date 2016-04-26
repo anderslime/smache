@@ -36,6 +36,8 @@ def test_newly_stored_elements_are_fresh(redis_store):
 def test_key_marked_as_stale_is_not_fresh(redis_store):
     redis_store.store("hello", "world", 0)
 
+    assert redis_store.is_fresh("hello") == True
+
     redis_store.mark_as_stale("hello")
 
     assert redis_store.is_fresh("hello") == False
