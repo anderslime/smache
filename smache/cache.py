@@ -73,6 +73,10 @@ class Smache:
         key = self._computed_key(fun, *args, **kwargs)
         return self._store.lookup(key).value
 
+    def invalidate(self, fun, *args, **kwargs):
+        key = self._computed_key(fun, *args, **kwargs)
+        self._store.mark_as_stale(key)
+
     def without_staleness(self):
         return Transaction(self._build_cached_function_proxy(stale=False))
 
