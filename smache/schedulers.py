@@ -13,6 +13,10 @@ class AsyncScheduler:
         reduce(self._enqueue_execute, keys, None)
 
     def schedule_update_handle(self, data_source_id, entity_id):
+        logger.debug("Schedule update handle on update for: {}/{}".format(
+            data_source_id,
+            entity_id
+        ))
         self.worker_queue.enqueue_call(
             func=_handle_data_source_update,
             args=(data_source_id, entity_id),
