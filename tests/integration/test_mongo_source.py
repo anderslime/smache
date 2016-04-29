@@ -1,8 +1,8 @@
 from smache import Smache
 from smache.data_sources import MongoDataSource
 from smache.schedulers import InProcessScheduler
-from tests.mongo_helper import User, test_connect
-
+from tests.mongo_helper import User, Handin, test_connect
+from tests.helper import relation_detector, RelationMissingError
 import pytest
 import redis
 
@@ -17,9 +17,11 @@ def name(a):
     return a.name
 
 
-@smache.sources(User)
+@smache.sources(User, Handin)
 @smache.computed()
 def score():
+    handin = Handin.objects().first()
+    user = handin.users[0]
     return 50
 
 
@@ -37,6 +39,19 @@ def flush_before_each_test_case():
     smache._set_globals()
     redis_con.flushall()
     yield
+
+
+def test_awesome_stuff(relation_detector):
+    users = [User(name='Anders', age=12) for _ in range(1)]
+
+    User.objects.insert(users)
+
+    handin = Handin(score=1, users=users[0])
+    handin.save()
+
+    with pytest.raises(RelationMissingError):
+        with relation_detector(score):
+            assert score() == 50
 
 
 def test_depending_computed_are_invalidated_on_save():

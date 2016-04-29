@@ -13,6 +13,7 @@ class CacheManager:
         self._set_computed(computed_fun)
 
     def add_relation_deps(self, computed_fun, relation_data_source_deps):
+        computed_fun.set_relation_deps(relation_data_source_deps)
         self._relation_deps_repo.add_all(
             relation_data_source_deps,
             computed_fun

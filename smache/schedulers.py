@@ -61,5 +61,6 @@ def execute(store, key, computed_fun, *args, **kwargs):
             computed_value = computed_fun(*args)
             timestamp = \
                 smache._instance._timestamp_registry.state_timestamp(key)
+            logger.debug("SMACHE: Storing new value for {}".format(key))
             store.store(key, computed_value, timestamp)
             return computed_value

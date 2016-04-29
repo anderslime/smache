@@ -2,6 +2,7 @@ import smache
 
 from .topological_sort import topological_sort
 from .dependency_graph_builder import build_dependency_graph
+from .smache_logging import logger
 from functools import reduce
 
 
@@ -18,9 +19,15 @@ class DataUpdatePropagator:
             data_source_id,
             entity_id
         )
+        logger.debug("SMACHE: depending keys={}".format(depending_keys))
         depending_relation_keys = self._depending_relation_keys(
             data_source,
             entity
+        )
+        logger.debug(
+            "SMACHE: depending relation keys={}".format(
+                depending_relation_keys
+            )
         )
         self._invalidate_keys(depending_keys | depending_relation_keys)
 
@@ -61,7 +68,10 @@ class DataUpdatePropagator:
     def _invalidate_keys(self, keys):
         self._mark_invalidation(keys)
         if smache._instance._options.write_through:
+            logger.debug("SMACHE: Writing through for {}".format(keys))
             self._write_through_invalidation(keys)
+        else:
+            logger.debug("SMACHE: Write through skipped")
 
     def _mark_invalidation(self, keys):
         for key in keys:

@@ -9,6 +9,7 @@ class ComputedFunction:
         self.arg_deps = arg_deps
         self.data_source_deps = data_source_deps
         self.computed_deps = computed_deps
+        self.relation_deps = []
 
     def __call__(self, *args):
         args_with_types = zip(self.arg_deps, args)
@@ -17,6 +18,9 @@ class ComputedFunction:
 
     def set_data_source_deps(self, new_data_source_deps):
         self.data_source_deps = new_data_source_deps
+
+    def set_relation_deps(self, relation_deps):
+        self.relation_deps = relation_deps
 
     @property
     def id(self):

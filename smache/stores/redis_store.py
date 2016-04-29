@@ -1,8 +1,8 @@
-import json
 import time
 import random
 from .cache_result import CacheResult
 from redis import WatchError
+import pickle
 
 
 class RedisStore:
@@ -41,7 +41,7 @@ class RedisStore:
     def _deserialize_json(self, value):
         if value is None:
             return None
-        return json.loads(value)
+        return pickle.loads(value)
 
     def _store_entry(self, key, value, state_timestamp, pipe, retries):
         try:
@@ -62,7 +62,7 @@ class RedisStore:
 
     def _update_cache_entry(self, key, value, state_timestamp, pipe):
         pipe.multi()
-        pipe.hset(key, 'value', json.dumps(value))
+        pipe.hset(key, 'value', pickle.dumps(value))
         self._timestamp_registry.set_value_timestamp(
             pipe,
             key,
