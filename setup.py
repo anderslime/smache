@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 __name__ = 'smache'
-__version__ = '0.0.6'
+__version__ = '0.0.7'
 __author__ = 'Anders Emil Nielsen'
 __author_email__ = 'aemilnielsen@gmail.com'
 __doc__ = """
