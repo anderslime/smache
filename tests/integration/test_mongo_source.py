@@ -2,7 +2,7 @@ from smache import Smache
 from smache.data_sources import MongoDataSource
 from smache.schedulers import InProcessScheduler
 from tests.mongo_helper import User, Handin, test_connect
-from tests.helper import relation_detector, RelationMissingError
+from tests.helper import relation_detector, RelationMissingError  # NOQA
 import pytest
 import redis
 
@@ -21,7 +21,7 @@ def name(a):
 @smache.computed()
 def score():
     handin = Handin.objects().first()
-    user = handin.users[0]
+    handin.users[0]
     return 50
 
 
@@ -41,7 +41,7 @@ def flush_before_each_test_case():
     yield
 
 
-def test_awesome_stuff(relation_detector):
+def test_awesome_stuff(relation_detector):  # NOQA
     users = [User(name='Anders', age=12) for _ in range(1)]
 
     User.objects.insert(users)

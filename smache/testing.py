@@ -40,9 +40,13 @@ class RelationDetector:
         return len(collection_diff) > 0
 
     def print_report(self):
-        computed_fun = smache._instance._computed_repo.get(self.computed_fun)
         if self.has_anything_to_report():
-            print "WARNING: The computed function {} used data from the collections '{}' without subscribing to it".format(
+            self._print_report_in_console()
+
+    def _print_report_in_console(self):
+        computed_fun = smache._instance._computed_repo.get(self.computed_fun)
+        print "WARNING: The computed function {} used data from the " \
+            "collections '{}' without subscribing to it".format(
                 computed_fun.fun.__name__,
                 self._collection_diff_names()
             )
@@ -58,15 +62,18 @@ class RelationDetector:
         return ', '.join(set([col.name for col in self._collection_diff()]))
 
     def _collections(self, data_sources):
-        mongo_data_sources = [data_source for data_source in data_sources
-                              if MongoDataSource.is_instance(data_source.__class__)]
         return [data_source.document._get_collection()
-                for data_source in mongo_data_sources]
+                for data_source in self._mongo_data_sources(data_sources)]
+
+    def _mongo_data_sources(self, data_sources):
+        return [data_source for data_source in data_sources
+                if MongoDataSource.is_instance(data_source.__class__)]
 
     def start_detecting(this_detector, computed_fun):
         this_detector.computed_fun = computed_fun
         old_init = Cursor.__init__
         this_detector._old_cursor_init = old_init
+
         def new_init(cursor_self, *args, **kwargs):
             collection = args[0]
             this_detector.mark_as_detected(collection)

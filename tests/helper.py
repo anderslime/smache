@@ -1,9 +1,8 @@
 from rq import SimpleWorker
 from smache.data_sources.in_memory_data_source import InMemoryEntity
-from smache.testing import relation_detector, RelationMissingError
-from mongoengine import Document
+from smache.testing import relation_detector, RelationMissingError  # NOQA
+from mongoengine import Document  # NOQA
 import redis
-import pytest
 
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=5)
 
