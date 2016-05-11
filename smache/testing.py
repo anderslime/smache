@@ -1,6 +1,7 @@
 import sys
 import smache
 from pymongo.cursor import Cursor
+from smache.data_sources import MongoDataSource
 
 
 class RelationMissingError(Exception):
@@ -27,10 +28,9 @@ class DetectorYield:
 
 
 class RelationDetector:
-    def __init__(self, documents, monkeypatch):
+    def __init__(self, documents):
         self.documents = documents
         self.detected_collections = set()
-        self.monkeypatch = monkeypatch
 
     def mark_as_detected(self, collection):
         self.detected_collections.add(collection)
@@ -58,8 +58,10 @@ class RelationDetector:
         return ', '.join(set([col.name for col in self._collection_diff()]))
 
     def _collections(self, data_sources):
+        mongo_data_sources = [data_source for data_source in data_sources
+                              if MongoDataSource.is_instance(data_source.__class__)]
         return [data_source.document._get_collection()
-                for data_source in data_sources]
+                for data_source in mongo_data_sources]
 
     def start_detecting(this_detector, computed_fun):
         this_detector.computed_fun = computed_fun
@@ -70,17 +72,17 @@ class RelationDetector:
             this_detector.mark_as_detected(collection)
             return old_init(cursor_self, *args, **kwargs)
 
-        this_detector.monkeypatch.setattr(Cursor, '__init__', new_init)
+        setattr(Cursor, '__init__', new_init)
 
     def cleanup(this_detector):
-        this_detector.monkeypatch.setattr(Cursor, '__init__', this_detector._old_cursor_init)
+        setattr(Cursor, '__init__', this_detector._old_cursor_init)
 
 if 'pytest' in sys.modules:
     import pytest
 
-    @pytest.yield_fixture
-    def relation_detector(monkeypatch):
-        detector = RelationDetector([], monkeypatch)
+    @pytest.yield_fixture(scope="class")
+    def relation_detector():
+        detector = RelationDetector([])
 
         def detect(computed_fun):
             return DetectorYield(detector, computed_fun)
