@@ -9,7 +9,7 @@ import redis
 # Definitions
 test_connect()
 
-smache = Smache(scheduler=InProcessScheduler())
+smache = Smache(scheduler=InProcessScheduler(), write_through=False)
 
 
 @smache.computed(User)

@@ -28,11 +28,16 @@ class InMemoryEntity:
         cls.subscribers.append(subscriber)
 
     @classmethod
-    def _key(self, input_value):
-        if isinstance(input_value, int) or isinstance(input_value, str):
+    def _key(cls, input_value):
+        if cls._is_primitive(input_value):
             return str(input_value)
         else:
             return input_value.id
+
+    @classmethod
+    def _is_primitive(self, value):
+        return isinstance(value, int) or isinstance(value, str) \
+            or isinstance(value, unicode)
 
     def __init__(self, id, value):
         self.id = id

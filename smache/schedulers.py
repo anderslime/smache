@@ -33,6 +33,9 @@ class AsyncScheduler:
 
 class InProcessScheduler:
 
+    def schedule_write_through(self, keys):
+        return [_execute_from_key(key) for key in keys]
+
     def schedule_update_handle(self, data_source_id, entity_id):
         _handle_data_source_update(data_source_id, entity_id)
 

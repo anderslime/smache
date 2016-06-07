@@ -8,7 +8,7 @@ connect('smache_test_db')
 class User(Document):
     name = StringField()
 
-mysmachecache = Smache(write_through=True)
+mysmachecache = Smache()
 
 
 @mysmachecache.computed(User)

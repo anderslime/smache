@@ -5,12 +5,13 @@ from .schedulers import AsyncScheduler
 
 class Options:
     defaults = {
-        'write_through': False,
+        'write_through': True,
         'debug': False
     }
 
-    def __init__(self, **options):
-        self.options = self.defaults.update(options)
+    def __init__(self, **user_options):
+        options = self.defaults.copy()
+        options.update(user_options)
 
         self.write_through = self._value_equal(options, 'write_through', True)
         self.debug = self._value_equal(options, 'debug', True)

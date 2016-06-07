@@ -20,7 +20,7 @@ def setup_module(module):
     DummyB.unsubscribe_all()
     DummyC.unsubscribe_all()
 
-    smache = Smache(scheduler=InProcessScheduler())
+    smache = Smache(scheduler=InProcessScheduler(), write_through=False)
 
     @smache.relations((DummyB, lambda b: DummyC.find('30')))
     @smache.computed(DummyA, DummyC, Raw, Raw)

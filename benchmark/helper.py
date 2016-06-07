@@ -7,7 +7,7 @@ import time
 # Setup
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 worker_queue = Queue('test_queue', connection=redis_con)
-smache = Smache(worker_queue=worker_queue, write_through=True)
+smache = Smache(worker_queue=worker_queue)
 
 @smache.relations((Handin, lambda handin: handin.users))
 @smache.computed(User, Raw)

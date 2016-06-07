@@ -16,7 +16,8 @@ def setup_module(module):
     DummyB.unsubscribe_all()
     DummyC.unsubscribe_all()
 
-    smache = Smache(scheduler=InProcessScheduler())
+    smache = Smache(scheduler=InProcessScheduler(),
+                    write_through=False)
 
     @smache.sources(DummyB, DummyC)
     @smache.computed(DummyA)
