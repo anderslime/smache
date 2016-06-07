@@ -19,7 +19,11 @@ class CacheManager:
             computed_fun
         )
 
-    def add_data_source_dependencies(self, fun, key):
+    def add_computed_instance(self, fun, args, key):
+        self._add_entity_dependencies(fun, args, key)
+        self._add_data_source_dependencies(fun, key)
+
+    def _add_data_source_dependencies(self, fun, key):
         data_source_deps = self._computed_repo.get(fun).data_source_deps
         for data_source_dep in data_source_deps:
             self._dep_graph.add_data_source_dependency(
@@ -27,7 +31,7 @@ class CacheManager:
                 key
             )
 
-    def add_entity_dependencies(self, fun, args, key):
+    def _add_entity_dependencies(self, fun, args, key):
         arg_deps = self._get_computed(fun).arg_deps
         for data_source, data_source_entity in zip(arg_deps, args):
             self._dep_graph.add_dependency(

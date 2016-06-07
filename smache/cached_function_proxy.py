@@ -10,8 +10,7 @@ class CachedFunctionProxy:
 
     def cache_function(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
-        self._cache_manager.add_entity_dependencies(fun, args, key)
-        self._cache_manager.add_data_source_dependencies(fun, key)
+        self._cache_manager.add_computed_instance(fun, args, key)
         cache_result = self._store.lookup(key)
         if self._return_cached_value(cache_result, key):
             return cache_result.value
