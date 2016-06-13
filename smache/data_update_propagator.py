@@ -51,20 +51,6 @@ class DataUpdatePropagator:
     def _flattened_sets(self, depending_relation_keys):
         return reduce(lambda x, y: x | y, depending_relation_keys, set())
 
-    def _fun_values_depending_on(self, computed_source, computed_fun):
-        data_source = self._find_data_source_for_entity(computed_source)
-        return smache._instance._dependency_graph.fun_values_depending_on(
-            data_source.data_source_id,
-            computed_source.id,
-            computed_fun.id
-        )
-
-    def _list(self, value):
-        if isinstance(value, list):
-            return value
-        else:
-            return [value]
-
     def _invalidate_keys(self, keys):
         self._mark_invalidation(keys)
         if smache._instance._options.write_through:
@@ -106,11 +92,6 @@ class DataUpdatePropagator:
             data_source_id
         )
 
-    def _find_data_source_for_entity(self, computed_source):
-        return smache._instance._data_source_repository.find_by_entity(
-            computed_source
-        )
-
     def _map_relation_keys(self, entity, depending_relations):
         return [self._rel_keys(relation_fun, entity, computed_fun)
                 for relation_fun, computed_fun in depending_relations]
@@ -120,3 +101,22 @@ class DataUpdatePropagator:
         rel_keys = [self._fun_values_depending_on(source, computed_fun)
                     for source in self._list(computed_sources)]
         return self._flattened_sets(rel_keys)
+
+    def _fun_values_depending_on(self, computed_source, computed_fun):
+        data_source = self._find_data_source_for_entity(computed_source)
+        return smache._instance._dependency_graph.fun_values_depending_on(
+            data_source.data_source_id,
+            computed_source.id,
+            computed_fun.id
+        )
+
+    def _find_data_source_for_entity(self, computed_source):
+        return smache._instance._data_source_repository.find_by_entity(
+            computed_source
+        )
+
+    def _list(self, value):
+        if isinstance(value, list):
+            return value
+        else:
+            return [value]
