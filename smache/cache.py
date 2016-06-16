@@ -66,15 +66,15 @@ class Smache:
         draw_graph(self._build_dependency_graph().values(), filename)
 
     def is_fun_fresh(self, fun, *args, **kwargs):
-        key = self._computed_key(fun, *args, **kwargs)
+        key = self.computed_key(fun, *args, **kwargs)
         return self._store.is_fresh(key)
 
     def function_cache_value(self, fun, *args, **kwargs):
-        key = self._computed_key(fun, *args, **kwargs)
+        key = self.computed_key(fun, *args, **kwargs)
         return self._store.lookup(key).value
 
     def invalidate(self, fun, *args, **kwargs):
-        key = self._computed_key(fun, *args, **kwargs)
+        key = self.computed_key(fun, *args, **kwargs)
         self._store.mark_as_stale(key)
 
     def without_staleness(self):
@@ -88,8 +88,14 @@ class Smache:
             **proxy_options
         )
 
-    def _computed_key(self, fun, *args, **kwargs):
+    def computed_key(self, fun, *args, **kwargs):
         return self._computed_repo.computed_key(fun, *args, **kwargs)
+
+    def deserialized_fun(self, key):
+        fun_name, args = \
+            smache._instance._function_serializer.deserialized_fun(key)
+        computed_fun = smache._instance._computed_repo.get_from_id(fun_name)
+        return computed_fun, args
 
     def _set_globals(self):
         smache._instance = self
