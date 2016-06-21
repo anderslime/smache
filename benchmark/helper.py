@@ -22,3 +22,58 @@ def score(user, sleep_time):
         'total_score': total_score,
         'avg_score': avg_score
     }
+
+@smache.computed(User, Raw)
+def simple_slow_fun(user, variation):
+    time.sleep(0.4)
+    return "SIMPLE SLOW FUN"
+
+
+## Cached functions to test nested computations
+
+
+@smache.computed(User, Raw)
+def eighth_layer(user, duration):
+    time.sleep(duration)
+    return seventh_layer(user, duration)
+
+@smache.computed(User, Raw)
+def seventh_layer(user, duration):
+    time.sleep(duration)
+    return sixth_layer(user, duration)
+
+
+@smache.computed(User, Raw)
+def sixth_layer(user, duration):
+    time.sleep(duration)
+    return fifth_layer(user, duration)
+
+
+@smache.computed(User, Raw)
+def fifth_layer(user, duration):
+    time.sleep(duration)
+    return fourth_layer(user, duration)
+
+
+@smache.computed(User, Raw)
+def fourth_layer(user, duration):
+    time.sleep(duration)
+    return third_layer(user, duration)
+
+
+@smache.computed(User, Raw)
+def third_layer(user, duration):
+    time.sleep(duration)
+    return second_layer(user, duration)
+
+
+@smache.computed(User, Raw)
+def second_layer(user, duration):
+    time.sleep(duration)
+    return first_layer(user, duration)
+
+
+@smache.computed(User, Raw)
+def first_layer(user, duration):
+    time.sleep(duration)
+    return "RESULT"

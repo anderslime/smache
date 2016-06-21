@@ -1,0 +1,152 @@
+{
+    "commit_info": {
+        "id": "4ec394adee0c13b35ee1c6a6520d19737b02c470", 
+        "dirty": true
+    }, 
+    "version": "3.0.0", 
+    "benchmarks": [
+        {
+            "stats": {
+                "q1": 21.553345918655396, 
+                "q3": 21.553345918655396, 
+                "iterations": 1, 
+                "min": 21.553345918655396, 
+                "max": 21.553345918655396, 
+                "median": 21.553345918655396, 
+                "iqr": 0.0, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 0, 
+                "ld15iqr": 21.553345918655396, 
+                "stddev": 0, 
+                "hd15iqr": 21.553345918655396, 
+                "outliers": "0;0", 
+                "data": [
+                    21.553345918655396
+                ], 
+                "rounds": 1, 
+                "mean": 21.553345918655396
+            }, 
+            "fullname": "tests/test_multi_deps.py::test_nested_updates_for_umbrella_deps__workers_1", 
+            "group": null, 
+            "name": "test_nested_updates_for_umbrella_deps__workers_1", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 10.788209915161133, 
+                "q3": 10.788209915161133, 
+                "iterations": 1, 
+                "min": 10.788209915161133, 
+                "max": 10.788209915161133, 
+                "median": 10.788209915161133, 
+                "iqr": 0.0, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 0, 
+                "ld15iqr": 10.788209915161133, 
+                "stddev": 0, 
+                "hd15iqr": 10.788209915161133, 
+                "outliers": "0;0", 
+                "data": [
+                    10.788209915161133
+                ], 
+                "rounds": 1, 
+                "mean": 10.788209915161133
+            }, 
+            "fullname": "tests/test_multi_deps.py::test_nested_updates_for_umbrella_deps__workers_2", 
+            "group": null, 
+            "name": "test_nested_updates_for_umbrella_deps__workers_2", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 5.706926107406616, 
+                "q3": 5.706926107406616, 
+                "iterations": 1, 
+                "min": 5.706926107406616, 
+                "max": 5.706926107406616, 
+                "median": 5.706926107406616, 
+                "iqr": 0.0, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 0, 
+                "ld15iqr": 5.706926107406616, 
+                "stddev": 0, 
+                "hd15iqr": 5.706926107406616, 
+                "outliers": "0;0", 
+                "data": [
+                    5.706926107406616
+                ], 
+                "rounds": 1, 
+                "mean": 5.706926107406616
+            }, 
+            "fullname": "tests/test_multi_deps.py::test_nested_updates_for_umbrella_deps__workers_4", 
+            "group": null, 
+            "name": "test_nested_updates_for_umbrella_deps__workers_4", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 3.2837870121002197, 
+                "q3": 3.2837870121002197, 
+                "iterations": 1, 
+                "min": 3.2837870121002197, 
+                "max": 3.2837870121002197, 
+                "median": 3.2837870121002197, 
+                "iqr": 0.0, 
+                "iqr_outliers": 0, 
+                "stddev_outliers": 0, 
+                "ld15iqr": 3.2837870121002197, 
+                "stddev": 0, 
+                "hd15iqr": 3.2837870121002197, 
+                "outliers": "0;0", 
+                "data": [
+                    3.2837870121002197
+                ], 
+                "rounds": 1, 
+                "mean": 3.2837870121002197
+            }, 
+            "fullname": "tests/test_multi_deps.py::test_nested_updates_for_umbrella_deps__workers_8", 
+            "group": null, 
+            "name": "test_nested_updates_for_umbrella_deps__workers_8", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }
+    ], 
+    "machine_info": {
+        "node": "anderslime.eduroam.wireless.dtu.dk", 
+        "machine": "x86_64", 
+        "python_version": "2.7.11", 
+        "release": "15.5.0", 
+        "python_compiler": "GCC 4.2.1 Compatible Apple LLVM 7.0.2 (clang-700.1.81)", 
+        "python_implementation": "CPython", 
+        "processor": "i386", 
+        "system": "Darwin"
+    }, 
+    "datetime": "2016-06-21T09:05:24.793237"
+}
