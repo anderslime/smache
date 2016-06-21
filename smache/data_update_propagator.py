@@ -1,6 +1,5 @@
 import smache
 
-from .topological_sort import topological_sort
 from .dependency_graph_builder import build_dependency_graph
 from .smache_logging import logger
 from functools import reduce
@@ -64,11 +63,7 @@ class DataUpdatePropagator:
             self._store.mark_as_stale(key)
 
     def _write_through_invalidation(self, keys):
-        sorted_nodes = self._node_ids_in_topological_order()
-        fun_names = [self._fun_name_from_key(key) for key in keys]
-        indices = [sorted_nodes.index(fun_name) for fun_name in fun_names]
-        sorted_keys = self._keys_sorted_by_index(keys, indices)
-        smache._instance._scheduler.schedule_write_through(sorted_keys)
+        smache._instance._scheduler.schedule_write_through(keys)
 
     def _keys_sorted_by_index(self, keys, indices):
         keys_with_indices = sorted(zip(keys, indices), key=lambda x: x[1])
@@ -76,10 +71,6 @@ class DataUpdatePropagator:
 
     def _fun_name_from_key(self, fun_key):
         return self._function_serializer.fun_name(fun_key)
-
-    def _node_ids_in_topological_order(self):
-        topologically_sorted_nodes = topological_sort(self._dependency_graph())
-        return [node.id for node in topologically_sorted_nodes]
 
     def _dependency_graph(self):
         return build_dependency_graph(
