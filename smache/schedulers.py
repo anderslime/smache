@@ -2,6 +2,9 @@ import smache
 from .smache_logging import logger
 from functools import reduce
 
+from rq.job import Job
+from rq.exceptions import NoSuchJobError
+
 
 class AsyncScheduler:
 
@@ -24,11 +27,20 @@ class AsyncScheduler:
         )
 
     def _enqueue_execute(self, last_job, key):
+        existing_job = self._fetch_job(key)
+        if existing_job and existing_job.is_queued:
+            return
         return self.worker_queue.enqueue_call(
             func=_execute_from_key,
             args=(key,),
-            depends_on=last_job
+            job_id=key
         )
+
+    def _fetch_job(self, key):
+        try:
+            return Job.fetch(key, connection=self.worker_queue.connection)
+        except NoSuchJobError:
+            return None
 
 
 class InProcessScheduler:
