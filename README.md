@@ -117,6 +117,14 @@ time.sleep(4)
 print computed_value(user)
 ```
 
+## Development
+
+### Setup
+
+To setup development, run:
+
+`python setup.py develop`
+
 ## Tests
 
 To run the tests, run:
