@@ -33,10 +33,11 @@ class RelationDetector:
         self.detected_collections = set()
 
     def mark_as_detected(self, collection):
-        self.detected_collections.add(collection)
+        if not collection.name in [col.name for col in self.detected_collections]:
+            self.detected_collections.add(collection)
 
     def has_anything_to_report(self):
-        collection_diff = self._collection_diff()
+        collection_diff = self._collection_diff_names()
         return len(collection_diff) > 0
 
     def print_report(self):
@@ -56,10 +57,12 @@ class RelationDetector:
         collections = self._collections(computed_fun.arg_deps) \
             + self._collections(computed_fun.data_source_deps) \
             + self._collections([ds for ds, _ in computed_fun.relation_deps])
-        return self.detected_collections - set(collections)
+        detected_collection_names = [col.name for col in self.detected_collections]
+        subscribed_collection_names = [col.name for col in collections]
+        return set(detected_collection_names) - set(subscribed_collection_names)
 
     def _collection_diff_names(self):
-        return ', '.join(set([col.name for col in self._collection_diff()]))
+        return ', '.join(self._collection_diff())
 
     def _collections(self, data_sources):
         return [data_source.document._get_collection()
@@ -67,7 +70,7 @@ class RelationDetector:
 
     def _mongo_data_sources(self, data_sources):
         return [data_source for data_source in data_sources
-                if MongoDataSource.is_instance(data_source.__class__)]
+                if MongoDataSource.is_instance(data_source.document)]
 
     def start_detecting(this_detector, computed_fun):
         this_detector.computed_fun = computed_fun
