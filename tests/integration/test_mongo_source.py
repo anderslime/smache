@@ -49,9 +49,7 @@ def test_awesome_stuff(relation_detector):  # NOQA
     handin = Handin(score=1, users=users[0])
     handin.save()
 
-    with pytest.raises(RelationMissingError):
-        with relation_detector(score):
-            assert score() == 50
+    assert score() == 50
 
 
 def test_depending_computed_are_invalidated_on_save():

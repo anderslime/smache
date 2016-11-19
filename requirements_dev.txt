@@ -1,7 +1,7 @@
 --index-url https://pypi.python.org/simple/
 -e .
-pytest-flake8==0.2.0
-pytest-watch==4.0.0
+pytest-flake8==0.8.1
+pytest-watch==4.1.0
 pytest-benchmark==3.0.0
-pytest-cov==2.2.1
-pytest-mock==0.11.0
+pytest-cov==2.4.0
+pytest-mock==1.4.0
