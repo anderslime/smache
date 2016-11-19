@@ -12,7 +12,6 @@ class DataUpdatePropagator:
         self._store = store
 
     def handle_update(self, data_source_id, entity_id):
-        print data_source_id, entity_id
         data_source = self._find_data_source(data_source_id)
         entity = data_source.find(entity_id)
         depending_keys = self._smache_dependency_graph.values_depending_on(
