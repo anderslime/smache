@@ -5,11 +5,11 @@ from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 __name__ = 'smache'
-__version__ = '0.0.7'
+__version__ = '0.0.8'
 __author__ = 'Anders Emil Nielsen'
 __author_email__ = 'aemilnielsen@gmail.com'
 __doc__ = """
-Lots of description
+Caching for the productive people
 """
 
 

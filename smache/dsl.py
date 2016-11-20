@@ -16,7 +16,27 @@ class DSL:
             def wrapper(*args, **wrapper_kwargs):
                 proxy = smache._instance._cached_function_proxy
                 return proxy.cache_function(fun, *args, **wrapper_kwargs)
-            self._add_computed(fun, deps, kwargs)
+            self._build_and_add_computed(fun, deps, kwargs)
+            wrapper.__name__ = fun.__name__
+            wrapper.__module__ = fun.__module__
+            return wrapper
+        return _computed
+
+    def computed_flask_view(self, *deps, **kwargs):
+        app = kwargs['app']
+
+        def _computed(fun):
+            def wrapper(*args, **wrapper_kwargs):
+                proxy = smache._instance._cached_function_proxy
+                return proxy.cache_function_in_app(
+                    app,
+                    fun,
+                    *args,
+                    **wrapper_kwargs
+                )
+            computed_fun = self._build_computed(fun, deps, kwargs)
+            computed_fun.set_app(app)
+            self._add_computed(computed_fun)
             wrapper.__name__ = fun.__name__
             wrapper.__module__ = fun.__module__
             return wrapper
@@ -49,13 +69,19 @@ class DSL:
         computed_fun = self._get_computed(fun)
         computed_fun.set_data_source_deps(data_source_deps)
 
-    def _add_computed(self, fun, arg_entity_class_deps, kwargs):
+    def _build_and_add_computed(self, fun, arg_entity_class_deps, kwargs):
+        computed_fun = self._build_computed(fun, arg_entity_class_deps, kwargs)
+        self._add_computed(computed_fun)
+
+    def _build_computed(self, fun, arg_entity_class_deps, kwargs):
         computed_deps = self._parse_deps(kwargs.get('computed_deps', ()))
         computed_dep_funs = [self._get_computed(computed_dep)
                              for computed_dep in computed_deps]
         arg_deps = [self._find_or_register_data_source(entity_class)
                     for entity_class in arg_entity_class_deps]
-        computed_fun = ComputedFunction(fun, arg_deps, computed_dep_funs)
+        return ComputedFunction(fun, arg_deps, computed_dep_funs)
+
+    def _add_computed(self, computed_fun):
         self._cache_manager.add_computed(computed_fun)
 
     def _relation_data_sources(self, relation_deps):
