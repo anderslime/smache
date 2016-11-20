@@ -96,6 +96,7 @@ class RelationDetector:
     def cleanup(this_detector):
         setattr(Cursor, '__init__', this_detector._old_cursor_init)
 
+
 if 'pytest' in sys.modules:
     import pytest
 

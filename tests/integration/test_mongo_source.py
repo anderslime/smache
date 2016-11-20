@@ -30,6 +30,7 @@ def teardown_module(module):
         if isinstance(data_source, MongoDataSource):
             data_source.disconnect()
 
+
 # Tests
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)
 

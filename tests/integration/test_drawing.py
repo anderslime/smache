@@ -8,12 +8,14 @@ import os
 class DummyA(InMemoryEntity):
     pass
 
+
 smache = Smache()
 
 
 @smache.computed(DummyA)
 def score(a):
     return a.value
+
 
 # Tests
 redis_con = redis.StrictRedis(host='localhost', port=6379, db=0)

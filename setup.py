@@ -23,6 +23,7 @@ class ToxTestCommand(TestCommand):
     def run_tests(self):
         sys.exit(os.system('tox'))
 
+
 setup(
     name=__name__,
     version=__version__,
