@@ -62,7 +62,11 @@ def _handle_data_source_update(data_source_id, entity_id):
 def _execute_from_key(key):
     logger.debug("EXECUTE on {}".format(key))
 
-    computed_fun, args = smache._instance.deserialized_fun(key)
+    computed_fun, args, kwargs = smache._instance.deserialized_fun(key)
+    logger.debug("Calling computed function {} with args {}".format(
+        computed_fun.fun.__name__,
+        args
+    ))
     return execute(smache._instance._store, key, computed_fun, *args)
 
 

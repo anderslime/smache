@@ -92,10 +92,10 @@ class Smache:
         return self._computed_repo.computed_key(fun, *args, **kwargs)
 
     def deserialized_fun(self, key):
-        fun_name, args = \
+        fun_name, args, kwargs = \
             smache._instance._function_serializer.deserialized_fun(key)
         computed_fun = smache._instance._computed_repo.get_from_id(fun_name)
-        return computed_fun, args
+        return computed_fun, args, kwargs
 
     def _set_globals(self):
         smache._instance = self

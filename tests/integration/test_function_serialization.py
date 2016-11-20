@@ -28,15 +28,20 @@ def test_serialization():
     b = InMemoryDataSource(DummyB)
     raw = RawDataSource()
 
-    e = '"tests.integration.test_function_serialization/score"~~~1~~~"2"~~~500'
+    e = '"tests.integration.test_function_serialization/score"' \
+        '~~~1~~~"2"~~~500' \
+        '***(dp0\nS\'resolved\'\np1\nI01\ns.'
 
     computed_fun = ComputedFunction(score, [a, b, raw], [])
 
-    key = fun_serializer.serialized_fun(computed_fun, ax, bx, 500)
+    key = fun_serializer.serialized_fun(computed_fun, ax, bx, 500,
+                                        resolved=True)
     assert key == e
 
     expected_deserialization = (
-        "tests.integration.test_function_serialization/score", [1, '2', 500]
+        "tests.integration.test_function_serialization/score",
+        [1, '2', 500],
+        {"resolved": True}
     )
     assert fun_serializer.deserialized_fun(key) == expected_deserialization
 
@@ -49,5 +54,7 @@ def test_de_and_serialization_of_no_arg_fun():
     key = fun_serializer.serialized_fun(computed_fun)
     assert key == '"tests.integration.test_function_serialization/score"'
     assert fun_serializer.deserialized_fun(key) == (
-        "tests.integration.test_function_serialization/score", []
+        "tests.integration.test_function_serialization/score",
+        [],
+        {}
     )

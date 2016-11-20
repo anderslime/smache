@@ -1,3 +1,6 @@
+from .smache_logging import logger
+
+
 class ComputedFunction:
 
     @staticmethod
@@ -11,10 +14,14 @@ class ComputedFunction:
         self.computed_deps = computed_deps
         self.relation_deps = []
 
-    def __call__(self, *args):
+    def __call__(self, *args, **kwargs):
         args_with_types = zip(self.arg_deps, args)
         args = [arg_type.find(arg) for arg_type, arg in args_with_types]
-        return self.fun(*args)
+        logger.debug("Calling real function {} with serialized args {}".format(
+            self.fun.__name__,
+            args
+        ))
+        return self.fun(*args, **kwargs)
 
     def set_data_source_deps(self, new_data_source_deps):
         self.data_source_deps = new_data_source_deps
