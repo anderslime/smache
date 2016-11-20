@@ -19,10 +19,12 @@ class DetectorYield:
     def __exit__(self, type, value, traceback):
         if self.detector.has_anything_to_report():
             self.detector.print_report()
-            raise RelationMissingError(
-                "One of the smache computed functions are using data without "
-                "subscribing to it"
-            )
+            msg = "The smache computed function '{}' is using data from the " \
+                "sources '{}' without subscribing to it/them".format(
+                    self.computed_fun.__name__,
+                    self.detector.collection_diff_names()
+                )
+            raise RelationMissingError(msg)
         else:
             self.detector.cleanup()
 
@@ -37,7 +39,7 @@ class RelationDetector:
             self.detected_collections.add(collection)
 
     def has_anything_to_report(self):
-        collection_diff = self._collection_diff_names()
+        collection_diff = self.collection_diff_names()
         return len(collection_diff) > 0
 
     def print_report(self):
@@ -49,7 +51,7 @@ class RelationDetector:
         print "WARNING: The computed function {} used data from the " \
             "collections '{}' without subscribing to it".format(
                 computed_fun.fun.__name__,
-                self._collection_diff_names()
+                self.collection_diff_names()
             )
 
     def _collection_diff(self):
@@ -61,7 +63,7 @@ class RelationDetector:
         subscribed_collection_names = set([col.name for col in collections])
         return detected_collection_names - subscribed_collection_names
 
-    def _collection_diff_names(self):
+    def collection_diff_names(self):
         return ', '.join(self._collection_diff())
 
     def _collections(self, data_sources):
@@ -70,7 +72,11 @@ class RelationDetector:
 
     def _mongo_data_sources(self, data_sources):
         return [data_source for data_source in data_sources
-                if MongoDataSource.is_instance(data_source.document)]
+                if self._is_mongo_data_source(data_source)]
+
+    def _is_mongo_data_source(self, data_source):
+        return hasattr(data_source, 'document') and \
+            MongoDataSource.is_instance(data_source.document)
 
     def _detected_collection_names(self):
         return [col.name for col in self.detected_collections]
@@ -101,3 +107,8 @@ if 'pytest' in sys.modules:
             return DetectorYield(detector, computed_fun)
 
         yield detect
+
+
+def detect_dependencies_for(computed_fun):
+    detector = RelationDetector([])
+    return DetectorYield(detector, computed_fun)
