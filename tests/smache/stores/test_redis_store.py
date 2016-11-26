@@ -20,13 +20,13 @@ def redis_store():
 
 
 def test_stored_elements_can_be_looked_up(redis_store):
-    timeout_at = 1480167086.027953
-    redis_store.store("hello", "world", 0, timeout_at)
+    ttl = 30
+    redis_store.store("hello", "world", 0, ttl)
 
     stored_element = redis_store.lookup("hello")
 
     assert stored_element.value == "world"
-    assert stored_element.timeout_at == timeout_at
+    assert stored_element.ttl == ttl
 
 
 def test_newly_stored_elements_are_fresh(redis_store):

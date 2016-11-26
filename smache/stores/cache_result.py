@@ -1,5 +1,5 @@
 class CacheResult:
-    def __init__(self, value, updated_at, timeout_at):
+    def __init__(self, value, updated_at, ttl):
         self.value = value
         self.updated_at = updated_at
-        self.timeout_at = timeout_at
+        self.ttl = ttl
