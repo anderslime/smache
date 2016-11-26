@@ -73,13 +73,13 @@ def test_retry_method_works_with_cache_overwrite(monkeypatch):
     global retries
     retries = 0
 
-    def test_cache_update(key, value, timestamp, pipe):
+    def test_cache_update(cache_entry, pipe):
         global retries
         retries += 1
-        redis_con.hset(key, "random_key", "random_value")
+        redis_con.hset(cache_entry.key, "random_key", "random_value")
 
         pipe.multi()
-        pipe.hset(key, "value", json.dumps(value))
+        pipe.hset(cache_entry.key, "value", json.dumps(cache_entry.value))
         pipe.execute()
 
     monkeypatch.setattr(redis_store, '_update_cache_entry', test_cache_update)
@@ -95,10 +95,10 @@ def test_retry_method_works_with_timestamp_overwrite(monkeypatch):
     global retries
     retries = 0
 
-    def test_cache_update(key, value, timestamp, pipe):
+    def test_cache_update(cache_entry, pipe):
         global retries
         retries += 1
-        ts_key = ts_registry.value_ts_key(key)
+        ts_key = ts_registry.value_ts_key(cache_entry.key)
         redis_con.set(ts_key, -500)
 
         pipe.multi()
