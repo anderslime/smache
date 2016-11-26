@@ -91,23 +91,27 @@ def execute_in_app(app, store, key, computed_fun, *args, **kwargs):
         return store.lookup(key).value
     else:
         with app.test_request_context('/'):
-            with smache._instance.without_staleness():
-                computed_value = computed_fun(*args)
-                timestamp = \
-                    smache._instance._timestamp_registry.state_timestamp(key)
-                logger.debug("SMACHE: Storing new value for {}".format(key))
-                store.store(key, computed_value, timestamp)
-                return computed_value
+            return _execute_computation(
+                store,
+                key,
+                computed_fun,
+                *args,
+                **kwargs
+            )
 
 
 def execute(store, key, computed_fun, *args, **kwargs):
     if store.is_fresh(key):
         return store.lookup(key).value
     else:
-        with smache._instance.without_staleness():
-            computed_value = computed_fun(*args, **kwargs)
-            timestamp = \
-                smache._instance._timestamp_registry.state_timestamp(key)
-            logger.debug("SMACHE: Storing new value for {}".format(key))
-            store.store(key, computed_value, timestamp)
-            return computed_value
+        return _execute_computation(store, key, computed_fun, *args, **kwargs)
+
+
+def _execute_computation(store, key, computed_fun, *args, **kwargs):
+    with smache._instance.without_staleness():
+        computed_value = computed_fun(*args, **kwargs)
+        timestamp = \
+            smache._instance._timestamp_registry.state_timestamp(key)
+        logger.debug("SMACHE: Storing new value for {}".format(key))
+        store.store(key, computed_value, timestamp)
+        return computed_value
