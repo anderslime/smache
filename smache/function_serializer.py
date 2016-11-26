@@ -4,6 +4,7 @@ import pickle
 
 
 class FunctionSerializer:
+    namespace = 'smache:functions:'
     seperator_token = '~~~'
     kwargs_seperator_token = '***'
 
@@ -11,18 +12,21 @@ class FunctionSerializer:
         args = self._serialized_args(args, computed_fun.arg_deps)
         kwargs = self._serialized_kwargs(kwargs)
         elements = [json.dumps(computed_fun.id)] + args
-        return reduce(lambda x, y: x + self.seperator_token + y, elements) + \
+        return self.namespace + \
+            reduce(lambda x, y: x + self.seperator_token + y, elements) + \
             kwargs
 
     def deserialized_fun(self, fun_key):
-        rest, kwargs = self._split_kwargs_from_rest(fun_key)
+        key_without_namespace = self._remove_namespace(fun_key)
+        rest, kwargs = self._split_kwargs_from_rest(key_without_namespace)
         elements = rest.split(self.seperator_token)
         return self._fun_name(elements), \
             self._deserialized_args(elements), \
             kwargs
 
     def fun_name(self, fun_key):
-        elements = fun_key.split(self.seperator_token)
+        key_without_namespace = self._remove_namespace(fun_key)
+        elements = key_without_namespace.split(self.seperator_token)
         return json.loads(elements[0])
 
     def _fun_name(self, elements):
@@ -45,6 +49,10 @@ class FunctionSerializer:
 
     def _serialized_arg(self, argument, arg_type):
         return json.dumps(arg_type.serialize(argument))
+
+    def _remove_namespace(self, key):
+        _, _, important_part = key.split(':')
+        return important_part
 
     def _split_kwargs_from_rest(self, fun_key):
         elements = fun_key.split(self.kwargs_seperator_token)
