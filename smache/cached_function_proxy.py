@@ -1,8 +1,10 @@
 from .schedulers import execute, execute_in_app
 import smache
+from contextlib import contextmanager
 
 
 class CachedFunctionProxy:
+
     def __init__(self, cache_manager, computed_repo, store, **proxy_options):
         self._cache_manager = cache_manager
         self._computed_repo = computed_repo
@@ -11,23 +13,36 @@ class CachedFunctionProxy:
 
     def cache_function(self, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
-        self._cache_manager.add_computed_instance(fun, args, key)
-        cache_result = self._store.lookup(key)
-        if self._return_cached_value(cache_result, key):
-            self._schedule_update_if_exceeded_ttl(cache_result, key, fun)
-            return cache_result.value
-        else:
-            return execute(self._store, key, fun, *args, **kwargs)
+        with self._fetch_cached_value(key, fun, args) as cache_result:
+            if cache_result is not None:
+                return cache_result
+            else:
+                return execute(self._store, key, fun, *args, **kwargs)
 
     def cache_function_in_app(self, app, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
+        with self._fetch_cached_value(key, fun, args) as cache_result:
+            if cache_result is not None:
+                return cache_result
+            else:
+                return execute_in_app(
+                    app,
+                    self._store,
+                    key,
+                    fun,
+                    *args,
+                    **kwargs
+                )
+
+    @contextmanager
+    def _fetch_cached_value(self, key, fun, args):
         self._cache_manager.add_computed_instance(fun, args, key)
         cache_result = self._store.lookup(key)
         if self._return_cached_value(cache_result, key):
             self._schedule_update_if_exceeded_ttl(cache_result, key, fun)
-            return cache_result.value
+            yield cache_result.value
         else:
-            return execute_in_app(app, self._store, key, fun, *args, **kwargs)
+            yield None
 
     def _schedule_update_if_exceeded_ttl(self, cache_result, key, fun):
         computed_fun = self._computed_repo.get(fun)
