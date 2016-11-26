@@ -74,12 +74,9 @@ class DSL:
         self._add_computed(computed_fun)
 
     def _build_computed(self, fun, arg_entity_class_deps, kwargs):
-        computed_deps = self._parse_deps(kwargs.get('computed_deps', ()))
-        computed_dep_funs = [self._get_computed(computed_dep)
-                             for computed_dep in computed_deps]
         arg_deps = [self._find_or_register_data_source(entity_class)
                     for entity_class in arg_entity_class_deps]
-        return ComputedFunction(fun, arg_deps, computed_dep_funs)
+        return ComputedFunction(fun, arg_deps)
 
     def _add_computed(self, computed_fun):
         self._cache_manager.add_computed(computed_fun)

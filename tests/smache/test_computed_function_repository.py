@@ -21,7 +21,7 @@ def computed_repo():
 
 @pytest.yield_fixture
 def computed_fun():
-    yield ComputedFunction(fun_fun, [], [], [])
+    yield ComputedFunction(fun_fun, [], [])
 
 
 def test_get_computed_function_from_function(computed_repo, computed_fun):

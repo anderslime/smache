@@ -18,10 +18,9 @@ def score(a, raw_value):
 
 def test_computed_function():
     a = InMemoryDataSource(DummyA)
-    b = InMemoryDataSource(DummyB)
     raw = RawDataSource()
 
-    computed_fun = ComputedFunction(score, (a, raw), (b), tuple())
+    computed_fun = ComputedFunction(score, (a, raw))
     ax = DummyA(1, 10)
 
     assert computed_fun(ax, 500) == 510
