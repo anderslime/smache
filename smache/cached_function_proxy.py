@@ -1,4 +1,5 @@
 from .schedulers import execute, execute_in_app
+import smache
 
 
 class CachedFunctionProxy:
@@ -13,6 +14,7 @@ class CachedFunctionProxy:
         self._cache_manager.add_computed_instance(fun, args, key)
         cache_result = self._store.lookup(key)
         if self._return_cached_value(cache_result, key):
+            self._schedule_update_if_exceeded_ttl(cache_result, key, fun)
             return cache_result.value
         else:
             return execute(self._store, key, fun, *args, **kwargs)
@@ -22,9 +24,16 @@ class CachedFunctionProxy:
         self._cache_manager.add_computed_instance(fun, args, key)
         cache_result = self._store.lookup(key)
         if self._return_cached_value(cache_result, key):
+            self._schedule_update_if_exceeded_ttl(cache_result, key, fun)
             return cache_result.value
         else:
             return execute_in_app(app, self._store, key, fun, *args, **kwargs)
+
+    def _schedule_update_if_exceeded_ttl(self, cache_result, key, fun):
+        computed_fun = self._computed_repo.get(fun)
+        if cache_result.needs_refresh(computed_fun.ttl):
+            self._store.mark_as_stale(key)
+            smache._instance._scheduler.schedule_write_through([key])
 
     def _return_cached_value(self, cache_result, key):
         return self._tolerate_stale and cache_result.value \

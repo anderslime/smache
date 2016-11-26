@@ -5,8 +5,7 @@ from redis import WatchError
 import pickle
 from collections import namedtuple
 
-CacheEntry = namedtuple('CacheEntry',
-                        ['key', 'value', 'state_timestamp', 'ttl'])
+CacheEntry = namedtuple('CacheEntry', ['key', 'value', 'state_timestamp'])
 
 
 class RedisStore:
@@ -20,17 +19,16 @@ class RedisStore:
             lambda: time.sleep(random.random())
         )
 
-    def store(self, key, value, state_timestamp, ttl=None):
+    def store(self, key, value, state_timestamp):
         pipe = self.redis_con.pipeline()
-        cache_entry = CacheEntry(key, value, state_timestamp, ttl)
+        cache_entry = CacheEntry(key, value, state_timestamp)
         self._store_entry(cache_entry, pipe, self._store_retries)
 
     def lookup(self, key):
         raw_cache_result = self._get_all(key) or {}
         return CacheResult(
             self._deserialize_value(raw_cache_result.get('value')),
-            self._deserialize_value(raw_cache_result.get('updated_at')),
-            self._deserialize_value(raw_cache_result.get('ttl'))
+            self._deserialize_value(raw_cache_result.get('updated_at'))
         )
 
     def is_fresh(self, key):
@@ -64,7 +62,6 @@ class RedisStore:
     def _update_cache_entry(self, cache_entry, pipe):
         pipe.multi()
         pipe.hset(cache_entry.key, 'value', pickle.dumps(cache_entry.value))
-        pipe.hset(cache_entry.key, 'ttl', pickle.dumps(cache_entry.ttl))
         pipe.hset(cache_entry.key, 'updated_at', pickle.dumps(time.time()))
         self._timestamp_registry.set_value_timestamp(
             pipe,
