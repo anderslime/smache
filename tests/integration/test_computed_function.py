@@ -24,3 +24,11 @@ def test_computed_function():
     ax = DummyA(1, 10)
 
     assert computed_fun(ax, 500) == 510
+
+
+def test_options():
+    computed_fun = ComputedFunction(None, tuple(), ttl=30)
+    computed_fun.set_app('mycoolapp')
+
+    assert computed_fun.ttl == 30
+    assert computed_fun.app == 'mycoolapp'

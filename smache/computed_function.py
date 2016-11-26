@@ -7,11 +7,12 @@ class ComputedFunction:
     def id_from_fun(fun):
         return '/'.join([fun.__module__, fun.__name__])
 
-    def __init__(self, fun, arg_deps):
+    def __init__(self, fun, arg_deps, **options):
         self.fun = fun
         self.arg_deps = arg_deps
         self.data_source_deps = []
         self.relation_deps = []
+        self.ttl = options.get('ttl', None)
         self.app = None
 
     def __call__(self, *args, **kwargs):
