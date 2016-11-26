@@ -32,7 +32,7 @@ def test_serialization():
         '~~~1~~~"2"~~~500' \
         '***(dp0\nS\'resolved\'\np1\nI01\ns.'
 
-    computed_fun = ComputedFunction(score, [a, b, raw], [])
+    computed_fun = ComputedFunction(score, [a, b, raw])
 
     key = fun_serializer.serialized_fun(computed_fun, ax, bx, 500,
                                         resolved=True)
@@ -49,7 +49,7 @@ def test_serialization():
 def test_de_and_serialization_of_no_arg_fun():
     fun_serializer = FunctionSerializer()
 
-    computed_fun = ComputedFunction(score, [], [])
+    computed_fun = ComputedFunction(score, [])
 
     key = fun_serializer.serialized_fun(computed_fun)
     assert key == '"tests.integration.test_function_serialization/score"'
