@@ -29,7 +29,7 @@ class RedisStore:
     def lookup(self, key):
         raw_cache_result = self._get_all(key) or {}
         return CacheResult(
-            self._deserialize_json(raw_cache_result.get('value')),
+            self._deserialize_value(raw_cache_result.get('value')),
         )
 
     def is_fresh(self, key):
@@ -38,7 +38,7 @@ class RedisStore:
     def mark_as_stale(self, key):
         self._timestamp_registry.increment_state_timestamp(key)
 
-    def _deserialize_json(self, value):
+    def _deserialize_value(self, value):
         if value is None:
             return None
         return pickle.loads(value)
