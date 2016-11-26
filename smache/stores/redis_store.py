@@ -29,8 +29,8 @@ class RedisStore:
         raw_cache_result = self._get_all(key) or {}
         return CacheResult(
             self._deserialize_value(raw_cache_result.get('value')),
-            None,
-            None
+            self._deserialize_value(raw_cache_result.get('updated_at')),
+            self._deserialize_value(raw_cache_result.get('timeout_at'))
         )
 
     def is_fresh(self, key):
@@ -64,6 +64,10 @@ class RedisStore:
     def _update_cache_entry(self, cache_entry, pipe):
         pipe.multi()
         pipe.hset(cache_entry.key, 'value', pickle.dumps(cache_entry.value))
+        pipe.hset(cache_entry.key,
+                  'timeout_at',
+                  pickle.dumps(cache_entry.timeout_at))
+        pipe.hset(cache_entry.key, 'updated_at', pickle.dumps(time.time()))
         self._timestamp_registry.set_value_timestamp(
             pipe,
             cache_entry.key,
