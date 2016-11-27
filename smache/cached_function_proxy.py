@@ -22,9 +22,9 @@ class CachedFunctionProxy:
 
     def cache_function_in_app(self, app, fun, *args, **kwargs):
         key = self._computed_key(fun, *args, **kwargs)
-        with self._fetch_cached_value(key, fun, args) as cache_result:
-            if cache_result is not None:
-                return cache_result
+        with self._fetch_cached_value(key, fun, args) as cached_value:
+            if cached_value is not None:
+                return cached_value
             else:
                 return execute_in_app(
                     app,
