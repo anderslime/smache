@@ -1,12 +1,11 @@
 import os
 import sys
 
-import smache
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 __name__ = 'smache'
-__version__ = smache.__version__
+__version__ = '0.0.8'
 __author__ = 'Anders Emil Nielsen'
 __author_email__ = 'aemilnielsen@gmail.com'
 __doc__ = """
@@ -39,8 +38,8 @@ setup(
         'blinker==1.4',
         'mongoengine>=0.10.6,<0.11',
         'rq==0.5.6',
-        'docopt>=0.6.0,<0.7.0',
-        'dagger'
+        'dagger==1.3.0',
+        'docopt>=0.6.0,<0.7.0'
     ],
     tests_require=['tox'],
     scripts=['bin/smache'],
