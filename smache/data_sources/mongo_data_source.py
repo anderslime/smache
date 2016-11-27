@@ -1,5 +1,5 @@
 from mongoengine import signals, Document
-from ..smache_logging import logger
+from ..smache_logging import debug, warn
 
 
 class MongoDataSource:
@@ -18,9 +18,7 @@ class MongoDataSource:
         self._subscriber = lambda x: x
 
     def subscribe(self, fun):
-        logger.debug(
-            "{} subscribed to {}".format(fun.__name__, self.data_source_id)
-        )
+        debug("{} subscribed to {}".format(fun.__name__, self.data_source_id))
         self._subscriber = fun
         signals.post_save.connect(
             self._mongoengine_post_save,
@@ -60,7 +58,7 @@ class MongoDataSource:
         if kwargs.pop('loaded', True):
             return documents
         else:
-            logger.warn(
+            warn(
                 "Smache: document updates are not received when using "
                 "bulk insert without load"
             )
@@ -76,4 +74,4 @@ class MongoDataSource:
             str(document.id),
             self._subscriber.__name__
         )
-        logger.debug(message)
+        debug(message)

@@ -1,5 +1,5 @@
 import smache
-from .smache_logging import logger
+from .smache_logging import debug
 from functools import reduce
 
 from rq.job import Job
@@ -12,11 +12,11 @@ class AsyncScheduler:
         self.worker_queue = worker_queue
 
     def schedule_write_through(self, keys):
-        logger.debug("Schedule write through update on: {}".format(keys))
+        debug("Schedule write through update on: {}".format(keys))
         reduce(self._enqueue_execute, keys, None)
 
     def schedule_update_handle(self, data_source_id, entity_id):
-        logger.debug("Schedule update handle on update for: {}/{}".format(
+        debug("Schedule update handle on update for: {}/{}".format(
             data_source_id,
             entity_id
         ))
@@ -60,10 +60,10 @@ def _handle_data_source_update(data_source_id, entity_id):
 
 
 def _execute_from_key(key):
-    logger.debug("EXECUTE on {}".format(key))
+    debug("EXECUTE on {}".format(key))
 
     computed_fun, args, kwargs = smache._instance.deserialized_fun(key)
-    logger.debug("Calling computed function {} with args {}".format(
+    debug("Calling computed function {} with args {}".format(
         computed_fun.fun.__name__,
         args
     ))
@@ -112,6 +112,6 @@ def _execute_computation(store, key, computed_fun, *args, **kwargs):
         computed_value = computed_fun(*args, **kwargs)
         timestamp = \
             smache._instance._timestamp_registry.state_timestamp(key)
-        logger.debug("SMACHE: Storing new value for {}".format(key))
+        debug("SMACHE: Storing new value for {}".format(key))
         store.store(key, computed_value, timestamp)
         return computed_value

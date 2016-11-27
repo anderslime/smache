@@ -1,4 +1,4 @@
-from .smache_logging import logger
+from .smache_logging import debug
 
 
 class ComputedFunction:
@@ -18,7 +18,7 @@ class ComputedFunction:
     def __call__(self, *args, **kwargs):
         args_with_types = zip(self.arg_deps, args)
         args = [arg_type.find(arg) for arg_type, arg in args_with_types]
-        logger.debug("Calling real function {} with serialized args {}".format(
+        debug("Calling real function {} with serialized args {}".format(
             self.fun.__name__,
             args
         ))
