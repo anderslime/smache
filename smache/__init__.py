@@ -4,3 +4,5 @@ from smache.data_sources.in_memory_data_source import InMemoryEntity  # NOQA
 from testing import detect_dependencies_for  # NOQA
 
 global _instance
+
+__version__ = '0.0.8'

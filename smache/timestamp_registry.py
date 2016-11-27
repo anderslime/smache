@@ -15,8 +15,11 @@ class TimestampRegistry:
     def value_timestamp(self, key):
         return self._get_timestamp_or_default(self.value_ts_key(key), None)
 
-    def increment_state_timestamp(self, key):
-        self._redis_con.incr(self._state_ts_key(key))
+    def increment_state_timestamp(self, key, pipe=None):
+        if pipe:
+            pipe.inc(self._state_ts_key(key))
+        else:
+            self._redis_con.incr(self._state_ts_key(key))
 
     def is_newer_value_timestamp(self, key, new_value_timestamp):
         current_timestamp = self.value_timestamp(key)

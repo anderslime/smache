@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+"""Smache CLI
+
+Usage:
+    smache invalidate_all <redis_url>
+    smache (-h | --help)
+
+Options:
+    -h --help    Show this screen
+"""
+from docopt import docopt
+import smache
+import redis
+
+if __name__ == '__main__':
+    args = docopt(__doc__, version=smache.__version__)
+
+    if args['invalidate_all'] == True:
+        redis_url = args['<redis_url>']
+        redis_con = redis.from_url(redis_url)
+        smache_cache = smache.Smache(redis_con=redis_con)
+        smache_cache.invalidate_all()

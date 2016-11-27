@@ -43,6 +43,21 @@ def test_key_marked_as_stale_is_not_fresh(redis_store):
     assert redis_store.is_fresh("hello") == False
 
 
+def test_all_keys_of_namespace_are_marked_as_stale(redis_store):
+    key1 = "namespace:key"
+    key2 = "other_namespace:key"
+    redis_store.store(key1, "coolio", 0)
+    redis_store.store(key2, "coolio", 0)
+
+    assert redis_store.is_fresh(key1)
+    assert redis_store.is_fresh(key2)
+
+    redis_store.mark_all_as_stale("namespace")
+
+    assert redis_store.is_fresh(key1) == False
+    assert redis_store.is_fresh(key2)
+
+
 def test_value_is_only_written_when_newer_then_current(redis_store):
     registry = TimestampRegistry(redis_con)
     redis_store = RedisStore(redis_con, registry)

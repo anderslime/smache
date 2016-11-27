@@ -78,6 +78,9 @@ class Smache:
         key = self.computed_key(fun, *args, **kwargs)
         self._store.mark_as_stale(key)
 
+    def invalidate_all(self):
+        self._store.mark_all_as_stale(FunctionSerializer.namespace)
+
     def without_staleness(self):
         return Transaction(self._build_cached_function_proxy(stale=False))
 

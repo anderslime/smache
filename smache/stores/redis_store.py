@@ -37,6 +37,14 @@ class RedisStore:
     def mark_as_stale(self, key):
         self._timestamp_registry.increment_state_timestamp(key)
 
+    def mark_all_as_stale(self, namespace):
+        pipe = self.redis_con.pipeline()
+        pipe.multi()
+        keys = self.redis_con.keys("{}*".format(namespace))
+        for key in keys:
+            self._timestamp_registry.increment_state_timestamp(key, pipe)
+        pipe.execute()
+
     def _deserialize_value(self, value):
         if value is None:
             return None
