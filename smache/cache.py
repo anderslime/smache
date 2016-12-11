@@ -55,7 +55,7 @@ class Smache:
             self._computed_repo
         )
         self.computed = dsl.computed
-        self.computed_flask_view = dsl.computed_flask_view
+        self.flask_computed = dsl.flask_computed
         self.relations = dsl.relations
         self.sources = dsl.sources
 

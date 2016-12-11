@@ -22,7 +22,7 @@ class DSL:
             return wrapper
         return _computed
 
-    def computed_flask_view(self, *deps, **options):
+    def flask_computed(self, *deps, **options):
         app = options['app']
 
         def _computed(fun):
