@@ -18,6 +18,7 @@ class Options:
         self.redis_con = self._redis_con(options)
         self.worker_queue = self._worker_queue(options, self.redis_con)
         self.scheduler = self._scheduler(options, self.worker_queue)
+        self.flask_app = options.get('flask_app', None)
 
     def set_debug(self):
         self.debug = True
