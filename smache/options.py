@@ -19,6 +19,9 @@ class Options:
         self.worker_queue = self._worker_queue(options, self.redis_con)
         self.scheduler = self._scheduler(options, self.worker_queue)
 
+    def set_debug(self):
+        self.debug = True
+
     def _worker_queue(self, options, redis_con):
         return self._use_or_default(
             options.get('worker_queue'),

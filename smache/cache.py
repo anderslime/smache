@@ -8,7 +8,7 @@ from .computed_function_repository import ComputedFunctionRepository
 from .relation_dependency_repository import RelationDependencyRepository
 from .function_serializer import FunctionSerializer
 from .options import Options
-from .smache_logging import setup_logger
+from .smache_logging import setup_logger, configure_logger_to_debug
 from .timestamp_registry import TimestampRegistry
 from .data_update_propagator import DataUpdatePropagator
 from .data_source_repository import DataSourceRepository
@@ -83,6 +83,10 @@ class Smache:
 
     def without_staleness(self):
         return Transaction(self._build_cached_function_proxy(stale=False))
+
+    def debug(self):
+        self._options.set_debug()
+        configure_logger_to_debug()
 
     def _build_cached_function_proxy(self, **proxy_options):
         return CachedFunctionProxy(

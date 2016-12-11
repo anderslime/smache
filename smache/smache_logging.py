@@ -14,8 +14,12 @@ def warn(message):
 
 def setup_logger(options):
     if options.debug:
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(logging.DEBUG)
+        configure_logger_to_debug()
 
-        logger.addHandler(handler)
-        logger.setLevel(logging.DEBUG)
+
+def configure_logger_to_debug():
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
