@@ -3,6 +3,7 @@ import smache
 from .dependency_graph_builder import build_dependency_graph
 from .smache_logging import debug
 from functools import reduce
+from .data_sources.mongo_data_source import MongoDataSource
 
 
 class DataUpdatePropagator:
@@ -103,7 +104,12 @@ class DataUpdatePropagator:
         )
 
     def _list(self, value):
-        if isinstance(value, list):
+        if self._is_iterable(value):
             return value
         else:
             return [value]
+
+    def _is_iterable(self, value):
+        return isinstance(value, list) or \
+            hasattr(value, '__iter__') and \
+            not MongoDataSource.is_instance(value.__class__)
