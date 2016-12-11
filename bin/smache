@@ -12,8 +12,10 @@ from docopt import docopt
 import smache
 import redis
 
+from smache.__meta__ import __version__
+
 if __name__ == '__main__':
-    args = docopt(__doc__, version=smache.__version__)
+    args = docopt(__doc__, version=__version__)
 
     if args['invalidate_all'] == True:
         redis_url = args['<redis_url>']
