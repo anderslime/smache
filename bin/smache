@@ -12,7 +12,7 @@ from docopt import docopt
 import smache
 import redis
 
-from smache.__meta__ import __version__
+from setup import __version__
 
 if __name__ == '__main__':
     args = docopt(__doc__, version=__version__)

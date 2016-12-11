@@ -4,7 +4,13 @@ import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
-from smache.__meta__ import (__name__, __version__, __author__, __doc__)
+__name__ = 'smache'
+__version__ = '0.0.9'
+__author__ = 'Anders Emil Nielsen'
+__author_email__ = 'aemilnielsen@gmail.com'
+__doc__ = """
+Caching for the productive people
+"""
 
 
 class ToxTestCommand(TestCommand):
