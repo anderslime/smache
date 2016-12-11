@@ -78,6 +78,12 @@ class Smache:
         key = self.computed_key(fun, *args, **kwargs)
         self._store.mark_as_stale(key)
 
+    def flask_app(self):
+        return self._flask_app
+
+    def set_flask_app(self, flask_app):
+        self._flask_app = flask_app
+
     def invalidate_all(self):
         self._store.mark_all_as_stale(FunctionSerializer.namespace)
 

@@ -23,19 +23,16 @@ class DSL:
         return _computed
 
     def flask_computed(self, *deps, **options):
-        app = options['app']
-
         def _computed(fun):
             def wrapper(*args, **wrapper_kwargs):
                 proxy = smache._instance._cached_function_proxy
                 return proxy.cache_function_in_app(
-                    app,
                     fun,
                     *args,
                     **wrapper_kwargs
                 )
             computed_fun = self._build_computed(fun, deps, **options)
-            computed_fun.set_app(app)
+            computed_fun.set_to_execute_in_flask_context()
             self._add_computed(computed_fun)
             wrapper.__name__ = fun.__name__
             wrapper.__module__ = fun.__module__

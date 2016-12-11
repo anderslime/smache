@@ -13,7 +13,7 @@ class ComputedFunction:
         self.data_source_deps = []
         self.relation_deps = []
         self.ttl = options.get('ttl', None)
-        self.app = None
+        self.in_flask_context = False
 
     def __call__(self, *args, **kwargs):
         args_with_types = zip(self.arg_deps, args)
@@ -25,10 +25,10 @@ class ComputedFunction:
         return self.fun(*args, **kwargs)
 
     def is_in_app_context(self):
-        return self.app is not None
+        return self.in_flask_context
 
-    def set_app(self, app):
-        self.app = app
+    def set_to_execute_in_flask_context(self):
+        self.in_flask_context = True
 
     def set_data_source_deps(self, new_data_source_deps):
         self.data_source_deps = new_data_source_deps

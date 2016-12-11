@@ -28,7 +28,5 @@ def test_computed_function():
 
 def test_options():
     computed_fun = ComputedFunction(None, tuple(), ttl=30)
-    computed_fun.set_app('mycoolapp')
 
     assert computed_fun.ttl == 30
-    assert computed_fun.app == 'mycoolapp'

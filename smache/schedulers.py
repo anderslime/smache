@@ -69,7 +69,7 @@ def _execute_from_key(key):
     ))
     if computed_fun.is_in_app_context():
         return execute_in_app(
-            computed_fun.app,
+            smache._instance.flask_app(),
             smache._instance._store,
             key,
             computed_fun,
